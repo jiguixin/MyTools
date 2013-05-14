@@ -1,0 +1,86 @@
+//店铺API，taobao.sellercats.list.get; 获取卖家自己的产品类目
+ITopClient client = new DefaultTopClient(url, appkey, appsecret);
+SellercatsListGetRequest req=new SellercatsListGetRequest();
+req.Nick = "mbgou";
+SellercatsListGetResponse response = client.Execute(req);
+
+//----------------------------------------------------------
+//类目API taobao.itemcats.get 获取后台供卖家发布商品的标准商品类目
+ITopClient client = new DefaultTopClient(url, appkey, appsecret);
+ItemcatsGetRequest req=new ItemcatsGetRequest();
+req.Fields = "cid,parent_cid,name,is_parent";
+req.ParentCid = 50011999L;
+req.Cids = "18957,19562,";
+ItemcatsGetResponse response = client.Execute(req);
+
+//----------------------------------------------------------
+//类目API taobao.itemprops.get 获取标准商品类目属性（包括：货号、品牌、衣长等）
+//注：1，货号，是放在input_str，input_pids 中，如：【（input_pids：input_str）（1632501：238286）】2，品牌，如果淘宝类目中有该品牌如：那么就加到props中，如果没有，需要自定义品牌者加到input_str，input_pids，如：【（input_pids：input_str）（20000：莱克）】3,SUK（销售）属性，sku_properties中有的属性props也必须存在。sku_properties中以“，”分开。
+
+ITopClient client = new DefaultTopClient(url, appkey, appsecret);
+ItempropsGetRequest req=new ItempropsGetRequest();
+req.Fields = "pid,name,must,multi,prop_values";
+req.Cid = 50000671;
+ItempropsGetResponse response = client.Execute(req);
+
+
+//---------------------------------------------------------------------
+// 返回结果：{"item_add_response":{"item":{"created":"2013-04-29 14:17:31","iid":"18220473644","num_iid":18220473644}}}
+ITopClient client = new DefaultTopClient(url, appkey, appsecret);
+ItemAddRequest req=new ItemAddRequest();
+req.Num = 10L;
+req.Price = "200";
+req.Type = "fixed";
+req.StuffStatus = "new";
+req.Title = "女装新款T恤";
+req.Desc = "商品不错哦。";
+req.LocationState = "四川";
+req.LocationCity = "成都";
+req.Cid = 50000671L;
+req.Props = "20511:105255;18066474:145656297;20000:29504;1627207:3232483;20509:28314;";
+req.FreightPayer = "buyer";
+req.HasShowcase = false;
+req.SellerCids = "714827842";
+req.PostFee = "10";
+req.ExpressFee = "10";
+req.EmsFee = "10";
+//设置其颜色大小别名
+req.PropertyAlias = "1627207:3232483:20色;20509:28314:155(S)";
+req.InputPids = "1632501";
+//前面是颜色，后面是大小 
+req.SkuProperties = "1627207:3232483;20509:28314";
+req.SkuQuantities = "10";
+req.SkuPrices = "200";
+req.PicPath = "i4/820330575/T2qamQXX0bXXXXXXXX_!!820330575.jpg_100x100.jpg"; //商品的主图
+req.SkuOuterIds = "238287";// SKU 商家编码
+req.OuterId = "238287";  //商家编码
+req.InputStr = "238287";
+ItemAddResponse response = client.Execute(req, sessionKey);
+
+
+//-------------------------------------------------------------------------------
+//商品API taobao.item.propimg.upload 添加或修改属性图片
+ITopClient client = new DefaultTopClient(url, appkey, appsecret);
+ItemPropimgUploadRequest req=new ItemPropimgUploadRequest();
+req.NumIid = 20234799324L;
+FileItem fItem = new FileItem("fileLocation");
+req.Image = fItem;
+req.Properties = "1627207:3232483";
+ItemPropimgUploadResponse response = client.Execute(req, sessionKey);
+
+//-------------------------------------------------------------------------------
+// 物流API taobao.delivery.templates.get 获取用户下所有模板
+ITopClient client = new DefaultTopClient(url, appkey, appsecret);
+DeliveryTemplatesGetRequest req=new DeliveryTemplatesGetRequest();
+req.Fields = "template_id";
+DeliveryTemplatesGetResponse response = client.Execute(req, sessionKey);
+
+
+//-------------------------------------------------------------------------------
+//类目API  taobao.item.joint.propimg 商品关联属性图
+ITopClient client = new DefaultTopClient(url, appkey, appsecret);
+ItemJointPropimgRequest req=new ItemJointPropimgRequest();
+req.Properties = "1627207:3232483";
+req.PicPath = "i4/820330575/T2qamQXX0bXXXXXXXX_!!820330575.jpg_100x100.jpg";
+req.NumIid = 18220473644L;
+ItemJointPropimgResponse response = client.Execute(req, sessionKey);
