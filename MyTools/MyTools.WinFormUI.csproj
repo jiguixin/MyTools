@@ -99,17 +99,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\MyLibrary\Infrastructure.CrossCutting.IoC.Ninject\Infrastructure.CrossCutting.IoC.Ninject.csproj">
+    <ProjectReference Include="..\..\MyDemo\C#\GetTbData\GetTbData\ExternalResource\taobao-sdk-net-online_standard\taobao-sdk-net-online_standard-20130425-source\TopSdk.csproj">
+      <Project>{9C11CAE5-5188-4E71-825B-68FC3135728A}</Project>
+      <Name>TopSdk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MyLibrary\Infrastructure.CrossCutting.IoC.Ninject\Infrastructure.CrossCutting.IoC.Ninject.csproj">
       <Project>{1C8CA404-AAD7-4AB9-9497-D7FE5FF5F171}</Project>
       <Name>Infrastructure.CrossCutting.IoC.Ninject</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\MyLibrary\Infrastructure.Crosscutting\Infrastructure.Crosscutting.csproj">
+    <ProjectReference Include="..\..\MyLibrary\Infrastructure.Crosscutting\Infrastructure.Crosscutting.csproj">
       <Project>{106C7F00-C03F-4E29-87AF-ACD1BA292078}</Project>
       <Name>Infrastructure.Crosscutting</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\GetTbData\GetTbData\ExternalResource\taobao-sdk-net-online_standard\taobao-sdk-net-online_standard-20130425-source\TopSdk.csproj">
-      <Project>{9C11CAE5-5188-4E71-825B-68FC3135728A}</Project>
-      <Name>TopSdk</Name>
     </ProjectReference>
     <ProjectReference Include="..\MyTools.TaoBao.DomainModule\MyTools.TaoBao.DomainModule.csproj">
       <Project>{cfda5730-0420-430f-bf57-312b716afa17}</Project>

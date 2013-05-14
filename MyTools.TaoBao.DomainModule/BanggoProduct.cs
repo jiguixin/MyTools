@@ -17,6 +17,16 @@ namespace MyTools.TaoBao.DomainModule
         #region Members
 
         /// <summary>
+        /// 品牌
+        /// </summary>
+        public string BrandCode { get; set; }
+
+        /// <summary>
+        /// 款号
+        /// </summary>
+        public string GoodsSn { get; set; }
+
+        /// <summary>
         /// 产品标题
         /// </summary>
         public string ProductTitle { get;set;}
@@ -46,6 +56,12 @@ namespace MyTools.TaoBao.DomainModule
         /// </summary>
         public int SalesVolume { get; set; }
 
+        /// <summary>
+        /// 折扣
+        /// </summary>
+        public string GoodsDiscount { get; set; }
+
+        
          
 
         #endregion
