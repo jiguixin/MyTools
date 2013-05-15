@@ -70,6 +70,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 通过该XPATH没有获取到正确的数据,{0} 的本地化字符串。
+        /// </summary>
+        public static string Exception_XPathGetDataError {
+            get {
+                return ResourceManager.GetString("Exception_XPathGetDataError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 在 [{0}] 方法中参数 [{1}] 不能为空 的本地化字符串。
         /// </summary>
         public static string ExceptionTemplate_MethedParameterIsNullorEmpty {
@@ -93,6 +102,15 @@ namespace MyTools.TaoBao.DomainModule {
         public static string SysConfig_AuthorizeUrl {
             get {
                 return ResourceManager.GetString("SysConfig_AuthorizeUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 /html/body/div[6]/div/span 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetBanggoProductTitleXPath {
+            get {
+                return ResourceManager.GetString("SysConfig_GetBanggoProductTitleXPath", resourceCulture);
             }
         }
         

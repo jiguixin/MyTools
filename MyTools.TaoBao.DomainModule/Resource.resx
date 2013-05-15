@@ -136,4 +136,12 @@
     <value>http://gw.api.taobao.com/router/rest</value>
     <comment>淘宝真实环境URL</comment>
   </data>
+  <data name="SysConfig_GetBanggoProductTitleXPath" xml:space="preserve">
+    <value>/html/body/div[6]/div/span</value>
+    <comment>得到banggo产品的标题</comment>
+  </data>
+  <data name="Exception_XPathGetDataError" xml:space="preserve">
+    <value>通过该XPATH没有获取到正确的数据,{0}</value>
+    <comment>通过该XPATH没有获取到正确的数据</comment>
+  </data>
 </root>

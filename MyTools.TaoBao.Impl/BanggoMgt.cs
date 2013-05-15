@@ -8,6 +8,8 @@
  */
 
 using System;
+using System.Linq;
+using HtmlAgilityPack;
 using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
 using Newtonsoft.Json;
@@ -25,6 +27,10 @@ namespace MyTools.TaoBao.Impl
         /// <returns></returns>
         public BanggoProduct GetGoodsInfo(BanggoRequestModel requestModel)
         {
+            BanggoProduct product = new BanggoProduct();
+            GetProductBaseInfo(product, requestModel);
+
+
             #region 得到banggo数据
 
             if (requestModel == null)
@@ -98,17 +104,66 @@ namespace MyTools.TaoBao.Impl
 
         }
 
-        //todo:2013.5.15 完成以下功能
+        /// <summary>
+        /// 读取或构造单个产品的基础信息。
+        /// 包括：标题、价格、销量、产品描述        
+        /// </summary>
+        /// <param name="product">产品</param>
+        /// <param name="requestModel">请求模型</param>
         public void GetProductBaseInfo(BanggoProduct product, BanggoRequestModel requestModel)
         {
-            throw new NotImplementedException();
+            #region 得到banggo数据
+
+            if (product == null || requestModel == null)
+                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+                                                  new System.Diagnostics.StackTrace().ToString()));
+
+            var restClient = new RestClient(requestModel.Referer);
+            var request = new RestRequest(Method.GET);
+              
+            var response = restClient.Execute(request);
+
+            if (response.ErrorException != null)
+                throw response.ErrorException;
+
+            HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(response.Content);
+            var selectNodesForProductTitle =
+                doc.DocumentNode.SelectNodes(Resource.SysConfig_GetBanggoProductTitleXPath);
+
+            //todo: 不正确需要重新调整
+            if (selectNodesForProductTitle == null)
+                throw new Exception(string.Format(Resource.Exception_XPathGetDataError, new System.Diagnostics.StackTrace().ToString()));
+
+            foreach (var node in selectNodesForProductTitle)
+            {
+                
+            }
+
+
+
+
+            #endregion
+
+            
+
         }
 
+        /// <summary>
+        /// 得到可售商品颜色
+        /// </summary>
+        /// <param name="product">产品</param>
+        /// <param name="requestModel">请求模型</param>
         public void GetAvailableColor(BanggoProduct product, BanggoRequestModel requestModel)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 得到可售商品颜色
+        /// </summary>
+        /// <param name="product">产品</param>
+        /// <param name="requestModel">请求模型</param>
         public void GetAvailableSize(BanggoProduct product, BanggoRequestModel requestModel)
         {
             throw new NotImplementedException();

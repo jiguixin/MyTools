@@ -16,7 +16,15 @@ namespace MyTools.TaoBao.DomainModule
 
         #region Members
 
+        /// <summary>
+        /// 库存
+        /// </summary>
+        public virtual int AvlNum { get; set; }
 
+        /// <summary>
+        /// 售价
+        /// </summary>
+        public double SalePrice { get; set; }
 
         #endregion
 

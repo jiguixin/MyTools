@@ -37,7 +37,7 @@ namespace MyTools.TaoBao.DomainModule
         public double MarketPrice { get; set; }
 
         /// <summary>
-        /// 售价
+        /// 总售价
         /// </summary>
         public double SalePrice { get; set; }
 
