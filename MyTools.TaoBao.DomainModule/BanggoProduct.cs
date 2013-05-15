@@ -61,7 +61,10 @@ namespace MyTools.TaoBao.DomainModule
         /// </summary>
         public string GoodsDiscount { get; set; }
 
-        
+        /// <summary>
+        /// 类别，如男装、女装
+        /// </summary>
+        public string Category { get; set; }
          
 
         #endregion

@@ -120,7 +120,7 @@ namespace MyTools.TaoBao.Impl
 
             var restClient = new RestClient(requestModel.Referer);
             var request = new RestRequest(Method.GET);
-              
+
             var response = restClient.Execute(request);
 
             if (response.ErrorException != null)
@@ -128,24 +128,36 @@ namespace MyTools.TaoBao.Impl
 
             HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(response.Content);
-            var selectNodesForProductTitle =
-                doc.DocumentNode.SelectNodes(Resource.SysConfig_GetBanggoProductTitleXPath);
 
-            //todo: 不正确需要重新调整
-            if (selectNodesForProductTitle == null)
-                throw new Exception(string.Format(Resource.Exception_XPathGetDataError, new System.Diagnostics.StackTrace().ToString()));
+            #region 获得品牌
+             
+            var selectNodesForProductBrandCode =
+                doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductBrandCodeXPath);
 
-            foreach (var node in selectNodesForProductTitle)
-            {
-                
-            }
+            if (selectNodesForProductBrandCode == null)
+                throw new Exception(string.Format(Resource.Exception_XPathGetDataError,
+                                                  new System.Diagnostics.StackTrace().ToString()));
 
-
-
+            product.BrandCode = selectNodesForProductBrandCode.InnerText;
 
             #endregion
 
-            
+            #region 获取产品详细界面的类别
+
+            var selectNodesForProductCategory =
+                doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductCategoryXPath);
+
+            if (selectNodesForProductCategory == null)
+                throw new Exception(string.Format(Resource.Exception_XPathGetDataError,
+                                                  new System.Diagnostics.StackTrace().ToString()));
+
+            product.Category = selectNodesForProductCategory.InnerText;
+
+            #endregion
+
+            #endregion
+
+
 
         }
 

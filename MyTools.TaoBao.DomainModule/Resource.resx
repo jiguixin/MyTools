@@ -136,12 +136,16 @@
     <value>http://gw.api.taobao.com/router/rest</value>
     <comment>淘宝真实环境URL</comment>
   </data>
-  <data name="SysConfig_GetBanggoProductTitleXPath" xml:space="preserve">
-    <value>/html/body/div[6]/div/span</value>
-    <comment>得到banggo产品的标题</comment>
+  <data name="SysConfig_GetBanggoProductBrandCodeXPath" xml:space="preserve">
+    <value>/html/body/div/div[@class='details_dir']/a[2]</value>
+    <comment>得到banggo产品的品牌</comment>
   </data>
   <data name="Exception_XPathGetDataError" xml:space="preserve">
     <value>通过该XPATH没有获取到正确的数据,{0}</value>
     <comment>通过该XPATH没有获取到正确的数据</comment>
+  </data>
+  <data name="SysConfig_GetBanggoProductCategoryXPath" xml:space="preserve">
+    <value>/html/body/div/div[@class='details_dir']/a[3]</value>
+    <comment>获得产品详细界面的类别，如，男装、女装.</comment>
   </data>
 </root>

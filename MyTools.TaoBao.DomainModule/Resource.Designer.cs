@@ -106,11 +106,20 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 /html/body/div[6]/div/span 的本地化字符串。
+        ///   查找类似 /html/body/div/div[@class=&apos;details_dir&apos;]/a[2] 的本地化字符串。
         /// </summary>
-        public static string SysConfig_GetBanggoProductTitleXPath {
+        public static string SysConfig_GetBanggoProductBrandCodeXPath {
             get {
-                return ResourceManager.GetString("SysConfig_GetBanggoProductTitleXPath", resourceCulture);
+                return ResourceManager.GetString("SysConfig_GetBanggoProductBrandCodeXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 /html/body/div/div[@class=&apos;details_dir&apos;]/a[3] 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetBanggoProductCategoryXPath {
+            get {
+                return ResourceManager.GetString("SysConfig_GetBanggoProductCategoryXPath", resourceCulture);
             }
         }
         
