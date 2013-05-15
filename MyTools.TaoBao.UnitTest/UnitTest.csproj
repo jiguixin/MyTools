@@ -33,8 +33,28 @@
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net40\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="Infrastructure.Crosscutting, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\Infrastructure.Crosscutting.dll</HintPath>
+    </Reference>
+    <Reference Include="Infrastructure.CrossCutting.IoC.Ninject, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\Infrastructure.CrossCutting.IoC.Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="MyTools.TaoBao.DomainModule, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\MyTools.TaoBao.DomainModule.dll</HintPath>
+    </Reference>
+    <Reference Include="MyTools.TaoBao.Impl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\MyTools.TaoBao.Impl.dll</HintPath>
+    </Reference>
+    <Reference Include="MyTools.TaoBao.Interface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\MyTools.TaoBao.Interface.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
@@ -49,6 +69,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TopSdk, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\TopSdk.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
@@ -59,32 +83,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\MyDemo\C#\GetTbData\GetTbData\ExternalResource\taobao-sdk-net-online_standard\taobao-sdk-net-online_standard-20130425-source\TopSdk.csproj">
-      <Project>{9C11CAE5-5188-4E71-825B-68FC3135728A}</Project>
-      <Name>TopSdk</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MyLibrary\Infrastructure.CrossCutting.IoC.Ninject\Infrastructure.CrossCutting.IoC.Ninject.csproj">
-      <Project>{1C8CA404-AAD7-4AB9-9497-D7FE5FF5F171}</Project>
-      <Name>Infrastructure.CrossCutting.IoC.Ninject</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\MyLibrary\Infrastructure.Crosscutting\Infrastructure.Crosscutting.csproj">
-      <Project>{106C7F00-C03F-4E29-87AF-ACD1BA292078}</Project>
-      <Name>Infrastructure.Crosscutting</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MyTools.TaoBao.DomainModule\MyTools.TaoBao.DomainModule.csproj">
-      <Project>{cfda5730-0420-430f-bf57-312b716afa17}</Project>
-      <Name>MyTools.TaoBao.DomainModule</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MyTools.TaoBao.Impl\MyTools.TaoBao.Impl.csproj">
-      <Project>{0A7006AF-066C-43E0-BB32-E17313EB6BB2}</Project>
-      <Name>MyTools.TaoBao.Impl</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MyTools.TaoBao.Interface\MyTools.TaoBao.Interface.csproj">
-      <Project>{67F099C3-F743-4E52-B0CC-2C06A88D1A78}</Project>
-      <Name>MyTools.TaoBao.Interface</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

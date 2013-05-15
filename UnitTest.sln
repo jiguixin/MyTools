@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "MyTools.TaoBao.UnitTest\UnitTest.csproj", "{8291F169-B677-4A41-8E2F-654690B38082}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8291F169-B677-4A41-8E2F-654690B38082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8291F169-B677-4A41-8E2F-654690B38082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8291F169-B677-4A41-8E2F-654690B38082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8291F169-B677-4A41-8E2F-654690B38082}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -148,13 +148,14 @@ namespace MyTools
                 log.LogInfo("数据获取完成，结果为：{0}",login.resultHtml); 
 
                 context = auth.Authorized(login.resultHtml);
+                   
+                InstanceLocator.Current.RegisterInstance<TopContext>(context);
                   
-                InstanceLocator.Current.RegisterInstance<TopContext>(context);  
             }
         }
 
         private void btnGetCats_Click(object sender, EventArgs e)
-        {
+        { 
             var sellCatsList = shopApi.GetSellercatsList(context.UserNick);
             log.LogInfo("数据获取完成，卖家自定列表个数：{0}", sellCatsList.Count); 
         }

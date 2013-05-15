@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTools.TaoBao.Interface", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTools.TaoBao.Impl", "MyTools.TaoBao.Impl\MyTools.TaoBao.Impl.csproj", "{0A7006AF-066C-43E0-BB32-E17313EB6BB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTools.TaoBao.UnitTest", "MyTools.TaoBao.UnitTest\MyTools.TaoBao.UnitTest.csproj", "{8291F169-B677-4A41-8E2F-654690B38082}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "MyTools.TaoBao.UnitTest\UnitTest.csproj", "{8291F169-B677-4A41-8E2F-654690B38082}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Crosscutting", "..\MyLibrary\Infrastructure.Crosscutting\Infrastructure.Crosscutting.csproj", "{106C7F00-C03F-4E29-87AF-ACD1BA292078}"
 EndProject
