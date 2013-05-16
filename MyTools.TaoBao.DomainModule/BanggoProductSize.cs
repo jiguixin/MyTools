@@ -17,9 +17,19 @@ namespace MyTools.TaoBao.DomainModule
         #region Members
 
         /// <summary>
+        /// 大小编码
+        /// </summary>
+        public string SizeCode { get; set; }
+
+        /// <summary>
+        /// 大小别名
+        /// </summary>
+        public string Alias{get;set;}
+
+        /// <summary>
         /// 库存
         /// </summary>
-        public virtual int AvlNum { get; set; }
+        public int AvlNum { get; set; }
 
         /// <summary>
         /// 售价

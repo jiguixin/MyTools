@@ -37,13 +37,7 @@ namespace MyTools.TaoBao.Interface
         /// <param name="product">产品</param>
         /// <param name="requestModel">请求模型</param>
         void GetAvailableColor(BanggoProduct product, BanggoRequestModel requestModel);
-
-        /// <summary>
-        /// 得到可售商品颜色
-        /// </summary>
-        /// <param name="product">产品</param>
-        /// <param name="requestModel">请求模型</param>
-        void GetAvailableSize(BanggoProduct product, BanggoRequestModel requestModel);
+         
 
 
     }

@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace MyTools.TaoBao.DomainModule
 {
@@ -89,7 +90,8 @@ namespace MyTools.TaoBao.DomainModule
         /// 商品目录，如 针织短袖恤	
         /// </summary>
         public string Catalog { get; set; }
-         
+
+        public List<BanggoProductColor> ColorList { get; set; }
 
         #endregion
 
