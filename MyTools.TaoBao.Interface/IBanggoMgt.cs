@@ -20,6 +20,9 @@ namespace MyTools.TaoBao.Interface
         /// <returns></returns>
         BanggoProduct GetGoodsInfo(BanggoRequestModel requestModel);
 
+
+
+
         /// <summary>
         /// 读取或构造单个产品的基础信息。
         /// 包括：标题、价格、销量、产品描述        

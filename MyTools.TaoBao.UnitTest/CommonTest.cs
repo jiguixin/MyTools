@@ -83,10 +83,31 @@ namespace MyTools.TaoBao.UnitTest
         }
 
         [Test]
-        public void TestJson()
+        public void Test1()
         {
-             
+            string BrandCode = "Metersbonwe";
+            string Category = "女装";
+            string Catalog = "1234567890针织短袖恤	";
+            string startTitle = string.Format("{0} {1} {2} ", BrandCode.Trim(), Category.Trim(), Catalog.Trim());
+
+            if (startTitle.Length > 24)
+            {
+                int moreThanNum = startTitle.Length - 24;
+                string finalCatalog = "";
+                if (moreThanNum < Catalog.Length)
+                {
+                    finalCatalog = Catalog.Remove(0, moreThanNum);
+                }
+
+                string GoodsSn = "";
+                //return string.Format("{0} {1} {2} {3}", BrandCode, Category, finalCatalog, GoodsSn);
+                //string finalCatalog = Catalog.Remove(0, moreThanNum);
+
+
+
+            }
         }
+         
 
         #endregion
 

@@ -79,7 +79,7 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 在 [{0}] 方法中参数 [{1}] 不能为空 的本地化字符串。
+        ///   查找类似 在 [{0}] 方法中参数不能为空 的本地化字符串。
         /// </summary>
         public static string ExceptionTemplate_MethedParameterIsNullorEmpty {
             get {
@@ -111,6 +111,15 @@ namespace MyTools.TaoBao.DomainModule {
         public static string SysConfig_GetBanggoProductBrandCodeXPath {
             get {
                 return ResourceManager.GetString("SysConfig_GetBanggoProductBrandCodeXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 /html/body/div/div[@class=&apos;details_dir&apos;]/a[5] 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetBanggoProductCatalogXPath {
+            get {
+                return ResourceManager.GetString("SysConfig_GetBanggoProductCatalogXPath", resourceCulture);
             }
         }
         

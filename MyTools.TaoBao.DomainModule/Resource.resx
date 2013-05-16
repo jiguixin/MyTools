@@ -125,8 +125,8 @@
     <comment>用于该XPATH获取在淘宝认证界面的AuthorizedCode</comment>
   </data>
   <data name="ExceptionTemplate_MethedParameterIsNullorEmpty" xml:space="preserve">
-    <value>在 [{0}] 方法中参数 [{1}] 不能为空</value>
-    <comment>异常模版，在 [{0}] 方法中参数 [{1}] 不能为空</comment>
+    <value>在 [{0}] 方法中参数不能为空</value>
+    <comment>异常模版，在 [{0}] 方法中参数 不能为空</comment>
   </data>
   <data name="SysConfig_AuthorizeUrl" xml:space="preserve">
     <value>http://open.taobao.com/authorize/?appkey={0}</value>
@@ -147,5 +147,9 @@
   <data name="SysConfig_GetBanggoProductCategoryXPath" xml:space="preserve">
     <value>/html/body/div/div[@class='details_dir']/a[3]</value>
     <comment>获得产品详细界面的类别，如，男装、女装.</comment>
+  </data>
+  <data name="SysConfig_GetBanggoProductCatalogXPath" xml:space="preserve">
+    <value>/html/body/div/div[@class='details_dir']/a[5]</value>
+    <comment>获得产品详情的商品目录</comment>
   </data>
 </root>

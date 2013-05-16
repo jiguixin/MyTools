@@ -9,12 +9,16 @@
 
 using System;
 using System.Linq;
+using System.Net;
+using System.Text;
 using HtmlAgilityPack;
 using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using Infrastructure.Crosscutting.Declaration;
+
 
 namespace MyTools.TaoBao.Impl
 {
@@ -33,8 +37,7 @@ namespace MyTools.TaoBao.Impl
 
             #region 得到banggo数据
 
-            if (requestModel == null)
-                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            requestModel.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
                                                   new System.Diagnostics.StackTrace().ToString()));
 
             string url = string.Format(
@@ -78,9 +81,7 @@ namespace MyTools.TaoBao.Impl
             bProduct.SvipPrice = goodsInfo.SelectToken("svip").Value<double>(); 
             bProduct.SalePrice = goodsInfo.SelectToken("sale_price").Value<double>();
             bProduct.SalesVolume = goodsInfo.SelectToken("sale_count").Value<int>();
-            
-            
-
+             
            //bProduct.MarketPrice = 
 
              
@@ -114,9 +115,11 @@ namespace MyTools.TaoBao.Impl
         {
             #region 得到banggo数据
 
-            if (product == null || requestModel == null)
-                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
-                                                  new System.Diagnostics.StackTrace().ToString()));
+            product.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+                                              new System.Diagnostics.StackTrace().ToString()));
+
+            requestModel.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+                                              new System.Diagnostics.StackTrace().ToString()));
 
             var restClient = new RestClient(requestModel.Referer);
             var request = new RestRequest(Method.GET);
@@ -133,9 +136,7 @@ namespace MyTools.TaoBao.Impl
              
             var selectNodesForProductBrandCode =
                 doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductBrandCodeXPath);
-
-            if (selectNodesForProductBrandCode == null)
-                throw new Exception(string.Format(Resource.Exception_XPathGetDataError,
+             selectNodesForProductBrandCode.ThrowIfNull(string.Format(Resource.Exception_XPathGetDataError,
                                                   new System.Diagnostics.StackTrace().ToString()));
 
             product.BrandCode = selectNodesForProductBrandCode.InnerText;
@@ -147,19 +148,47 @@ namespace MyTools.TaoBao.Impl
             var selectNodesForProductCategory =
                 doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductCategoryXPath);
 
-            if (selectNodesForProductCategory == null)
-                throw new Exception(string.Format(Resource.Exception_XPathGetDataError,
+            selectNodesForProductCategory.ThrowIfNull(string.Format(Resource.Exception_XPathGetDataError,
                                                   new System.Diagnostics.StackTrace().ToString()));
 
             product.Category = selectNodesForProductCategory.InnerText;
 
             #endregion
 
+            #region 获得产品目录
+
+            var selectNodesForProductCatalog =
+                doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductCatalogXPath);
+
+            selectNodesForProductCatalog.ThrowIfNull(string.Format(Resource.Exception_XPathGetDataError,
+                                                                   new System.Diagnostics.StackTrace().ToString()));
+
+
+            product.Catalog = selectNodesForProductCatalog.InnerText;
+             
             #endregion
 
 
+            #region 得到售价 
+             /*   
+            var selectNodesForProductSalePrice =
+               doc.DocumentNode.SelectSingleNode("//*span[@id='sale_price']/span");
+             
+            selectNodesForProductSalePrice.ThrowIfNull(string.Format(Resource.Exception_XPathGetDataError,new System.Diagnostics.StackTrace().ToString()));
+
+
+            product.SalePrice = selectNodesForProductSalePrice.InnerText.ToDouble();
+*/
+            GetAvailableColor(product, requestModel);
+
+
+            #endregion
+
+            #endregion
+
 
         }
+         
 
         /// <summary>
         /// 得到可售商品颜色
@@ -168,6 +197,74 @@ namespace MyTools.TaoBao.Impl
         /// <param name="requestModel">请求模型</param>
         public void GetAvailableColor(BanggoProduct product, BanggoRequestModel requestModel)
         {
+            #region 得到售价
+
+            CookieContainer cookieJar = new CookieContainer();
+
+            string url = string.Format(
+                "http://act.banggo.com/Price/getGoodsPrice?r={0}&callback=&goods_sn={1}", DateTime.Now.Ticks, requestModel.GoodsSn);
+
+            var restClient = new RestClient(url);
+            restClient.CookieContainer = cookieJar;
+
+            var request = new RestRequest(Method.GET);
+
+            request.AddHeader("Host", "act.banggo.com");
+
+            request.AddHeader("Accept", "*/*");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+             
+            request.AddHeader("Referer", requestModel.Referer);
+             
+            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
+
+            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3"); 
+             
+            var response = restClient.Execute(request);
+
+            if (response.ErrorException != null)
+                throw response.ErrorException;
+             
+            string result = response.Content.TrimStart('(').TrimEnd(')');
+
+            JObject jObj = JObject.Parse(result);
+
+            string data = jObj["data"].ToString();
+             
+            HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(data);
+            var htmlNodeSalePrice = doc.GetElementbyId("sale_price");
+
+            htmlNodeSalePrice.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+                                               new System.Diagnostics.StackTrace().ToString()));
+
+            product.SalePrice = htmlNodeSalePrice.InnerText.Remove(0, 1).ToDouble();
+              
+            #endregion
+
+            #region 获得商品颜色信息
+
+            var htmlNodeColorList = doc.GetElementbyId("read_colorlist");
+
+            htmlNodeColorList.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+                                               new System.Diagnostics.StackTrace().ToString()));
+
+            var colors = htmlNodeColorList.SelectNodes("li/a");
+
+            htmlNodeColorList.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+                                              new System.Diagnostics.StackTrace().ToString()));
+            foreach (var colorNode in colors)
+            {
+                string colorInfo= colorNode.Attributes["onclick"].Value;
+                
+                //todo: 解析color的信息。
+
+            }
+             
+            #endregion
+
+
             throw new NotImplementedException();
         }
 

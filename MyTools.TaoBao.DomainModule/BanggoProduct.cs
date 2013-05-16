@@ -29,7 +29,26 @@ namespace MyTools.TaoBao.DomainModule
         /// <summary>
         /// 产品标题
         /// </summary>
-        public string ProductTitle { get;set;}
+        public string ProductTitle
+        {
+            get
+            {
+                string startTitle = string.Format("{0} {1} {2} ", BrandCode, Category, Catalog);
+                //标题字符不能大于30满足款号所以长度只能是24个字符
+                if (startTitle.Length > 24)
+                {
+                    int moreThanNum = startTitle.Length - 24;
+                    string finalCatalog = "";
+                    if (moreThanNum < Catalog.Length)
+                    {
+                        finalCatalog = Catalog.Remove(0, moreThanNum);
+                    }
+                    return string.Format("{0} {1} {2} {3}", BrandCode, Category, finalCatalog, GoodsSn);
+                }
+                 
+                return string.Format("{0} {1} {2} {3}", BrandCode, Category, Catalog, GoodsSn);
+            }  
+        }
 
         /// <summary>
         /// 市场价
@@ -65,6 +84,11 @@ namespace MyTools.TaoBao.DomainModule
         /// 类别，如男装、女装
         /// </summary>
         public string Category { get; set; }
+
+        /// <summary>
+        /// 商品目录，如 针织短袖恤	
+        /// </summary>
+        public string Catalog { get; set; }
          
 
         #endregion
