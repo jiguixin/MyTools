@@ -19,25 +19,28 @@ namespace MyTools.TaoBao.Interface
         /// <param name="requestModel"></param>
         /// <returns></returns>
         BanggoProduct GetGoodsInfo(BanggoRequestModel requestModel);
-
-
-
-
-        /// <summary>
+         
+         /// <summary>
         /// 读取或构造单个产品的基础信息。
         /// 包括：标题、价格、销量、产品描述        
         /// </summary>
         /// <param name="product">产品</param>
         /// <param name="requestModel">请求模型</param>
         void GetProductBaseInfo(BanggoProduct product, BanggoRequestModel requestModel);
-
+        
         /// <summary>
-        /// 得到可售商品颜色
+        /// 得到可售商品Sku
         /// </summary>
         /// <param name="product">产品</param>
         /// <param name="requestModel">请求模型</param>
-        void GetAvailableColor(BanggoProduct product, BanggoRequestModel requestModel);
-         
+        void GetProductSku(BanggoProduct product, BanggoRequestModel requestModel);
+
+        /// <summary>
+        /// 解析产品的URL 得到款号
+        /// </summary>
+        /// <param name="url">产品的URL</param>
+        /// <returns></returns>
+        string ResolveProductUrl(string url);
 
 
     }

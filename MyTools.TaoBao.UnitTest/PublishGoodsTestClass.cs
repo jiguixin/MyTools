@@ -169,20 +169,20 @@ namespace MyTools.TaoBao.UnitTest
 
             var brm = new BanggoRequestModel();
             brm.Referer = "http://metersbonwe.banggo.com/Goods/238395.shtml";
-            brm.SizeCode = "23852";
-            brm.ColorCode = 91;
+           // brm.SizeCode = "23852";
+            //brm.ColorCode = 91;
             brm.GoodsSn = "238395";
              
             var goodsModel = mgt.GetGoodsInfo(brm);
             Console.WriteLine(goodsModel.MarketPrice);
 
-
         }
 
         [Test]
-        public void PublishGoodsTest()
+        public void BanggoMgt_ResolveProductUrl()
         {
-
+            IBanggoMgt mgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
+            Console.WriteLine(mgt.ResolveProductUrl("http://235589metersbonwe.banggo.com/Goods/238395.shtml"));
         } 
     }
 }

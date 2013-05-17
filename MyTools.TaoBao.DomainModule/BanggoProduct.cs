@@ -93,6 +93,17 @@ namespace MyTools.TaoBao.DomainModule
 
         public List<BanggoProductColor> ColorList { get; set; }
 
+        /// <summary>
+        /// 商品主图 url
+        /// </summary>
+        public string ThumbUrl { get; set; }
+
+        /// <summary>
+        /// 商品描述
+        /// </summary>
+        public string Desc { get; set; }
+
+
         #endregion
 
 
