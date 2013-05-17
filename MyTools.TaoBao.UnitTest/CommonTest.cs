@@ -8,9 +8,13 @@
  */
 
 using System;
+using System.Drawing;
+using System.IO;
 using Infrastructure.Crosscutting.Utility;
+using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.TaoBao.DomainModule;
 using NUnit.Framework;
+using RestSharp;
 using Top.Api.Request;
 using Product = MyTools.TaoBao.DomainModule.Product;
 
@@ -107,7 +111,62 @@ namespace MyTools.TaoBao.UnitTest
 
             }
         }
-         
+
+        [Test]
+        public void GetImgByte()
+        {  
+            var restClient = new RestClient("http://img6.ibanggo.com/sources/images/goods/MB/209697/209697_00--w_498_h_498.jpg");
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = restClient.Execute(request);
+
+             var bytes = response.RawBytes;
+
+             FileStream fs = new FileStream("209697_00.jpg", FileMode.Create, FileAccess.Write);
+             fs.Write(bytes, 0, bytes.Length);
+             fs.Close();
+
+            //Guid photoID = System.Guid.NewGuid();
+            // String photolocation = String.Format(@"c:\temp\{0}.jpg", Guid.NewGuid().ToString());
+
+/*
+            IRestResponse response = restClient.ExecuteAsync(
+        request,
+        Response =>
+        {
+            if (Response != null)
+            {
+                byte[] imageBytes = Response.RawBytes;
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = new MemoryStream(imageBytes);
+                bitmapImage.CreateOptions = BitmapCreateOptions.None;
+                bitmapImage.CacheOption = BitmapCacheOption.Default;
+                bitmapImage.EndInit();
+
+                JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                Guid photoID = System.Guid.NewGuid();
+                String photolocation = String.Format(@"c:\temp\{0}.jpg", Guid.NewGuid().ToString());
+                encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+                using (var filestream = new FileStream(photolocation, FileMode.Create))
+                encoder.Save(filestream);
+
+                this.Dispatcher.Invoke((Action)(() => { img.Source = bitmapImage; }));
+                ;
+            }
+        });*/
+              
+
+        }
+
+        [Test]
+        public void DownloadImg()
+        { 
+            Image img = PicDealHelper.DownloadImage(
+                "http://img6.ibanggo.com/sources/images/goods/MB/209697/209697_00--w_498_h_498.jpg");
+            img.Save("test.jpg");
+
+
+        }
 
         #endregion
 

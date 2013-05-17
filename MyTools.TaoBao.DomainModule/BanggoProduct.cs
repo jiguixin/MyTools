@@ -87,6 +87,11 @@ namespace MyTools.TaoBao.DomainModule
         public string Category { get; set; }
 
         /// <summary>
+        /// 得到banggo的父目录，如 T恤
+        /// </summary>
+        public string ParentCatalog { get; set; }
+
+        /// <summary>
         /// 商品目录，如 针织短袖恤	
         /// </summary>
         public string Catalog { get; set; }

@@ -93,6 +93,17 @@ namespace MyTools.TaoBao.Impl
 
             #endregion
 
+            #region 得到banggo的父目录，如 T恤
+
+            var selectNodeForProductParentCatalog = doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductParentCatalogXPath);
+
+            selectNodeForProductParentCatalog.ThrowIfNull(string.Format(Resource.Exception_XPathGetDataError,
+                                                                   new StackTrace()));
+
+            product.ParentCatalog = selectNodeForProductParentCatalog.InnerHtml;
+
+            #endregion
+
             #region 获得产品目录
 
             HtmlNode selectNodesForProductCatalog =

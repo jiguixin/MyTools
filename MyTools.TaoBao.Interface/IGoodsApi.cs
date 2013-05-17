@@ -26,6 +26,13 @@ namespace MyTools.TaoBao.Interface
         Item PublishGoods(Product product);
 
         /// <summary>
+        /// 从banggo上获取数据发布到淘宝
+        /// </summary>
+        /// <param name="banggoProductUrl"></param>
+        /// <returns></returns>
+        Item PublishGoodsForBanggoToTaobao(string banggoProductUrl);
+
+        /// <summary>
         /// 更新和添加销售商品图片
         /// </summary>
         /// <param name="numId">商品编号</param>

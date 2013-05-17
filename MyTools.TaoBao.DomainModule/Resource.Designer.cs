@@ -133,6 +133,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 /html/body/div/div[@class=&apos;details_dir&apos;]/a[4] 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetBanggoProductParentCatalogXPath {
+            get {
+                return ResourceManager.GetString("SysConfig_GetBanggoProductParentCatalogXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 http://gw.api.taobao.com/router/rest 的本地化字符串。
         /// </summary>
         public static string SysConfig_RealTaobaoServerUrl {

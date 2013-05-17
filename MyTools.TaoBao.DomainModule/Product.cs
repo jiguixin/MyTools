@@ -33,7 +33,7 @@ namespace MyTools.TaoBao.DomainModule
         public string Desc { get; set; }
 
         /// <summary>
-        /// 运费承担方式。可选值:seller（卖家承担）,buyer(买家承担);默认值:seller。卖家承担不用设置邮费和postage_id.
+        /// 运费承担方式。默认 buyer  可选值:seller（卖家承担）,buyer(买家承担);默认值:seller。卖家承担不用设置邮费和postage_id.
         /// 买家承担的时候，必填邮费和postage_id 如果用户设置了运费模板会优先使用运费模板，否则要同步设置邮费（post_fee,express_fee,
         /// ems_fee）
         /// </summary>
@@ -61,13 +61,15 @@ namespace MyTools.TaoBao.DomainModule
         public string InputStr { get; set; }
 
         /// <summary>
-        /// 所在地城市。如杭州 。可以通过http://dl.open.taobao.com/sdk/商品城市列表.rar查询
+        /// 所在地城市。默认 四川 。可以通过http://dl.open.taobao.com/sdk/商品城市列表.rar查询
         /// </summary>
-        public string LocationCity { get; set; }
+        public string LocationCity = "四川";
+
         /// <summary>
-        /// 所在地省份。如浙江，具体可以下载http://dl.open.taobao.com/sdk/商品城市列表.rar  取到
+        /// 所在地省份。默认 成都，具体可以下载http://dl.open.taobao.com/sdk/商品城市列表.rar  取到
         /// </summary>
-        public string LocationState { get; set; }
+        public string LocationState = "成都";
+
 
         /// <summary>
         /// 商品数量，取值范围:0-999999的整数。且需要等于Sku所有数量的和。  拍卖商品中增加拍只能为1，荷兰拍要在[2,500)范围内。
@@ -132,7 +134,7 @@ namespace MyTools.TaoBao.DomainModule
         public string SkuQuantities { get; set; }
 
         /// <summary>
-        /// 新旧程度。可选值：new(新)，second(二手)，unused(闲置)。B商家不能发布二手商品。 如果是二手商品，特定类目下属性里面必填新旧成色属性
+        /// 新旧程度。默认 new 可选值：new(新)，second(二手)，unused(闲置)。B商家不能发布二手商品。 如果是二手商品，特定类目下属性里面必填新旧成色属性
         /// </summary>
         public string StuffStatus = "new";
 
@@ -142,7 +144,7 @@ namespace MyTools.TaoBao.DomainModule
         public string Title { get; set; }
 
         /// <summary>
-        /// 发布类型。可选值:fixed(一口价),auction(拍卖)。B商家不能发布拍卖商品，而且拍卖商品是没有SKU的。
+        /// 发布类型。默认 fixed  可选值:fixed(一口价),auction(拍卖)。B商家不能发布拍卖商品，而且拍卖商品是没有SKU的。
         /// 拍卖商品发布时需要附加拍卖商品信息：拍卖类型(paimai_info.
         /// mode，拍卖类型包括三种：增价拍[1]，荷兰拍[2]以及降价拍[3])，商品数量(num)，起拍价(price)，价格幅度(increament)，保证金(p
         /// aimai_info.deposit)。另外拍卖商品支持自定义销售周期，通过paimai_info.valid_hour和paimai_info.

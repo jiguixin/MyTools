@@ -152,4 +152,8 @@
     <value>/html/body/div/div[@class='details_dir']/a[5]</value>
     <comment>获得产品详情的商品目录</comment>
   </data>
+  <data name="SysConfig_GetBanggoProductParentCatalogXPath" xml:space="preserve">
+    <value>/html/body/div/div[@class='details_dir']/a[4]</value>
+    <comment>得到banggo的父目录，如 T恤</comment>
+  </data>
 </root>
