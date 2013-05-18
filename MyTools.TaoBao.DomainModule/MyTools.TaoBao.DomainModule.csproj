@@ -41,8 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BanggoProduct.cs" />
-    <Compile Include="BanggoProductColor.cs" />
-    <Compile Include="BanggoProductSize.cs" />
+    <Compile Include="ProductColor.cs" />
+    <Compile Include="ProductSize.cs" />
     <Compile Include="BanggoRequestModel.cs" />
     <Compile Include="ExceptionDef\TopResponseException.cs" />
     <Compile Include="Product.cs" />

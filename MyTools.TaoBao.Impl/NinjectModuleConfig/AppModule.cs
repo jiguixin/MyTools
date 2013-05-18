@@ -27,7 +27,18 @@ namespace MyTools.TaoBao.Impl.NinjectModuleConfig
         public override void Load()
         {
             this.Bind<IShopApi>().To<ShopApi>().InSingletonScope();
-            this.Bind<IItemCats>().To<ItemCats>().InSingletonScope();
+            
+            this.Bind<IShop>().To<ShopApi>().InSingletonScope().Named(Resource.SysConfig_GetDataByApi);
+            this.Bind<IShop>().To<ShopLocalData>().InSingletonScope().Named(Resource.SysConfig_GetDataByLocal);
+
+            this.Bind<ICatalog>().To<CatalogLocalData>().InSingletonScope().Named(Resource.SysConfig_GetDataByLocal);
+            this.Bind<ICatalog>().To<ItemCatsApi>().InSingletonScope().Named(Resource.SysConfig_GetDataByApi);
+
+            this.Bind<IDelivery>().To<DeliveryLocalData>().InSingletonScope().Named(Resource.SysConfig_GetDataByLocal);
+            this.Bind<IDelivery>().To<DeliveryApi>().InSingletonScope().Named(Resource.SysConfig_GetDataByLocal);
+
+             
+            this.Bind<IItemCatsApi>().To<ItemCatsApi>().InSingletonScope();
             this.Bind<IAuthorization>().To<DefaultAuthorization>().InSingletonScope();
 
             this.Bind<IGoodsApi>().To<GoodsApi>().InSingletonScope();
@@ -37,6 +48,8 @@ namespace MyTools.TaoBao.Impl.NinjectModuleConfig
             this.Bind<ILoggerFactory>().ToMethod(x => new TraceSourceLogFactory()).InSingletonScope();
 
             this.Bind<IBanggoMgt>().To<BanggoMgt>().InSingletonScope();
+
+
               
         }
     }

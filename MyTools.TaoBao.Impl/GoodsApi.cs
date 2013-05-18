@@ -37,16 +37,28 @@ namespace MyTools.TaoBao.Impl
         private ITopClient client = InstanceLocator.Current.GetInstance<ITopClient>();
         private IBanggoMgt banggoMgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
 
-        private IItemCats itemCats = InstanceLocator.Current.GetInstance<IItemCats>();
+        private IItemCatsApi itemCatsApi = InstanceLocator.Current.GetInstance<IItemCatsApi>();
+
+        private ICatalog catalog = InstanceLocator.Current.GetInstance<ICatalog>(Resource.SysConfig_GetDataWay);
+
 
         private IShopApi shopApi = InstanceLocator.Current.GetInstance<IShopApi>();
 
+        private IShop shop = InstanceLocator.Current.GetInstance<IShop>(Resource.SysConfig_GetDataWay);
+
+
+        private IDelivery delivery = InstanceLocator.Current.GetInstance<IDelivery>();
+
 
         public List<SellerCat> SellercatsList;
-
+          
         public GoodsApi()
         {
-            SellercatsList = shopApi.GetSellercatsList("mbgou");
+            TopContext tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+            SellercatsList = shopApi.GetSellercatsList(tContext.UserNick);
+             
+
         }
 
         #endregion
@@ -99,17 +111,58 @@ namespace MyTools.TaoBao.Impl
 
         private void MapBanggoToTaobaoProduct(BanggoProduct bProduct, Product tProduct)
         {
+            tProduct.Title = bProduct.ProductTitle;
+            tProduct.OuterId = bProduct.GoodsSn;
+              
+            tProduct.Cid = catalog.GetCid(bProduct.Category,bProduct.ParentCatalog).ToLong();
+
+            tProduct.Desc = bProduct.Desc;
+
+            tProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", GetImgByte(bProduct.ThumbUrl));
+
+            TopContext tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+            tProduct.SellerCids = shop.GetSellerCids(tContext.UserNick,string.Format("{0} - {1}",bProduct.BrandCode,bProduct.Category),bProduct.ParentCatalog);
+
+            //得到运费模版
+            string deliveryTemplateId = delivery.GetDeliveryTemplateId(Resource.SysConfig_DeliveryTemplateName);
+
+            if (deliveryTemplateId == null)
+            {
+                SetDeliveryFee(tProduct);
+            }
+            else
+            {
+                tProduct.PostageId = deliveryTemplateId.ToLong();
+                tProduct.ItemWeight = Resource.SysConfig_ItemWeight;
+            }
+             
+
+            string itemProps = catalog.GetItemProps(tProduct.Cid.ToString());
+            tProduct.Props = itemProps; //只先提取必填项
+
+            // todo:读取颜色和尺码设置SKU信息
+            #region SetSkuInfo  
+
+
+
+            #endregion
+
+
+            #region 暂时先不用
+
+            /*
 
             tProduct.Title = bProduct.ProductTitle; 
             tProduct.OuterId = bProduct.GoodsSn;
 
-            long cid = itemCats.GetCid(bProduct.Category, bProduct.ParentCatalog).ToLong();
+            long cid = itemCatsApi.GetCid(bProduct.Category, bProduct.ParentCatalog).ToLong();
             tProduct.Cid = cid;
             tProduct.Desc = bProduct.Desc;
              
             tProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", GetImgByte(bProduct.ThumbUrl));
 
-            var propsList = itemCats.GetPropsByCid(cid);
+            var propsList = itemCatsApi.GetPropsByCid(cid);
 
             //获得该目录下必备的参数
             var mustItemProps = propsList.FindAll(p => p.Must);
@@ -135,6 +188,27 @@ namespace MyTools.TaoBao.Impl
 
             tProduct.SellerCids = parentSellCat.ToColumnString();
 
+            //得到运费模版
+            if (DeliveryTemplateList.Count > 0)
+            {  
+                var dTmp = DeliveryTemplateList.Find(f => f.Name == Resource.SysConfig_DeliveryTemplateName);
+
+                if (dTmp == null)
+                {
+                    SetDeliveryFee(tProduct);
+                }
+                else
+                {
+                    tProduct.PostageId = dTmp.TemplateId;
+                    tProduct.ItemWeight = Resource.SysConfig_ItemWeight;    
+                }
+            }
+            else
+            {
+                SetDeliveryFee(tProduct);
+            }
+             
+
             //todo 实现sku的map
            // tProduct
 
@@ -143,47 +217,12 @@ namespace MyTools.TaoBao.Impl
 
             tProduct.Props = "";
 
+*/
 
-             
+            #endregion
+
 
             throw new NotImplementedException();
-        }
-
-
-        private byte[] GetImgByte(string imgUrl)
-        {
-            var restClient = new RestClient(imgUrl);
-            var request = new RestRequest(Method.GET);
-            IRestResponse response = restClient.Execute(request);
-
-/*
-            IRestResponse response = restClient.ExecuteAsync(
-        request,
-        Response =>
-        {
-            if (Response != null)
-            {
-                byte[] imageBytes = Response.RawBytes;
-                var bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = new MemoryStream(imageBytes);
-                bitmapImage.CreateOptions = BitmapCreateOptions.None;
-                bitmapImage.CacheOption = BitmapCacheOption.Default;
-                bitmapImage.EndInit();
-
-                JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-                Guid photoID = System.Guid.NewGuid();
-                String photolocation = String.Format(@"c:\temp\{0}.jpg", Guid.NewGuid().ToString());
-                encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-                using (var filestream = new FileStream(photolocation, FileMode.Create))
-                encoder.Save(filestream);
-
-                this.Dispatcher.Invoke((Action)(() => { img.Source = bitmapImage; }));
-                ;
-            }
-        });*/
-              
-            return response.RawBytes; 
         }
 
 
@@ -221,6 +260,51 @@ namespace MyTools.TaoBao.Impl
          
 
         #region Private Methods
+
+
+        private static void SetDeliveryFee(Product tProduct)
+        {
+            tProduct.PostFee = Resource.SysConfig_PostFee;
+            tProduct.ExpressFee = Resource.SysConfig_ExpressFee;
+            tProduct.EmsFee = Resource.SysConfig_EmsFee;
+        }
+
+        private byte[] GetImgByte(string imgUrl)
+        {
+            var restClient = new RestClient(imgUrl);
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = restClient.Execute(request);
+
+            /*
+                        IRestResponse response = restClient.ExecuteAsync(
+                    request,
+                    Response =>
+                    {
+                        if (Response != null)
+                        {
+                            byte[] imageBytes = Response.RawBytes;
+                            var bitmapImage = new BitmapImage();
+                            bitmapImage.BeginInit();
+                            bitmapImage.StreamSource = new MemoryStream(imageBytes);
+                            bitmapImage.CreateOptions = BitmapCreateOptions.None;
+                            bitmapImage.CacheOption = BitmapCacheOption.Default;
+                            bitmapImage.EndInit();
+
+                            JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                            Guid photoID = System.Guid.NewGuid();
+                            String photolocation = String.Format(@"c:\temp\{0}.jpg", Guid.NewGuid().ToString());
+                            encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+                            using (var filestream = new FileStream(photolocation, FileMode.Create))
+                            encoder.Save(filestream);
+
+                            this.Dispatcher.Invoke((Action)(() => { img.Source = bitmapImage; }));
+                            ;
+                        }
+                    });*/
+
+            return response.RawBytes;
+        }
+
 
         #endregion
 

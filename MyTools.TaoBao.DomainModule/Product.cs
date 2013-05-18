@@ -20,8 +20,7 @@ namespace MyTools.TaoBao.DomainModule
     /// SUK（销售）属性，sku_properties中有的属性props也必须存在。sku_properties中以“，”分开。
     /// </summary>
     public class Product
-    {
-
+    { 
         /// <summary>
         ///叶子类目id  类目API---- taobao.itemcats.get
         /// </summary>
@@ -69,8 +68,7 @@ namespace MyTools.TaoBao.DomainModule
         /// 所在地省份。默认 成都，具体可以下载http://dl.open.taobao.com/sdk/商品城市列表.rar  取到
         /// </summary>
         public string LocationState = "成都";
-
-
+         
         /// <summary>
         /// 商品数量，取值范围:0-999999的整数。且需要等于Sku所有数量的和。  拍卖商品中增加拍只能为1，荷兰拍要在[2,500)范围内。
         /// </summary>
@@ -85,6 +83,26 @@ namespace MyTools.TaoBao.DomainModule
         /// 宝贝所属的运费模板ID。取值范围：整数且必须是该卖家的运费模板的ID（可通过taobao.delivery.template.get获得当前会话用户的所有邮费模板）
         /// </summary>
         public Nullable<long> PostageId { get; set; }
+
+        /// <summary>
+        /// 商品的重量，用于按重量计费的运费模板。注意：单位为kg。 只能传入数值类型（包含小数），不能带单位，单位默认为kg。
+        /// </summary>
+        public string ItemWeight { get; set; }
+
+        /// <summary>
+        /// 平邮费用。取值范围:0.01-999.00;精确到2位小数;单位:元。如:5.07，表示:5元7分. 注:post_fee,express_fee,ems_fee需要一起填写 
+        /// </summary>
+        public string PostFee { get; set; }
+
+        /// <summary>
+        /// 快递费用。取值范围:0.01-999.00;精确到2位小数;单位:元。如:15.07，表示:15元7分
+        /// </summary>
+        public string ExpressFee { get; set; }
+
+        /// <summary>
+        /// ems费用。取值范围:0.01-999.00;精确到2位小数;单位:元。如:25.07，表示:25元7分
+        /// </summary>
+        public string EmsFee { get; set; }
 
         /// <summary>
         /// 商品价格。取值范围:0-100000000;精确到2位小数;单位:元。如:200.07，表示:200元7分。需要在正确的价格区间内。 拍卖商品对应的起拍价。

@@ -96,7 +96,7 @@ namespace MyTools.TaoBao.DomainModule
         /// </summary>
         public string Catalog { get; set; }
 
-        public List<BanggoProductColor> ColorList { get; set; }
+        public List<ProductColor> ColorList { get; set; }
 
         /// <summary>
         /// 商品主图 url

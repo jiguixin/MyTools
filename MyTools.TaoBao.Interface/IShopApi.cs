@@ -10,23 +10,15 @@ using Top.Api.Domain;
 
 namespace MyTools.TaoBao.Interface
 {
-    public interface IShopApi   {
-
+    public interface IShopApi : IShop
+    { 
         ////店铺API，taobao.sellercats.list.get; 获取卖家自己的产品类目
         /// <summary>
         ///店铺API，taobao.sellercats.list.get; 获取卖家自己的产品类目
         /// </summary>
         /// <param name="userNick">淘宝昵称</param>
         List<SellerCat> GetSellercatsList(string userNick);
-
-        /// <summary>
-        /// 获取商品所属的店铺类目列表
-        /// </summary>
-        /// <param name="userNick">淘宝用户名</param>
-        /// <param name="parentSellCatName">店铺的父组类目</param>
-        /// <param name="childSellCatsNames">子类目列表</param>
-        string GetSellerCids(string userNick, string parentSellCatName, params string[] childSellCatsNames);
-
+         
         /// <summary>
         /// 获取商品所属的店铺类目列表
         /// </summary>

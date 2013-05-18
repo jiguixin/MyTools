@@ -1,5 +1,5 @@
 ﻿/*
- *名称：BanggoProductColor
+ *名称：ProductColor
  *功能：
  *创建人：吉桂昕
  *创建时间：2013-05-12 05:56:15
@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace MyTools.TaoBao.DomainModule
 {
-    public class BanggoProductColor
+    public class ProductColor
     {
 
         #region Members
@@ -32,7 +32,7 @@ namespace MyTools.TaoBao.DomainModule
         /// </summary>
         public string ImgUrl { get; set; }
 
-        public List<BanggoProductSize> SizeList;
+        public List<ProductSize> SizeList;
 
 
         #endregion

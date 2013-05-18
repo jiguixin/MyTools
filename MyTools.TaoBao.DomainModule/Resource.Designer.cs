@@ -106,6 +106,33 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 2013运费模板 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_DeliveryTemplateName {
+            get {
+                return ResourceManager.GetString("SysConfig_DeliveryTemplateName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 25 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_EmsFee {
+            get {
+                return ResourceManager.GetString("SysConfig_EmsFee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 12 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_ExpressFee {
+            get {
+                return ResourceManager.GetString("SysConfig_ExpressFee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 /html/body/div/div[@class=&apos;details_dir&apos;]/a[2] 的本地化字符串。
         /// </summary>
         public static string SysConfig_GetBanggoProductBrandCodeXPath {
@@ -138,6 +165,51 @@ namespace MyTools.TaoBao.DomainModule {
         public static string SysConfig_GetBanggoProductParentCatalogXPath {
             get {
                 return ResourceManager.GetString("SysConfig_GetBanggoProductParentCatalogXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Api 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetDataByApi {
+            get {
+                return ResourceManager.GetString("SysConfig_GetDataByApi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Local 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetDataByLocal {
+            get {
+                return ResourceManager.GetString("SysConfig_GetDataByLocal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Local 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetDataWay {
+            get {
+                return ResourceManager.GetString("SysConfig_GetDataWay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 0.2 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_ItemWeight {
+            get {
+                return ResourceManager.GetString("SysConfig_ItemWeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 12 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_PostFee {
+            get {
+                return ResourceManager.GetString("SysConfig_PostFee", resourceCulture);
             }
         }
         

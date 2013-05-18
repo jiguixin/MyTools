@@ -156,4 +156,36 @@
     <value>/html/body/div/div[@class='details_dir']/a[4]</value>
     <comment>得到banggo的父目录，如 T恤</comment>
   </data>
+  <data name="SysConfig_ItemWeight" xml:space="preserve">
+    <value>0.2</value>
+    <comment>商品重量</comment>
+  </data>
+  <data name="SysConfig_PostFee" xml:space="preserve">
+    <value>12</value>
+    <comment>平邮费用</comment>
+  </data>
+  <data name="SysConfig_ExpressFee" xml:space="preserve">
+    <value>12</value>
+    <comment>快递费用</comment>
+  </data>
+  <data name="SysConfig_EmsFee" xml:space="preserve">
+    <value>25</value>
+    <comment>EMS 费用</comment>
+  </data>
+  <data name="SysConfig_DeliveryTemplateName" xml:space="preserve">
+    <value>2013运费模板</value>
+    <comment>快递模版名字</comment>
+  </data>
+  <data name="SysConfig_GetDataByApi" xml:space="preserve">
+    <value>Api</value>
+    <comment>通过API获得淘宝相关数据</comment>
+  </data>
+  <data name="SysConfig_GetDataByLocal" xml:space="preserve">
+    <value>Local</value>
+    <comment>通过本地数据库得到相应数据</comment>
+  </data>
+  <data name="SysConfig_GetDataWay" xml:space="preserve">
+    <value>Local</value>
+    <comment>得到数据的方式</comment>
+  </data>
 </root>

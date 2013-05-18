@@ -28,7 +28,7 @@ namespace MyTools
         private static void StartUp()
         {
             InstanceLocator.SetLocator(
-               new NinjectContainer().WireDependenciesInAssemblies(typeof(ItemCats).Assembly.FullName).Locator);
+               new NinjectContainer().WireDependenciesInAssemblies(typeof(ItemCatsApi).Assembly.FullName).Locator);
 
         }
     }

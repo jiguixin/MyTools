@@ -41,8 +41,12 @@
   <ItemGroup>
     <Compile Include="Authorization\IAuthorization.cs" />
     <Compile Include="IBanggoMgt.cs" />
+    <Compile Include="ICatalog.cs" />
+    <Compile Include="IDelivery.cs" />
+    <Compile Include="IDeliveryApi.cs" />
     <Compile Include="IGoodsApi.cs" />
-    <Compile Include="IItemCats.cs" />
+    <Compile Include="IItemCatsApi.cs" />
+    <Compile Include="IShop.cs" />
     <Compile Include="IShopApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

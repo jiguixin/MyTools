@@ -51,7 +51,7 @@ namespace MyTools.TaoBao.UnitTest
         public void Initialize()
         {
             InstanceLocator.SetLocator(
-              new NinjectContainer().WireDependenciesInAssemblies(typeof(ItemCats).Assembly.FullName).Locator);
+              new NinjectContainer().WireDependenciesInAssemblies(typeof(ItemCatsApi).Assembly.FullName).Locator);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace MyTools.TaoBao.UnitTest
         [Test]
         public void TestGetCid()
         {
-            IItemCats client = InstanceLocator.Current.GetInstance<IItemCats>();
+            IItemCatsApi client = InstanceLocator.Current.GetInstance<IItemCatsApi>();
 
             string parentCid = client.GetCid("T恤", "女装");
             Console.WriteLine(parentCid);

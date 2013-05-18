@@ -22,7 +22,7 @@ using Top.Api.Response;
 namespace MyTools.TaoBao.Impl
 {
     /// <summary>
-    ///     店铺API
+    ///     店铺API,通过调用淘宝API实现相关功能
     /// </summary>
     public class ShopApi : IShopApi
     {

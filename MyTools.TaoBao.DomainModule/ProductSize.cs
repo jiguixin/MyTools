@@ -1,5 +1,5 @@
 ﻿/*
- *名称：BanggoProductSize
+ *名称：ProductSize
  *功能：
  *创建人：吉桂昕
  *创建时间：2013-05-12 06:10:31
@@ -11,7 +11,7 @@ using System;
 
 namespace MyTools.TaoBao.DomainModule
 {
-    public class BanggoProductSize
+    public class ProductSize
     {
 
         #region Members

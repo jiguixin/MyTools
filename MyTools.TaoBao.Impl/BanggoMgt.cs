@@ -209,9 +209,9 @@ namespace MyTools.TaoBao.Impl
         ///     得到可售商品大小及库存
         /// </summary>
         /// <param name="requestModel">请求模型</param>
-        private List<BanggoProductSize> GetAvailableSize(BanggoRequestModel requestModel)
+        private List<ProductSize> GetAvailableSize(BanggoRequestModel requestModel)
         {
-            var lstResult = new List<BanggoProductSize>();
+            var lstResult = new List<ProductSize>();
 
             string url = string.Format(
                 "http://act.banggo.com/Ajax/cartAjax?time={0}&ajaxtype=color_size&type=color&code={1}&r_code=&goods_sn={2}",
@@ -241,7 +241,7 @@ namespace MyTools.TaoBao.Impl
 
                     int avlNum = GetAvlNum(requestModel);
 
-                    lstResult.Add(new BanggoProductSize
+                    lstResult.Add(new ProductSize
                     {
                         Alias = sName,
                         SizeCode = sCode,
@@ -260,7 +260,7 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="colorInfo">类别结构：newchoose('color','90','黑色组','','207728','read');changeImg'#current_img','/sources/images/goods/MB/207728/207728_90_13.jpg','http://img7.ibanggo.com/sources/images/goods/MB/207728/207728_90_13--w_498_h_498.jpg','http://img7.ibanggo.com/sources/images/goods/MB/207728/207728_90_13--w_730_h_730.jpg',1)</param>
         /// <returns></returns>
-        internal BanggoProductColor CreateProductColor(string colorInfo)
+        internal ProductColor CreateProductColor(string colorInfo)
         {
             string[] colorAndImg = colorInfo.Split(';');
 
@@ -270,7 +270,7 @@ namespace MyTools.TaoBao.Impl
 
             string imgUrl = colorAndImg[1].Replace("'", "").Split(',')[2];
 
-            return new BanggoProductColor
+            return new ProductColor
                 {
                     Title = colorName,
                     ColorCode = colorCode.ToInt32(),
@@ -332,13 +332,13 @@ namespace MyTools.TaoBao.Impl
             htmlNodeColorList.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
                                                         new StackTrace()));
 
-            product.ColorList = new List<BanggoProductColor>();
+            product.ColorList = new List<ProductColor>();
 
             foreach (HtmlNode colorNode in colors)
             {
                 string colorInfo = colorNode.Attributes["onclick"].Value;
 
-                BanggoProductColor productColor = CreateProductColor(colorInfo);
+                ProductColor productColor = CreateProductColor(colorInfo);
 
                 requestModel.ColorCode = productColor.ColorCode;
                 productColor.SizeList = GetAvailableSize(requestModel);
