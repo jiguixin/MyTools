@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using MyTools.TaoBao.Interface;
 
 namespace MyTools.TaoBao.Impl
@@ -36,6 +37,17 @@ namespace MyTools.TaoBao.Impl
         }
 
         public string GetItemProps(string cid)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 得到相关Sku属性串，如颜色，大小
+        /// </summary>
+        /// <param name="propName">要查询SKU的名字</param>
+        /// <param name="cid">对应的淘宝目录编号</param>
+        /// <returns></returns>
+        public List<string> GetSkuProps(string propName, string cid)
         {
             throw new NotImplementedException();
         }

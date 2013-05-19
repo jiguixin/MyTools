@@ -17,6 +17,8 @@ namespace MyTools.TaoBao.DomainModule
         public static readonly string AppKey = ConfigurationManager.AppSettings["appKey"];
         public static readonly string AppSecret = ConfigurationManager.AppSettings["appSecret"];
         public static readonly string PostageId = ConfigurationManager.AppSettings["PostageId"];
-        
+
+        public static readonly string DiscountRatio = ConfigurationManager.AppSettings["DiscountRatio"];
+
     }
 }

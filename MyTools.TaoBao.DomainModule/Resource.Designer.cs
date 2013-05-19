@@ -187,7 +187,7 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 Local 的本地化字符串。
+        ///   查找类似 Api 的本地化字符串。
         /// </summary>
         public static string SysConfig_GetDataWay {
             get {
@@ -205,11 +205,29 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 2000:29504; 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_METERSBONWE_BrandProp {
+            get {
+                return ResourceManager.GetString("SysConfig_METERSBONWE_BrandProp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 12 的本地化字符串。
         /// </summary>
         public static string SysConfig_PostFee {
             get {
                 return ResourceManager.GetString("SysConfig_PostFee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 1632501 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_ProductCodeProp {
+            get {
+                return ResourceManager.GetString("SysConfig_ProductCodeProp", resourceCulture);
             }
         }
         

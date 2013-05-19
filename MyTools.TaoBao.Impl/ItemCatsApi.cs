@@ -9,6 +9,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Text;
 using Infrastructure.Crosscutting.IoC;
 using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
@@ -16,6 +18,7 @@ using Top.Api;
 using Top.Api.Domain;
 using Top.Api.Request;
 using Top.Api.Response;
+using Infrastructure.Crosscutting.Declaration;
 
 namespace MyTools.TaoBao.Impl
 {
@@ -51,13 +54,51 @@ namespace MyTools.TaoBao.Impl
 
         /// <summary>
         /// 得到待发布商品的属性串
+        /// 只先提取必填项
         /// </summary>
         /// <param name="cid"></param>
         /// <returns></returns>
         public string GetItemProps(string cid)
         {
+            var sb = new StringBuilder();
+            var lstMustProps = GetPropsByCid(cid.ToLong()).Where(p=>p.Must);
 
-            throw new NotImplementedException();
+            foreach (var prop in lstMustProps)
+            {
+                var pid = prop.Pid.ToString(CultureInfo.InvariantCulture);
+
+                sb.AppendFormat("{0}:{1};", prop.Pid, prop.PropValues[0].Vid);
+            }
+
+            return sb.ToString(); 
+        }
+
+        /// <summary>
+        /// 得到相关Sku属性串，如颜色，大小
+        /// </summary>
+        /// <param name="propName">要查询SKU的名字</param>
+        /// <param name="cid">对应的淘宝目录编号</param>
+        /// <returns></returns>
+        public List<string> GetSkuProps(string propName, string cid)
+        {
+            var props = GetPropsByCid(cid.ToLong());
+
+            var prop = (from p in props where p.Name.Contains(propName) select p).First();
+
+            return prop.PropValues.Select(pValue => string.Format("{0}:{1}", prop.Pid, pValue.Vid)).ToList();
+
+            #region 原始方法
+
+            /*
+            foreach (var pValue in prop.PropValues)
+            {
+
+                listResult.Add(string.Format("{0}:{1};", prop.Pid, pValue.Vid));
+
+            }*/
+
+            #endregion
+              
         }
 
         //得到淘宝的所有商品类目

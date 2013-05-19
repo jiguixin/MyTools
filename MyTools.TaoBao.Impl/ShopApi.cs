@@ -75,7 +75,7 @@ namespace MyTools.TaoBao.Impl
                 throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty, new System.Diagnostics.StackTrace().ToString()));
 
             // 获取父节点
-            SellerCat parentSellerCat = sellerCats.FirstOrDefault(s => s.Name == parentSellCatName);
+            SellerCat parentSellerCat = sellerCats.FirstOrDefault(s => s.Name.ToUpper() == parentSellCatName);
 
             if (parentSellerCat == null)
                 throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty, new System.Diagnostics.StackTrace().ToString()));
@@ -124,7 +124,7 @@ namespace MyTools.TaoBao.Impl
             foreach (
                 SellerCat sellerCat in
                     childSellCatsNames.Select(
-                        cat => sellerCats.FirstOrDefault(s => s.ParentCid == parentSellerCat.Cid && s.Name == cat))
+                        cat => sellerCats.FirstOrDefault(s => s.ParentCid == parentSellerCat.Cid && s.Name.Contains(cat)))
                                       .Where(sellerCat => sellerCat != null))
             {
                 if (!string.IsNullOrEmpty(result))

@@ -185,7 +185,15 @@
     <comment>通过本地数据库得到相应数据</comment>
   </data>
   <data name="SysConfig_GetDataWay" xml:space="preserve">
-    <value>Local</value>
+    <value>Api</value>
     <comment>得到数据的方式</comment>
+  </data>
+  <data name="SysConfig_METERSBONWE_BrandProp" xml:space="preserve">
+    <value>2000:29504;</value>
+    <comment>美特斯邦威 品牌，对应的淘宝属性串</comment>
+  </data>
+  <data name="SysConfig_ProductCodeProp" xml:space="preserve">
+    <value>1632501</value>
+    <comment>在淘宝上货号对应的编码</comment>
   </data>
 </root>

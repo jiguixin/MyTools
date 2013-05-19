@@ -36,7 +36,7 @@ namespace MyTools.TaoBao.DomainModule
         /// 买家承担的时候，必填邮费和postage_id 如果用户设置了运费模板会优先使用运费模板，否则要同步设置邮费（post_fee,express_fee,
         /// ems_fee）
         /// </summary>
-        public string FreightPayer = "buyer";
+        public string FreightPayer{get;set;}
 
         /// <summary>
         /// 橱窗推荐。可选值:true,false;默认值:false(不推荐)
@@ -62,12 +62,12 @@ namespace MyTools.TaoBao.DomainModule
         /// <summary>
         /// 所在地城市。默认 四川 。可以通过http://dl.open.taobao.com/sdk/商品城市列表.rar查询
         /// </summary>
-        public string LocationCity = "四川";
+        public string LocationCity{get;set;}
 
         /// <summary>
         /// 所在地省份。默认 成都，具体可以下载http://dl.open.taobao.com/sdk/商品城市列表.rar  取到
         /// </summary>
-        public string LocationState = "成都";
+        public string LocationState {get;set;}
          
         /// <summary>
         /// 商品数量，取值范围:0-999999的整数。且需要等于Sku所有数量的和。  拍卖商品中增加拍只能为1，荷兰拍要在[2,500)范围内。
@@ -154,7 +154,7 @@ namespace MyTools.TaoBao.DomainModule
         /// <summary>
         /// 新旧程度。默认 new 可选值：new(新)，second(二手)，unused(闲置)。B商家不能发布二手商品。 如果是二手商品，特定类目下属性里面必填新旧成色属性
         /// </summary>
-        public string StuffStatus = "new";
+        public string StuffStatus {get;set;}
 
         /// <summary>
         /// 宝贝标题。不能超过60字符，受违禁词控制
@@ -169,7 +169,16 @@ namespace MyTools.TaoBao.DomainModule
         /// valid_minute来指定。对于降价拍来说需要设置降价周期(paimai_info.interval)和拍卖保留价(paimai_info.
         /// reserve)。 注意：通过taobao.item.get接口获取拍卖信息时，会返回除了valid_hour和valid_minute之外的所有拍卖信息
         /// </summary>
-        public string Type = "fixed";
+        public string Type {get;set;}
+
+        public Product()
+        {
+            FreightPayer = "buyer";
+            Type = "fixed";
+            StuffStatus = "new";
+            LocationState = "四川";
+            LocationCity = "成都";
+        }
 
         public virtual void Dispose()
         {

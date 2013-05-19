@@ -36,6 +36,11 @@ namespace MyTools.TaoBao.DomainModule
         /// </summary>
         public double SalePrice { get; set; }
 
+        /// <summary>
+        /// 我的售价
+        /// </summary>
+        public double Price { get; set; }
+
         #endregion
 
 

@@ -25,7 +25,7 @@ namespace MyTools.TaoBao.DomainModule
         /// <summary>
         /// 色码
         /// </summary>
-        public int ColorCode { get; set; }
+        public string ColorCode { get; set; }
 
         /// <summary>
         /// 图片地址

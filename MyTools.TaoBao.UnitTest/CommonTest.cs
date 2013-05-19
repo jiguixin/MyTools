@@ -10,6 +10,8 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
+using System.Resources;
 using Infrastructure.Crosscutting.Utility;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.TaoBao.DomainModule;
@@ -166,6 +168,16 @@ namespace MyTools.TaoBao.UnitTest
             img.Save("test.jpg");
 
 
+        }
+
+        [Test]
+        public void ResourceTest()
+        {
+            ResourceManager rm = new ResourceManager(typeof(Resource).FullName,
+                             typeof(Resource).Assembly);
+            var s = rm.GetString("SysConfig_METERSBONWE_BrandProp");
+
+            Console.WriteLine(s);
         }
 
         #endregion

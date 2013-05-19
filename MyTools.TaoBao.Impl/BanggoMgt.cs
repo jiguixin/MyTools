@@ -116,6 +116,7 @@ namespace MyTools.TaoBao.Impl
 
             #endregion
 
+            //todo 需要修改获取的HTML img 的SRC URL
             #region 得到产品描述
 
             product.Desc = doc.GetElementbyId("goods_model").OuterHtml;
@@ -246,6 +247,7 @@ namespace MyTools.TaoBao.Impl
                         Alias = sName,
                         SizeCode = sCode,
                         SalePrice = goodsInfo.SelectToken("sale_price").Value<double>(),
+                        Price = (goodsInfo.SelectToken("market_price").Value<double>() * SysConst.DiscountRatio.ToDouble()).ToInt32(),
                         AvlNum = avlNum
                     });
                 }
@@ -273,7 +275,7 @@ namespace MyTools.TaoBao.Impl
             return new ProductColor
                 {
                     Title = colorName,
-                    ColorCode = colorCode.ToInt32(),
+                    ColorCode = colorCode,
                     ImgUrl = imgUrl,
                 };
         }
@@ -365,6 +367,7 @@ namespace MyTools.TaoBao.Impl
             }
 
             product.SalesVolume = GetSalesVolume(doc);
+
         }
          
         //得到市场价

@@ -10,8 +10,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Utility;
@@ -46,28 +48,29 @@ namespace MyTools.TaoBao.Impl
 
         private IShop shop = InstanceLocator.Current.GetInstance<IShop>(Resource.SysConfig_GetDataWay);
 
-
-        private IDelivery delivery = InstanceLocator.Current.GetInstance<IDelivery>();
-
+        private IDelivery delivery = InstanceLocator.Current.GetInstance<IDelivery>(Resource.SysConfig_GetDataWay);
 
         public List<SellerCat> SellercatsList;
-          
-        public GoodsApi()
-        {
-            TopContext tContext = InstanceLocator.Current.GetInstance<TopContext>();
 
-            SellercatsList = shopApi.GetSellercatsList(tContext.UserNick);
-             
-
-        }
+        private Dictionary<string, string> dicColorMap = new Dictionary<string, string>();
 
         #endregion
 
 
         #region Constructor
 
-        #endregion
 
+        public GoodsApi()
+        {
+            //TopContext tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+            //SellercatsList = shopApi.GetSellercatsList(tContext.UserNick);
+
+
+        }
+
+
+        #endregion
 
         #region public Methods
 
@@ -80,14 +83,16 @@ namespace MyTools.TaoBao.Impl
         {  
             ItemAddRequest req = new ItemAddRequest();
             
-            Util.CopyModel(product, req);
-  
+            Util.CopyModel(product, req); 
+            
             TopContext tContext = InstanceLocator.Current.GetInstance<TopContext>();
             ItemAddResponse response = client.Execute(req, tContext.SessionKey);
 
             if (response.IsError)
+            {
                 throw new TopResponseException(response.ErrCode,response.ErrMsg,response.SubErrCode,response.SubErrMsg,response.TopForbiddenFields);
-
+            }
+               
             return response.Item;
         }
 
@@ -106,7 +111,7 @@ namespace MyTools.TaoBao.Impl
 
             MapBanggoToTaobaoProduct(banggoProduct, taobaoProduct);
 
-            throw new NotImplementedException();
+            return PublishGoods(taobaoProduct);
         }
 
         private void MapBanggoToTaobaoProduct(BanggoProduct bProduct, Product tProduct)
@@ -136,18 +141,13 @@ namespace MyTools.TaoBao.Impl
                 tProduct.PostageId = deliveryTemplateId.ToLong();
                 tProduct.ItemWeight = Resource.SysConfig_ItemWeight;
             }
-             
-
+              
             string itemProps = catalog.GetItemProps(tProduct.Cid.ToString());
             tProduct.Props = itemProps; //只先提取必填项
 
-            // todo:读取颜色和尺码设置SKU信息
-            #region SetSkuInfo  
+            SetOptionalProps(bProduct, tProduct);
 
-
-
-            #endregion
-
+            SetSkuInfo(bProduct, tProduct);
 
             #region 暂时先不用
 
@@ -220,11 +220,27 @@ namespace MyTools.TaoBao.Impl
 */
 
             #endregion
-
-
-            throw new NotImplementedException();
+             
         }
 
+        //包括设置品牌、货号
+        private void SetOptionalProps(BanggoProduct bProduct, Product tProduct)
+        { 
+            ResourceManager rm = new ResourceManager(typeof(Resource).FullName,
+                             typeof(Resource).Assembly);
+            var brandProp = rm.GetString(string.Format("SysConfig_{0}_BrandProp",bProduct.BrandCode));
+
+            if (!brandProp.IsNullOrEmpty())
+            {
+                tProduct.Props += brandProp;
+            }
+
+
+            tProduct.InputPids = Resource.SysConfig_ProductCodeProp;
+            tProduct.InputStr = bProduct.GoodsSn;
+
+             
+        }
 
         /// <summary>
         /// 更新和添加销售商品图片
@@ -261,6 +277,94 @@ namespace MyTools.TaoBao.Impl
 
         #region Private Methods
 
+
+        private void SetSkuInfo(BanggoProduct bProduct, Product tProduct)
+        {
+            var sbSku = new StringBuilder();
+            var sbSkuToProps = new StringBuilder();
+            var sbSkuAlias = new StringBuilder();
+            var lstSkuQuantities = new List<string>();
+            var lstSkuPrices = new List<string>();
+            var sbSkuOuterIds = new StringBuilder();
+
+            var propColors = catalog.GetSkuProps("颜色", tProduct.Cid.ToString());
+
+            var propSize = catalog.GetSkuProps("尺码", tProduct.Cid.ToString());
+            int colorCount = bProduct.ColorList.Count;
+
+            //清空现有的色码与淘宝的属性映射
+            dicColorMap.Clear();
+
+            int num = 0;
+
+            for (int i = 0; i < colorCount; i++)
+            {
+                var pColor = propColors[i];
+
+                var bColor = bProduct.ColorList[i];
+
+                dicColorMap.Add(bColor.ColorCode.ToString(), pColor);
+
+                sbSkuToProps.AppendFormat("{0}{1}", pColor, CommomConst.SEMI);
+                sbSkuAlias.AppendFormat("{0}{1}{2}({3}色){4}", pColor, CommomConst.COLON, bColor.Title, bColor.ColorCode,
+                                        CommomConst.SEMI);
+                
+                //读取尺码
+                int sizeCount = bColor.SizeList.Count;
+                for (int j = 0; j < sizeCount; j++)
+                {
+                    var pSize = propSize[j];
+
+                    var bSize = bColor.SizeList[j];
+
+                    sbSku.AppendFormat("{0}{1}", pColor, CommomConst.SEMI);
+                    sbSku.AppendFormat("{0}{1}", pSize, CommomConst.COMMA);
+
+                    if (sbSkuOuterIds.Length > 0)
+                    {
+                        sbSkuOuterIds.AppendFormat(",{0}", bProduct.GoodsSn);
+                    }
+                    else
+                    {
+                        sbSkuOuterIds.Append(bProduct.GoodsSn);
+                    }
+
+
+                    sbSkuToProps.AppendFormat("{0}{1}", pSize, CommomConst.SEMI);
+
+                    //todo 此处有bug 不用为每个尺码都加别名
+                    sbSkuAlias.AppendFormat("{0}{1}{2}({3}){4}", pSize, CommomConst.COLON, bSize.Alias, bSize.SizeCode,
+                                            CommomConst.SEMI);
+
+                    lstSkuQuantities.Add(bSize.AvlNum.ToString(CultureInfo.InvariantCulture));
+                    num += bSize.AvlNum;
+
+                    if (tProduct.Price.IsNullOrEmpty())
+                        tProduct.Price = bSize.Price.ToString();
+
+                    lstSkuPrices.Add(bSize.Price.ToString(CultureInfo.InvariantCulture));
+                }
+            }
+
+            tProduct.Num = num;
+
+            tProduct.Props += sbSkuToProps.ToString();
+            tProduct.PropertyAlias = sbSkuAlias.ToString();
+            tProduct.SkuProperties = sbSku.ToString().TrimEnd(','); 
+
+            //tProduct.Props =
+            //    "18066474:145656297;20511:105255;2000:29504;1627207:3232483;20509:28383;20509:28381;1627207:3232484;20509:28383;";
+            //tProduct.PropertyAlias =
+            //    "1627207:3232483:黑色(99色);20509:28383:155/80A(S)(21042);20509:28381:160/84A(M)(21044);1627207:3232484:灰蓝(45色);20509:28383:155/80A(S)(21042)";
+
+            //tProduct.SkuProperties =
+            //    "1627207:3232483;20509:28383,1627207:3232483;20509:28381,1627207:3232484;20509:28383";
+
+            tProduct.SkuQuantities = lstSkuQuantities.ToColumnString();
+            tProduct.SkuPrices = lstSkuPrices.ToColumnString();
+            tProduct.SkuOuterIds = sbSkuOuterIds.ToString();
+
+        }
 
         private static void SetDeliveryFee(Product tProduct)
         {

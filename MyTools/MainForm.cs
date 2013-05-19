@@ -130,6 +130,8 @@ namespace MyTools
 
         private IShopApi shopApi = InstanceLocator.Current.GetInstance<IShopApi>();
 
+        private IGoodsApi goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
+
         private string authorizeUrl;
          
         private IAuthorization auth = InstanceLocator.Current.GetInstance<IAuthorization>();
@@ -164,6 +166,11 @@ namespace MyTools
         { 
             authorizeUrl = string.Format(Resource.SysConfig_AuthorizeUrl, SysConst.AppKey);
               
+        }
+
+        private void btnPublishProduct_Click(object sender, EventArgs e)
+        {
+            goodsApi.PublishGoodsForBanggoToTaobao("http://metersbonwe.banggo.com/Goods/209697.shtml");
         }
     }
 }

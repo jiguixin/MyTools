@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace MyTools.TaoBao.Interface
 {
@@ -22,9 +23,20 @@ namespace MyTools.TaoBao.Interface
 
         /// <summary>
         /// 得到待发布商品的属性串
+        /// 只先提取必填项
         /// </summary>
         /// <param name="cid"></param>
         /// <returns></returns>
         string GetItemProps(string cid);
-    }
+
+        /// <summary>
+        /// 得到相关Sku属性串，如颜色，大小
+        /// </summary>
+        /// <param name="propName">要查询SKU的名字</param>
+        /// <param name="cid">对应的淘宝目录编号</param>
+        /// <returns></returns>
+        List<string> GetSkuProps(string propName, string cid);
+
+
+    } 
 }
