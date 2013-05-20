@@ -115,10 +115,17 @@ namespace MyTools.TaoBao.Impl
             product.Catalog = selectNodesForProductCatalog.InnerText;
 
             #endregion
-
-            //todo 需要修改获取的HTML img 的SRC URL
+             
             #region 得到产品描述
 
+            //修改获取的HTML img 的SRC URL
+            var imgNodes = doc.DocumentNode.SelectNodes(Resource.SysConfig_GetGoodsModeImgGreyXPath);
+
+            foreach (var imgNode in imgNodes)
+            {
+                imgNode.SetAttributeValue("src", imgNode.GetAttributeValue("original",""));
+            }
+              
             product.Desc = doc.GetElementbyId("goods_model").OuterHtml;
 
             #endregion
@@ -331,8 +338,25 @@ namespace MyTools.TaoBao.Impl
 
             HtmlNodeCollection colors = htmlNodeColorList.SelectNodes("li/a");
 
-            htmlNodeColorList.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            colors.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
                                                         new StackTrace()));
+
+
+             HtmlNode htmlNodeSizeList = doc.GetElementbyId("read_sizelist");
+             htmlNodeSizeList.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+                                                       new StackTrace()));
+
+             HtmlNodeCollection sizes = htmlNodeSizeList.SelectNodes("a");
+             sizes.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+                                                         new StackTrace()));
+
+            product.BSizeToTSize = new Dictionary<string, string>();
+
+            foreach (var sizeNode in sizes)
+            {
+               product.BSizeToTSize.Add(sizeNode.InnerText.Trim(),null);
+            }
+
 
             product.ColorList = new List<ProductColor>();
 

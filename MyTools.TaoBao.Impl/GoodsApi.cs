@@ -209,7 +209,6 @@ namespace MyTools.TaoBao.Impl
             }
              
 
-            //todo 实现sku的map
            // tProduct
 
   
@@ -282,7 +281,7 @@ namespace MyTools.TaoBao.Impl
         {
             var sbSku = new StringBuilder();
             var sbSkuToProps = new StringBuilder();
-            var sbSkuAlias = new StringBuilder();
+            var lstSkuAlias = new List<string>();
             var lstSkuQuantities = new List<string>();
             var lstSkuPrices = new List<string>();
             var sbSkuOuterIds = new StringBuilder();
@@ -297,6 +296,13 @@ namespace MyTools.TaoBao.Impl
 
             int num = 0;
 
+            var keys = bProduct.BSizeToTSize.Keys.ToList<string>();
+            bProduct.BSizeToTSize.Clear();
+            for (int k = 0; k < keys.Count; k++)
+            {
+                bProduct.BSizeToTSize.Add(keys[k], propSize[k]);
+            } 
+
             for (int i = 0; i < colorCount; i++)
             {
                 var pColor = propColors[i];
@@ -306,16 +312,18 @@ namespace MyTools.TaoBao.Impl
                 dicColorMap.Add(bColor.ColorCode.ToString(), pColor);
 
                 sbSkuToProps.AppendFormat("{0}{1}", pColor, CommomConst.SEMI);
-                sbSkuAlias.AppendFormat("{0}{1}{2}({3}色){4}", pColor, CommomConst.COLON, bColor.Title, bColor.ColorCode,
-                                        CommomConst.SEMI);
+                lstSkuAlias.Add(string.Format("{0}{1}{2}({3}色){4}", pColor, CommomConst.COLON, bColor.Title, bColor.ColorCode,
+                                        CommomConst.SEMI));
                 
                 //读取尺码
                 int sizeCount = bColor.SizeList.Count;
                 for (int j = 0; j < sizeCount; j++)
                 {
-                    var pSize = propSize[j];
-
                     var bSize = bColor.SizeList[j];
+//                    var pSize = propSize[j];
+                    string pSize=null; 
+                    if (!bProduct.BSizeToTSize.TryGetValue(bSize.Alias, out pSize))
+                        continue;
 
                     sbSku.AppendFormat("{0}{1}", pColor, CommomConst.SEMI);
                     sbSku.AppendFormat("{0}{1}", pSize, CommomConst.COMMA);
@@ -332,15 +340,16 @@ namespace MyTools.TaoBao.Impl
 
                     sbSkuToProps.AppendFormat("{0}{1}", pSize, CommomConst.SEMI);
 
-                    //todo 此处有bug 不用为每个尺码都加别名
-                    sbSkuAlias.AppendFormat("{0}{1}{2}({3}){4}", pSize, CommomConst.COLON, bSize.Alias, bSize.SizeCode,
-                                            CommomConst.SEMI);
+                    // 不用为每个尺码都加别名
+                    if (lstSkuAlias.Find(a => a.Contains(pSize)) == null)
+                        lstSkuAlias.Add(string.Format("{0}{1}{2}({3}){4}", pSize, CommomConst.COLON, bSize.Alias, bSize.SizeCode,CommomConst.SEMI));
+
 
                     lstSkuQuantities.Add(bSize.AvlNum.ToString(CultureInfo.InvariantCulture));
                     num += bSize.AvlNum;
 
                     if (tProduct.Price.IsNullOrEmpty())
-                        tProduct.Price = bSize.Price.ToString();
+                        tProduct.Price = bSize.Price.ToString(CultureInfo.InvariantCulture);
 
                     lstSkuPrices.Add(bSize.Price.ToString(CultureInfo.InvariantCulture));
                 }
@@ -349,7 +358,7 @@ namespace MyTools.TaoBao.Impl
             tProduct.Num = num;
 
             tProduct.Props += sbSkuToProps.ToString();
-            tProduct.PropertyAlias = sbSkuAlias.ToString();
+            tProduct.PropertyAlias = lstSkuAlias.ToColumnString(""); 
             tProduct.SkuProperties = sbSku.ToString().TrimEnd(','); 
 
             //tProduct.Props =

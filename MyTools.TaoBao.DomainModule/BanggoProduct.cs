@@ -108,6 +108,10 @@ namespace MyTools.TaoBao.DomainModule
         /// </summary>
         public string Desc { get; set; }
 
+        /// <summary>
+        /// banggo的尺码与淘宝尺码对照表
+        /// </summary>
+        public Dictionary<string, string> BSizeToTSize { get; set; }
 
         #endregion
 

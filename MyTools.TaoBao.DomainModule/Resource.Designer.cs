@@ -196,6 +196,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 //*[@id=&apos;goods_model&apos;]//img[@src=&apos;http://s.mb-go.com/pub7/style/images/grey.gif&apos;] 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetGoodsModeImgGreyXPath {
+            get {
+                return ResourceManager.GetString("SysConfig_GetGoodsModeImgGreyXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 0.2 的本地化字符串。
         /// </summary>
         public static string SysConfig_ItemWeight {

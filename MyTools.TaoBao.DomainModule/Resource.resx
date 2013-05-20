@@ -196,4 +196,8 @@
     <value>1632501</value>
     <comment>在淘宝上货号对应的编码</comment>
   </data>
+  <data name="SysConfig_GetGoodsModeImgGreyXPath" xml:space="preserve">
+    <value>//*[@id='goods_model']//img[@src='http://s.mb-go.com/pub7/style/images/grey.gif']</value>
+    <comment>得到产品描述下，所以的grey.gif图片结点，用于修改src值</comment>
+  </data>
 </root>
