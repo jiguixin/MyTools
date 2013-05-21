@@ -39,9 +39,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Crosscutting
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.CrossCutting.IoC.Ninject", "..\MyLibrary\Infrastructure.CrossCutting.IoC.Ninject\Infrastructure.CrossCutting.IoC.Ninject.csproj", "{1C8CA404-AAD7-4AB9-9497-D7FE5FF5F171}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopSdk", "..\MyDemo\C#\GetTbData\GetTbData\ExternalResource\taobao-sdk-net-online_standard\taobao-sdk-net-online_standard-20130425-source\TopSdk.csproj", "{9C11CAE5-5188-4E71-825B-68FC3135728A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTools.Framework.Common", "MyTools.Framework.Common\MyTools.Framework.Common.csproj", "{C85B7CBD-BE38-4D55-921D-8C6EA200C911}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopSdk", "Reference\TopSdk\TopSdk.csproj", "{9C11CAE5-5188-4E71-825B-68FC3135728A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,14 +89,14 @@ Global
 		{1C8CA404-AAD7-4AB9-9497-D7FE5FF5F171}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C8CA404-AAD7-4AB9-9497-D7FE5FF5F171}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C8CA404-AAD7-4AB9-9497-D7FE5FF5F171}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C85B7CBD-BE38-4D55-921D-8C6EA200C911}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C85B7CBD-BE38-4D55-921D-8C6EA200C911}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C85B7CBD-BE38-4D55-921D-8C6EA200C911}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C85B7CBD-BE38-4D55-921D-8C6EA200C911}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C11CAE5-5188-4E71-825B-68FC3135728A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

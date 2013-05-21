@@ -108,10 +108,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MyDemo\C#\GetTbData\GetTbData\ExternalResource\taobao-sdk-net-online_standard\taobao-sdk-net-online_standard-20130425-source\TopSdk.csproj">
-      <Project>{9C11CAE5-5188-4E71-825B-68FC3135728A}</Project>
-      <Name>TopSdk</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\MyLibrary\Infrastructure.CrossCutting.IoC.Ninject\Infrastructure.CrossCutting.IoC.Ninject.csproj">
       <Project>{1C8CA404-AAD7-4AB9-9497-D7FE5FF5F171}</Project>
       <Name>Infrastructure.CrossCutting.IoC.Ninject</Name>
@@ -135,6 +131,10 @@
     <ProjectReference Include="..\MyTools.TaoBao.Interface\MyTools.TaoBao.Interface.csproj">
       <Project>{67f099c3-f743-4e52-b0cc-2c06a88d1a78}</Project>
       <Name>MyTools.TaoBao.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reference\TopSdk\TopSdk.csproj">
+      <Project>{9C11CAE5-5188-4E71-825B-68FC3135728A}</Project>
+      <Name>TopSdk</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

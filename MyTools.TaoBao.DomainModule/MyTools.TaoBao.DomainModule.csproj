@@ -61,13 +61,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MyDemo\C#\GetTbData\GetTbData\ExternalResource\taobao-sdk-net-online_standard\taobao-sdk-net-online_standard-20130425-source\TopSdk.csproj">
-      <Project>{9C11CAE5-5188-4E71-825B-68FC3135728A}</Project>
-      <Name>TopSdk</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MyTools.Framework.Common\MyTools.Framework.Common.csproj">
       <Project>{C85B7CBD-BE38-4D55-921D-8C6EA200C911}</Project>
       <Name>MyTools.Framework.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Reference\TopSdk\TopSdk.csproj">
+      <Project>{9C11CAE5-5188-4E71-825B-68FC3135728A}</Project>
+      <Name>TopSdk</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
