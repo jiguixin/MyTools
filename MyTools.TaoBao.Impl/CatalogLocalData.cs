@@ -47,7 +47,12 @@ namespace MyTools.TaoBao.Impl
         /// <param name="propName">要查询SKU的名字</param>
         /// <param name="cid">对应的淘宝目录编号</param>
         /// <returns></returns>
-        public List<string> GetSkuProps(string propName, string cid)
+        public List<string> GetProps(string propName, string cid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetSaleProp(bool isColorProp, string cid)
         {
             throw new NotImplementedException();
         }

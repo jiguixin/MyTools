@@ -170,7 +170,7 @@ namespace MyTools
 
         private void btnPublishProduct_Click(object sender, EventArgs e)
         {
-            goodsApi.PublishGoodsForBanggoToTaobao("http://metersbonwe.banggo.com/Goods/209697.shtml");
+            goodsApi.PublishGoodsForBanggoToTaobao("http://metersbonwe.banggo.com/Goods/207617.shtml");
         }
     }
 }

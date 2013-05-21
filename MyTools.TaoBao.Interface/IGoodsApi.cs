@@ -41,7 +41,14 @@ namespace MyTools.TaoBao.Interface
         /// <returns></returns>
         PropImg UploadItemPropimg(long numId, string properties,string imgPath);
 
-
+        /// <summary>
+        /// 更新和添加销售商品图片
+        /// </summary>
+        /// <param name="numId">商品编号</param>
+        /// <param name="properties">销售属性</param>
+        /// <param name="urlImg">网上的图片地址</param>
+        /// <returns></returns>
+        PropImg UploadItemPropimg(long numId, string properties, Uri urlImg);
 
     }
      

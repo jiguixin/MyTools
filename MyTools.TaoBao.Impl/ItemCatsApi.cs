@@ -74,12 +74,12 @@ namespace MyTools.TaoBao.Impl
         }
 
         /// <summary>
-        /// 得到相关Sku属性串，如颜色，大小
+        /// 得到相关属性串
         /// </summary>
-        /// <param name="propName">要查询SKU的名字</param>
+        /// <param name="propName">要查询属性的名字</param>
         /// <param name="cid">对应的淘宝目录编号</param>
         /// <returns></returns>
-        public List<string> GetSkuProps(string propName, string cid)
+        public List<string> GetProps(string propName, string cid)
         {
             var props = GetPropsByCid(cid.ToLong());
 
@@ -100,6 +100,19 @@ namespace MyTools.TaoBao.Impl
             #endregion
               
         }
+        /// <summary>
+        /// 得到销售属性，如颜色，大小，
+        /// </summary>
+        /// <param name="isColorProp">是获取颜色属性 如果是为true 不是为false</param>
+        /// <param name="cid">对应的淘宝目录编号</param>
+        /// <returns></returns>
+        public List<string> GetSaleProp(bool isColorProp, string cid)
+        {
+            var prop = GetPropsByCid(cid.ToLong(),isColorProp,true).First();
+
+            return prop.PropValues.Select(pValue => string.Format("{0}:{1}", prop.Pid, pValue.Vid)).ToList(); 
+        }
+
 
         //得到淘宝的所有商品类目
         /// <summary>
@@ -127,11 +140,16 @@ namespace MyTools.TaoBao.Impl
         /// sku_properties中以，分开。
         /// </summary>
         /// <param name="cid">淘宝所属类目ID</param>
-        public List<ItemProp> GetPropsByCid(long cid)
+        /// <param name="isColorProp">是否为颜色属性</param>
+        /// <param name="isSaleProp">是否为销售属性</param>
+        public List<ItemProp> GetPropsByCid(long cid, bool? isColorProp = null, bool? isSaleProp = null)
         {
             ItempropsGetRequest req = new ItempropsGetRequest();
-            req.Fields = "pid,name,must,multi,prop_values";
+            req.Fields = "pid,name,must,multi,prop_values,is_color_prop,is_sale_prop";
             req.Cid = cid;
+            req.IsColorProp = isColorProp;
+            req.IsSaleProp = isSaleProp;
+            
             ItempropsGetResponse response = client.Execute(req);
             return response.ItemProps; 
         }

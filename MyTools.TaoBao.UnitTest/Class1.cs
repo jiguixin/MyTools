@@ -8,5 +8,10 @@ namespace MyTools.TaoBao.UnitTest
     public class Class1
     {
         //sdfsdf
+
+        public void Foo(bool? b = null)
+        {
+
+        }
     }
 }

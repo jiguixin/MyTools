@@ -200,4 +200,16 @@
     <value>//*[@id='goods_model']//img[@src='http://s.mb-go.com/pub7/style/images/grey.gif']</value>
     <comment>得到产品描述下，所以的grey.gif图片结点，用于修改src值</comment>
   </data>
+  <data name="Log_PublishGoodsSuccess" xml:space="preserve">
+    <value>发布产品：{0} 已发布成功。numId:{1}</value>
+    <comment>发布的产品成功信息</comment>
+  </data>
+  <data name="Log_PublishSaleImgSuccess" xml:space="preserve">
+    <value>发布产品-&gt;上传销售图片：成功。numId:{0},图片地址:{1}</value>
+    <comment>上传销售图片：成功</comment>
+  </data>
+  <data name="Log_PublishSaleImgFailure" xml:space="preserve">
+    <value>发布产品-&gt;上传销售图片：失败。</value>
+    <comment>上传销售图片：失败</comment>
+  </data>
 </root>

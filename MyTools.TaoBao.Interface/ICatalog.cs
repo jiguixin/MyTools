@@ -30,13 +30,20 @@ namespace MyTools.TaoBao.Interface
         string GetItemProps(string cid);
 
         /// <summary>
-        /// 得到相关Sku属性串，如颜色，大小
+        /// 得到相关属性串
         /// </summary>
-        /// <param name="propName">要查询SKU的名字</param>
+        /// <param name="propName">要查询属性的名字</param>
         /// <param name="cid">对应的淘宝目录编号</param>
         /// <returns></returns>
-        List<string> GetSkuProps(string propName, string cid);
+        List<string> GetProps(string propName, string cid);
 
+        /// <summary>
+        /// 得到销售属性，如颜色，大小，
+        /// </summary>
+        /// <param name="isColorProp">是获取颜色属性</param>
+        /// <param name="cid">对应的淘宝目录编号</param>
+        /// <returns></returns>
+        List<string> GetSaleProp(bool isColorProp, string cid);
 
     } 
 }

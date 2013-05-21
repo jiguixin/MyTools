@@ -34,6 +34,10 @@ namespace MyTools.TaoBao.DomainModule
 
         public List<ProductSize> SizeList;
 
+        /// <summary>
+        /// 对应的props属性值
+        /// </summary>
+        public string MapProps { get; set; }
 
         #endregion
 

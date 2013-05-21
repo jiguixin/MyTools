@@ -180,6 +180,16 @@ namespace MyTools.TaoBao.UnitTest
             Console.WriteLine(s);
         }
 
+        [Test]
+        public void UrlTest()
+        {
+
+            Uri uri = new Uri("http://img3.mbanggo.com/sources/images/bgpicupload/206039/206039_29--w_438_h_710.jpg");
+            int lastIndex = uri.Segments.Length - 1;
+            Console.WriteLine(uri.Segments[lastIndex]);
+ 
+        }
+
         #endregion
 
 

@@ -88,6 +88,33 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 发布产品：{0} 已发布成功。numId:{1} 的本地化字符串。
+        /// </summary>
+        public static string Log_PublishGoodsSuccess {
+            get {
+                return ResourceManager.GetString("Log_PublishGoodsSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 发布产品-&gt;上传销售图片：失败。 的本地化字符串。
+        /// </summary>
+        public static string Log_PublishSaleImgFailure {
+            get {
+                return ResourceManager.GetString("Log_PublishSaleImgFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 发布产品-&gt;上传销售图片：成功。numId:{0},图片地址:{1} 的本地化字符串。
+        /// </summary>
+        public static string Log_PublishSaleImgSuccess {
+            get {
+                return ResourceManager.GetString("Log_PublishSaleImgSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 /html/body/div[@class=&apos;content&apos;]/div[2]/div[@class=&apos;copy-code&apos;]/input 的本地化字符串。
         /// </summary>
         public static string SysConfig_AuthorizedCodeXPath {

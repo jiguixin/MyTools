@@ -11,12 +11,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Resources;
+using System.Security.Policy;
 using System.Text;
+using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
+using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Utility;
+using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.DomainModule.ExceptionDef;
 using MyTools.TaoBao.Interface;
 using RestSharp;
@@ -25,112 +28,156 @@ using Top.Api.Domain;
 using Top.Api.Request;
 using Top.Api.Response;
 using Top.Api.Util;
-using MyTools.TaoBao.DomainModule;
 using Product = MyTools.TaoBao.DomainModule.Product;
-using Infrastructure.Crosscutting.Declaration;
 
 namespace MyTools.TaoBao.Impl
 {
-    public class GoodsApi:IGoodsApi
+    public class GoodsApi : IGoodsApi
     {
-
         #region Members
 
-        private ITopClient client = InstanceLocator.Current.GetInstance<ITopClient>();
-        private IBanggoMgt banggoMgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
+        private readonly IBanggoMgt _banggoMgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
 
-        private IItemCatsApi itemCatsApi = InstanceLocator.Current.GetInstance<IItemCatsApi>();
-
-        private ICatalog catalog = InstanceLocator.Current.GetInstance<ICatalog>(Resource.SysConfig_GetDataWay);
+        private readonly ICatalog _catalog = InstanceLocator.Current.GetInstance<ICatalog>(Resource.SysConfig_GetDataWay);
+        private readonly ITopClient _client = InstanceLocator.Current.GetInstance<ITopClient>();
 
 
-        private IShopApi shopApi = InstanceLocator.Current.GetInstance<IShopApi>();
+        private readonly IDelivery _delivery =
+            InstanceLocator.Current.GetInstance<IDelivery>(Resource.SysConfig_GetDataWay);
 
-        private IShop shop = InstanceLocator.Current.GetInstance<IShop>(Resource.SysConfig_GetDataWay);
-
-        private IDelivery delivery = InstanceLocator.Current.GetInstance<IDelivery>(Resource.SysConfig_GetDataWay);
-
+        private readonly Dictionary<string, string> _dicColorMap = new Dictionary<string, string>();
+        private readonly IShop _shop = InstanceLocator.Current.GetInstance<IShop>(Resource.SysConfig_GetDataWay);
         public List<SellerCat> SellercatsList;
 
-        private Dictionary<string, string> dicColorMap = new Dictionary<string, string>();
+        ILogger log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
 
         #endregion
 
-
         #region Constructor
-
-
-        public GoodsApi()
-        {
-            //TopContext tContext = InstanceLocator.Current.GetInstance<TopContext>();
-
-            //SellercatsList = shopApi.GetSellercatsList(tContext.UserNick);
-
-
-        }
-
 
         #endregion
 
         #region public Methods
 
         /// <summary>
-        /// 发布商品
+        ///     发布商品
         /// </summary>
         /// <param name="product">商品</param>
         /// <returns>商品编号</returns>
         public Item PublishGoods(Product product)
-        {  
-            ItemAddRequest req = new ItemAddRequest();
-            
-            Util.CopyModel(product, req); 
-            
-            TopContext tContext = InstanceLocator.Current.GetInstance<TopContext>();
-            ItemAddResponse response = client.Execute(req, tContext.SessionKey);
+        {
+            var req = new ItemAddRequest();
+
+            Util.CopyModel(product, req);
+
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            ItemAddResponse response = _client.Execute(req, tContext.SessionKey);
 
             if (response.IsError)
             {
-                throw new TopResponseException(response.ErrCode,response.ErrMsg,response.SubErrCode,response.SubErrMsg,response.TopForbiddenFields);
+                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                               response.SubErrMsg, response.TopForbiddenFields);
             }
-               
-            return response.Item;
+
+            var item = response.Item;
+
+            log.LogInfo(Resource.Log_PublishGoodsSuccess, product.Title, item.NumIid);
+             
+            return item;
         }
 
         /// <summary>
-        /// 从banggo上获取数据发布到淘宝
+        ///     从banggo上获取数据发布到淘宝
         /// </summary>
         /// <param name="banggoProductUrl"></param>
         /// <returns></returns>
         public Item PublishGoodsForBanggoToTaobao(string banggoProductUrl)
         {
-            var goodsSn = banggoMgt.ResolveProductUrl(banggoProductUrl);
-            
-            var banggoProduct = banggoMgt.GetGoodsInfo(new BanggoRequestModel() {GoodsSn = goodsSn, Referer = banggoProductUrl});
+            string goodsSn = _banggoMgt.ResolveProductUrl(banggoProductUrl);
+
+            BanggoProduct banggoProduct =
+                _banggoMgt.GetGoodsInfo(new BanggoRequestModel {GoodsSn = goodsSn, Referer = banggoProductUrl});
 
             var taobaoProduct = new Product();
 
             MapBanggoToTaobaoProduct(banggoProduct, taobaoProduct);
+           
+            var item = PublishGoods(taobaoProduct);
 
-            return PublishGoods(taobaoProduct);
+            foreach (var pColor in banggoProduct.ColorList)
+            {
+               var img = UploadItemPropimg(item.NumIid, pColor.MapProps, new Uri(pColor.ImgUrl));
+
+                if (img != null && img.Id > 0)
+                    log.LogInfo(Resource.Log_PublishSaleImgSuccess, img.Id, img.Url);
+                else
+                    log.LogInfo(Resource.Log_PublishSaleImgFailure); 
+            }
+             
+            return item;
         }
+
+        /// <summary>
+        ///     更新和添加销售商品图片
+        /// </summary>
+        /// <param name="numId">商品编号</param>
+        /// <param name="properties">销售属性</param>
+        /// <param name="imgPath">本地图片路径</param>
+        /// <returns></returns>
+        public PropImg UploadItemPropimg(long numId, string properties, string imgPath)
+        { 
+            #region validation
+              
+            if (numId <= 0 || string.IsNullOrEmpty(properties) || string.IsNullOrEmpty(imgPath))
+                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+                                                  new StackTrace()));
+
+            #endregion
+
+            var fItem = new FileItem(imgPath);
+
+            return UploadItemPropimgInternal(numId, properties, fItem);
+        }
+
+        /// <summary>
+        /// 更新和添加销售商品图片
+        /// </summary>
+        /// <param name="numId">商品编号</param>
+        /// <param name="properties">销售属性</param>
+        /// <param name="urlImg">网上的图片地址</param>
+        /// <returns></returns>
+        public PropImg UploadItemPropimg(long numId, string properties, Uri urlImg)
+        {
+              int len = urlImg.Segments.Length;
+            var fileName = len > 0
+                               ? urlImg.Segments[len - 1]
+                               : string.Format("{0}-{1}.jpg", numId.ToString(), properties);
+
+            var fItem = new FileItem(fileName, GetImgByte(urlImg.ToString()));
+           ;
+           return UploadItemPropimgInternal(numId, properties, fItem);
+        }
+
 
         private void MapBanggoToTaobaoProduct(BanggoProduct bProduct, Product tProduct)
         {
             tProduct.Title = bProduct.ProductTitle;
             tProduct.OuterId = bProduct.GoodsSn;
-              
-            tProduct.Cid = catalog.GetCid(bProduct.Category,bProduct.ParentCatalog).ToLong();
+
+            tProduct.Cid = _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToLong();
 
             tProduct.Desc = bProduct.Desc;
 
             tProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", GetImgByte(bProduct.ThumbUrl));
 
-            TopContext tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
 
-            tProduct.SellerCids = shop.GetSellerCids(tContext.UserNick,string.Format("{0} - {1}",bProduct.BrandCode,bProduct.Category),bProduct.ParentCatalog);
+            tProduct.SellerCids = _shop.GetSellerCids(tContext.UserNick,
+                                                     string.Format("{0} - {1}", bProduct.BrandCode, bProduct.Category),
+                                                     bProduct.ParentCatalog);
 
             //得到运费模版
-            string deliveryTemplateId = delivery.GetDeliveryTemplateId(Resource.SysConfig_DeliveryTemplateName);
+            string deliveryTemplateId = _delivery.GetDeliveryTemplateId(Resource.SysConfig_DeliveryTemplateName);
 
             if (deliveryTemplateId == null)
             {
@@ -141,8 +188,8 @@ namespace MyTools.TaoBao.Impl
                 tProduct.PostageId = deliveryTemplateId.ToLong();
                 tProduct.ItemWeight = Resource.SysConfig_ItemWeight;
             }
-              
-            string itemProps = catalog.GetItemProps(tProduct.Cid.ToString());
+
+            string itemProps = _catalog.GetItemProps(tProduct.Cid.ToString());
             tProduct.Props = itemProps; //只先提取必填项
 
             SetOptionalProps(bProduct, tProduct);
@@ -219,15 +266,14 @@ namespace MyTools.TaoBao.Impl
 */
 
             #endregion
-             
         }
 
         //包括设置品牌、货号
         private void SetOptionalProps(BanggoProduct bProduct, Product tProduct)
-        { 
-            ResourceManager rm = new ResourceManager(typeof(Resource).FullName,
-                             typeof(Resource).Assembly);
-            var brandProp = rm.GetString(string.Format("SysConfig_{0}_BrandProp",bProduct.BrandCode));
+        {
+            var rm = new ResourceManager(typeof (Resource).FullName,
+                                         typeof (Resource).Assembly);
+            string brandProp = rm.GetString(string.Format("SysConfig_{0}_BrandProp", bProduct.BrandCode));
 
             if (!brandProp.IsNullOrEmpty())
             {
@@ -237,48 +283,33 @@ namespace MyTools.TaoBao.Impl
 
             tProduct.InputPids = Resource.SysConfig_ProductCodeProp;
             tProduct.InputStr = bProduct.GoodsSn;
-
-             
-        }
-
-        /// <summary>
-        /// 更新和添加销售商品图片
-        /// </summary>
-        /// <param name="numId">商品编号</param>
-        /// <param name="properties">销售属性</param>
-        /// <param name="imgPath">本地图片路径</param>
-        /// <returns></returns>
-        public PropImg UploadItemPropimg(long numId, string properties,string imgPath)
-        {
-            #region validation
-
-            if (numId <= 0 || string.IsNullOrEmpty(properties) || string.IsNullOrEmpty(imgPath))
-                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty, new System.Diagnostics.StackTrace().ToString()));
-
-            #endregion
-
-            ItemPropimgUploadRequest req = new ItemPropimgUploadRequest();
-            req.NumIid = numId;
-            FileItem fItem = new FileItem(imgPath);
-            req.Image = fItem;
-            req.Properties = properties;
-            TopContext tContext = InstanceLocator.Current.GetInstance<TopContext>();
-            ItemPropimgUploadResponse response = client.Execute(req, tContext.SessionKey);
-
-            if (response.IsError)
-                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode, response.SubErrMsg, response.TopForbiddenFields);
-
-            return response.PropImg;
         }
 
         #endregion
-         
 
         #region Private Methods
 
 
+        private PropImg UploadItemPropimgInternal(long numId, string properties, FileItem fItem)
+        {
+            var req = new ItemPropimgUploadRequest { NumIid = numId };
+
+            req.Image = fItem;
+            req.Properties = properties;
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            ItemPropimgUploadResponse response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                               response.SubErrMsg, response.TopForbiddenFields);
+
+            return response.PropImg;
+        }
+         
         private void SetSkuInfo(BanggoProduct bProduct, Product tProduct)
         {
+            #region var
+
             var sbSku = new StringBuilder();
             var sbSkuToProps = new StringBuilder();
             var lstSkuAlias = new List<string>();
@@ -286,42 +317,46 @@ namespace MyTools.TaoBao.Impl
             var lstSkuPrices = new List<string>();
             var sbSkuOuterIds = new StringBuilder();
 
-            var propColors = catalog.GetSkuProps("颜色", tProduct.Cid.ToString());
+            int num = 0; //商品数量
 
-            var propSize = catalog.GetSkuProps("尺码", tProduct.Cid.ToString());
+            #endregion
+
+            List<string> propColors = _catalog.GetSaleProp(true, tProduct.Cid.ToString());
+
+            List<string> propSize = _catalog.GetSaleProp(false, tProduct.Cid.ToString());
             int colorCount = bProduct.ColorList.Count;
 
             //清空现有的色码与淘宝的属性映射
-            dicColorMap.Clear();
-
-            int num = 0;
-
-            var keys = bProduct.BSizeToTSize.Keys.ToList<string>();
+            _dicColorMap.Clear();
+             
+            List<string> keys = bProduct.BSizeToTSize.Keys.ToList();
             bProduct.BSizeToTSize.Clear();
             for (int k = 0; k < keys.Count; k++)
             {
                 bProduct.BSizeToTSize.Add(keys[k], propSize[k]);
-            } 
+            }
 
             for (int i = 0; i < colorCount; i++)
             {
-                var pColor = propColors[i];
+                string pColor = propColors[i];
 
-                var bColor = bProduct.ColorList[i];
+                ProductColor bColor = bProduct.ColorList[i];
 
-                dicColorMap.Add(bColor.ColorCode.ToString(), pColor);
+                bColor.MapProps = pColor;
+
+                _dicColorMap.Add(bColor.ColorCode, pColor);
 
                 sbSkuToProps.AppendFormat("{0}{1}", pColor, CommomConst.SEMI);
-                lstSkuAlias.Add(string.Format("{0}{1}{2}({3}色){4}", pColor, CommomConst.COLON, bColor.Title, bColor.ColorCode,
-                                        CommomConst.SEMI));
-                
+                lstSkuAlias.Add(string.Format("{0}{1}{2}({3}色){4}", pColor, CommomConst.COLON, bColor.Title,
+                                              bColor.ColorCode,
+                                              CommomConst.SEMI));
+
                 //读取尺码
                 int sizeCount = bColor.SizeList.Count;
                 for (int j = 0; j < sizeCount; j++)
                 {
-                    var bSize = bColor.SizeList[j];
-//                    var pSize = propSize[j];
-                    string pSize=null; 
+                    ProductSize bSize = bColor.SizeList[j];
+                    string pSize;
                     if (!bProduct.BSizeToTSize.TryGetValue(bSize.Alias, out pSize))
                         continue;
 
@@ -336,15 +371,14 @@ namespace MyTools.TaoBao.Impl
                     {
                         sbSkuOuterIds.Append(bProduct.GoodsSn);
                     }
-
-
+                     
                     sbSkuToProps.AppendFormat("{0}{1}", pSize, CommomConst.SEMI);
 
                     // 不用为每个尺码都加别名
                     if (lstSkuAlias.Find(a => a.Contains(pSize)) == null)
-                        lstSkuAlias.Add(string.Format("{0}{1}{2}({3}){4}", pSize, CommomConst.COLON, bSize.Alias, bSize.SizeCode,CommomConst.SEMI));
-
-
+                        lstSkuAlias.Add(string.Format("{0}{1}{2}({3}){4}", pSize, CommomConst.COLON, bSize.Alias,
+                                                      bSize.SizeCode, CommomConst.SEMI));
+                     
                     lstSkuQuantities.Add(bSize.AvlNum.ToString(CultureInfo.InvariantCulture));
                     num += bSize.AvlNum;
 
@@ -358,21 +392,12 @@ namespace MyTools.TaoBao.Impl
             tProduct.Num = num;
 
             tProduct.Props += sbSkuToProps.ToString();
-            tProduct.PropertyAlias = lstSkuAlias.ToColumnString(""); 
-            tProduct.SkuProperties = sbSku.ToString().TrimEnd(','); 
-
-            //tProduct.Props =
-            //    "18066474:145656297;20511:105255;2000:29504;1627207:3232483;20509:28383;20509:28381;1627207:3232484;20509:28383;";
-            //tProduct.PropertyAlias =
-            //    "1627207:3232483:黑色(99色);20509:28383:155/80A(S)(21042);20509:28381:160/84A(M)(21044);1627207:3232484:灰蓝(45色);20509:28383:155/80A(S)(21042)";
-
-            //tProduct.SkuProperties =
-            //    "1627207:3232483;20509:28383,1627207:3232483;20509:28381,1627207:3232484;20509:28383";
+            tProduct.PropertyAlias = lstSkuAlias.ToColumnString("");
+            tProduct.SkuProperties = sbSku.ToString().TrimEnd(',');
 
             tProduct.SkuQuantities = lstSkuQuantities.ToColumnString();
             tProduct.SkuPrices = lstSkuPrices.ToColumnString();
             tProduct.SkuOuterIds = sbSkuOuterIds.ToString();
-
         }
 
         private static void SetDeliveryFee(Product tProduct)
@@ -418,9 +443,6 @@ namespace MyTools.TaoBao.Impl
             return response.RawBytes;
         }
 
-
         #endregion
-
-        
     }
 }

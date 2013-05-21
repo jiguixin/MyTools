@@ -60,12 +60,12 @@ namespace MyTools.TaoBao.DomainModule
         public string InputStr { get; set; }
 
         /// <summary>
-        /// 所在地城市。默认 四川 。可以通过http://dl.open.taobao.com/sdk/商品城市列表.rar查询
+        /// 所在地城市。默认  成都 。可以通过http://dl.open.taobao.com/sdk/商品城市列表.rar查询
         /// </summary>
         public string LocationCity{get;set;}
 
         /// <summary>
-        /// 所在地省份。默认 成都，具体可以下载http://dl.open.taobao.com/sdk/商品城市列表.rar  取到
+        /// 所在地省份。默认 四川，具体可以下载http://dl.open.taobao.com/sdk/商品城市列表.rar  取到
         /// </summary>
         public string LocationState {get;set;}
          

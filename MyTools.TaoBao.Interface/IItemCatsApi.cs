@@ -33,7 +33,9 @@ namespace MyTools.TaoBao.Interface
         /// sku_properties中以，分开。
         /// </summary>
         /// <param name="cid">淘宝所属类目ID</param>
-        List<ItemProp> GetPropsByCid(long cid);
+        /// <param name="isColorProp">是否为颜色属性</param>
+        /// <param name="isSaleProp">是否为销售属性</param>
+        List<ItemProp> GetPropsByCid(long cid, bool? isColorProp = null, bool? isSaleProp = null);
 
 
     }
