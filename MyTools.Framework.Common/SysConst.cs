@@ -7,10 +7,9 @@
  *备注：
  */
 
-using System;
 using System.Configuration;
 
-namespace MyTools.TaoBao.DomainModule
+namespace MyTools.Framework.Common
 {
     public class SysConst
     {

@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
+using MyTools.Framework.Common;
 using MyTools.TaoBao;
 using MyTools.TaoBao.Impl;
 using MyTools.TaoBao.Impl.Authorization;
@@ -129,9 +130,7 @@ namespace MyTools
         private TopContext context;
 
         private IShopApi shopApi = InstanceLocator.Current.GetInstance<IShopApi>();
-
-        private IGoodsApi goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
-
+         
         private string authorizeUrl;
          
         private IAuthorization auth = InstanceLocator.Current.GetInstance<IAuthorization>();
@@ -170,7 +169,9 @@ namespace MyTools
 
         private void btnPublishProduct_Click(object sender, EventArgs e)
         {
-            goodsApi.PublishGoodsForBanggoToTaobao("http://metersbonwe.banggo.com/Goods/207617.shtml");
+            FrmPublishGoods frm = new FrmPublishGoods();
+            frm.MdiParent = this; 
+            frm.Show(); 
         }
     }
 }

@@ -133,6 +133,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 read_colorlist 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_ColorListId {
+            get {
+                return ResourceManager.GetString("SysConfig_ColorListId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 2013运费模板 的本地化字符串。
         /// </summary>
         public static string SysConfig_DeliveryTemplateName {
@@ -232,6 +241,96 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 http://act.banggo.com/Price/getGoodsPrice?r={0}&amp;callback=&amp;goods_sn={1} 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetGoodsPriceByBanggoUrl {
+            get {
+                return ResourceManager.GetString("SysConfig_GetGoodsPriceByBanggoUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 \d{6} 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetGoodsSnByUrlRegex {
+            get {
+                return ResourceManager.GetString("SysConfig_GetGoodsSnByUrlRegex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 div[@class=&apos;goods_price&apos;]/del 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetMarketPriceXPath {
+            get {
+                return ResourceManager.GetString("SysConfig_GetMarketPriceXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 http://act.banggo.com/Ajax/cartAjax?time={0}&amp;ajaxtype=color_size&amp;type=color&amp;code={1}&amp;r_code=&amp;goods_sn={2} 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetProductByBanggoAvailableColorUrl {
+            get {
+                return ResourceManager.GetString("SysConfig_GetProductByBanggoAvailableColorUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 http://act.banggo.com/Ajax/cartAjax?time={0}&amp;ajaxtype=color_size&amp;type=size&amp;code={1}&amp;r_code={2}&amp;goods_sn={3} 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetProductByBanggoAvailableSizeUrl {
+            get {
+                return ResourceManager.GetString("SysConfig_GetProductByBanggoAvailableSizeUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 sale_price 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetSalePriceId {
+            get {
+                return ResourceManager.GetString("SysConfig_GetSalePriceId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 div[@class=&apos;sales&apos;]/p/strong[@class=&apos;red&apos;]/a 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetSalesVolumeXPath {
+            get {
+                return ResourceManager.GetString("SysConfig_GetSalesVolumeXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 svip_price 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetSvipPriceId {
+            get {
+                return ResourceManager.GetString("SysConfig_GetSvipPriceId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 vip_price 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetVipPriceId {
+            get {
+                return ResourceManager.GetString("SysConfig_GetVipPriceId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 goods_model 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GoodsDescId {
+            get {
+                return ResourceManager.GetString("SysConfig_GoodsDescId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 0.2 的本地化字符串。
         /// </summary>
         public static string SysConfig_ItemWeight {
@@ -273,6 +372,15 @@ namespace MyTools.TaoBao.DomainModule {
         public static string SysConfig_RealTaobaoServerUrl {
             get {
                 return ResourceManager.GetString("SysConfig_RealTaobaoServerUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 read_sizelist 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_SizeListId {
+            get {
+                return ResourceManager.GetString("SysConfig_SizeListId", resourceCulture);
             }
         }
     }

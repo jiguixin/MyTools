@@ -106,7 +106,7 @@ namespace MyTools.TaoBao.UnitTest
                 }
 
                 string GoodsSn = "";
-                //return string.Format("{0} {1} {2} {3}", BrandCode, Category, finalCatalog, GoodsSn);
+                //return string.Format("{0} {1} {2} {3}", Brand, Category, finalCatalog, GoodsSn);
                 //string finalCatalog = Catalog.Remove(0, moreThanNum);
 
 

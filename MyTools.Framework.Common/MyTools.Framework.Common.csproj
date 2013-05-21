@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CFDA5730-0420-430F-BF57-312B716AFA17}</ProjectGuid>
+    <ProjectGuid>{C85B7CBD-BE38-4D55-921D-8C6EA200C911}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MyTools.TaoBao.DomainModule</RootNamespace>
-    <AssemblyName>MyTools.TaoBao.DomainModule</AssemblyName>
+    <RootNamespace>MyTools.Framework.Common</RootNamespace>
+    <AssemblyName>MyTools.Framework.Common</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -16,11 +16,10 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Assemblies\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RestSharp">
+      <HintPath>..\Assemblies\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -41,29 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BanggoProduct.cs" />
-    <Compile Include="ProductColor.cs" />
-    <Compile Include="ProductSize.cs" />
-    <Compile Include="BanggoRequestModel.cs" />
-    <Compile Include="Product.cs" />
+    <Compile Include="ExceptionDef\TopResponseException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resource.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\MyDemo\C#\GetTbData\GetTbData\ExternalResource\taobao-sdk-net-online_standard\taobao-sdk-net-online_standard-20130425-source\TopSdk.csproj">
-      <Project>{9C11CAE5-5188-4E71-825B-68FC3135728A}</Project>
-      <Name>TopSdk</Name>
-    </ProjectReference>
+    <Compile Include="SysConst.cs" />
+    <Compile Include="SysUtils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

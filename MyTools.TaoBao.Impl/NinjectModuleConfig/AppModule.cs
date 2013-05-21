@@ -9,6 +9,7 @@
 
 using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Logging.TraceSource;
+using MyTools.Framework.Common;
 using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Impl.Authorization;
 using MyTools.TaoBao.Interface;

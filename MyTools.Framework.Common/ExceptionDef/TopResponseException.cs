@@ -9,7 +9,7 @@
 
 using System;
 
-namespace MyTools.TaoBao.DomainModule.ExceptionDef
+namespace MyTools.Framework.Common.ExceptionDef
 {
     public class TopResponseException:Exception
     {

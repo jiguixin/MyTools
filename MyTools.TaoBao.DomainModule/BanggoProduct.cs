@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace MyTools.TaoBao.DomainModule
 {
-    public class BanggoProduct
+    public class BanggoProduct:Product
     {
 
         #region Members
@@ -20,7 +20,7 @@ namespace MyTools.TaoBao.DomainModule
         /// <summary>
         /// 品牌
         /// </summary>
-        public string BrandCode { get; set; }
+        public string Brand { get; set; }
 
         /// <summary>
         /// 款号
@@ -30,13 +30,13 @@ namespace MyTools.TaoBao.DomainModule
         /// <summary>
         /// 产品标题
         /// </summary>
-        public string ProductTitle
+        public override string Title
         {
             get
             {
-                string startTitle = string.Format("{0} {1} {2} ", BrandCode, Category, Catalog);
-                //标题字符不能大于30满足款号所以长度只能是24个字符
-                if (startTitle.Length > 24)
+                string startTitle = string.Format("{0} {1} {2} ", Brand, Category, Catalog);
+                //标题字符不能大于60满足款号所以长度只能是24个字符
+                if (startTitle.Length > 54)
                 {
                     int moreThanNum = startTitle.Length - 24;
                     string finalCatalog = "";
@@ -44,22 +44,12 @@ namespace MyTools.TaoBao.DomainModule
                     {
                         finalCatalog = Catalog.Remove(0, moreThanNum);
                     }
-                    return string.Format("{0} {1} {2} {3}", BrandCode, Category, finalCatalog, GoodsSn);
+                    return string.Format("{0} {1} {2} {3}", Brand, Category, finalCatalog, GoodsSn);
                 }
                  
-                return string.Format("{0} {1} {2} {3}", BrandCode, Category, Catalog, GoodsSn);
+                return string.Format("{0} {1} {2} {3}", Brand, Category, Catalog, GoodsSn);
             }  
         }
-
-        /// <summary>
-        /// 市场价
-        /// </summary>
-        public double MarketPrice { get; set; }
-
-        /// <summary>
-        /// 总售价
-        /// </summary>
-        public double SalePrice { get; set; }
 
         /// <summary>
         /// VIP价
@@ -70,12 +60,7 @@ namespace MyTools.TaoBao.DomainModule
         ///VIP价
         /// </summary>
         public double SvipPrice { get; set; }
-
-        /// <summary>
-        /// 销量
-        /// </summary>
-        public int SalesVolume { get; set; }
-
+         
         /// <summary>
         /// 折扣
         /// </summary>
@@ -96,22 +81,10 @@ namespace MyTools.TaoBao.DomainModule
         /// </summary>
         public string Catalog { get; set; }
 
-        public List<ProductColor> ColorList { get; set; }
-
         /// <summary>
         /// 商品主图 url
         /// </summary>
         public string ThumbUrl { get; set; }
-
-        /// <summary>
-        /// 商品描述
-        /// </summary>
-        public string Desc { get; set; }
-
-        /// <summary>
-        /// banggo的尺码与淘宝尺码对照表
-        /// </summary>
-        public Dictionary<string, string> BSizeToTSize { get; set; }
 
         #endregion
 

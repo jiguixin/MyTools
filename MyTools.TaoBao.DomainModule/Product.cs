@@ -7,6 +7,8 @@
 ///////////////////////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
+using Top.Api.Request;
 using Top.Api.Util;
 
 namespace MyTools.TaoBao.DomainModule
@@ -19,8 +21,11 @@ namespace MyTools.TaoBao.DomainModule
     /// 要自定义品牌者加到input_str，input_pids，如：【（input_pids：input_str）（20000：莱克）】3,
     /// SUK（销售）属性，sku_properties中有的属性props也必须存在。sku_properties中以“，”分开。
     /// </summary>
-    public class Product
-    { 
+    public class Product : ItemAddRequest
+    {
+        #region 重构Product类
+
+        /*
         /// <summary>
         ///叶子类目id  类目API---- taobao.itemcats.get
         /// </summary>
@@ -170,6 +175,33 @@ namespace MyTools.TaoBao.DomainModule
         /// reserve)。 注意：通过taobao.item.get接口获取拍卖信息时，会返回除了valid_hour和valid_minute之外的所有拍卖信息
         /// </summary>
         public string Type {get;set;}
+*/
+
+        #endregion
+
+        /// <summary>
+        /// 市场价
+        /// </summary>
+        public virtual double MarketPrice { get; set; }
+
+        /// <summary>
+        /// 总售价
+        /// </summary>
+        public virtual double SalePrice { get; set; }
+         
+        /// <summary>
+        /// 销量
+        /// </summary>
+        public virtual int SalesVolume { get; set; }
+
+
+        public List<ProductColor> ColorList { get; set; }
+         
+        /// <summary>
+        /// 销售属性与淘宝的销售属性对应，如。key: 155/80A(S); 20509:28314
+        /// </summary>
+        public Dictionary<string, string> BSizeToTSize { get; set; }
+
 
         public Product()
         {
