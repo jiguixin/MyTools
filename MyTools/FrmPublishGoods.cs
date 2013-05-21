@@ -25,6 +25,10 @@ namespace MyTools
             var urls = txtUrls.Text.Split(';');
             foreach (var url in urls)
             {
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    continue;
+                }
                 goodsApi.PublishGoodsForBanggoToTaobao(url);
             } 
         }

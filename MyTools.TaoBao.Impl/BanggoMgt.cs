@@ -122,15 +122,74 @@ namespace MyTools.TaoBao.Impl
             //修改获取的HTML img 的SRC URL
             HtmlNodeCollection imgNodes = doc.DocumentNode.SelectNodes(Resource.SysConfig_GetGoodsModeImgGreyXPath);
 
+            if (imgNodes != null)
+            {
+                product.Desc = GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_GoodsDescId);
+            }
+            else
+            {
+                //有可能是没有grey.gif文件，检查是否有描述结点。如果有，直接返回
+
+                var desNode = doc.GetElementbyId(Resource.SysConfig_GoodsDescId);
+
+                if (desNode != null)
+                {
+                    product.Desc = desNode.OuterHtml;
+                }
+                else //说明是该描述id为productinfo_div
+                {
+                    //检查是否有grey.gif文件
+                    imgNodes =
+                        doc.DocumentNode.SelectNodes(
+                            Resource.SysConfig_GetProductInfoImgGreyXPath);
+
+                    if (imgNodes != null)
+                    {
+                        product.Desc = GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_ProductInfoId);
+                    }
+                    else
+                    {
+                        //检查是否有productinfo_div结点
+                        var descNode = doc.GetElementbyId(Resource.SysConfig_ProductInfoId);
+
+                        if (descNode != null)
+                        {
+                            product.Desc = descNode.OuterHtml;
+                        }
+                        else
+                        {  
+                            product.Desc = "详情到：" + requestModel.Referer;
+                        } 
+                    }
+                }
+            }
+
+            #endregion
+        }
+
+        //读取Desc数据，因为有些产品描述的Id是productinfo_div
+        private static string GetProductDesc( BanggoRequestModel requestModel, HtmlNodeCollection imgNodes,
+                                     HtmlDocument doc, string detailId)
+        {
+            string desc;
             foreach (HtmlNode imgNode in imgNodes)
             {
                 imgNode.SetAttributeValue("src", imgNode.GetAttributeValue("original", ""));
             }
 
-            product.Desc = doc.GetElementbyId(Resource.SysConfig_GoodsDescId).OuterHtml;
+            var desNode = doc.GetElementbyId(detailId);
 
-            #endregion
+            if (desNode != null)
+            {
+                desc = desNode.OuterHtml;
+            }
+            else
+            {
+                desc = "详情到：" + requestModel.Referer;
+            }
+            return desc;
         }
+
 
         /// <summary>
         ///     得到可售商品Sku

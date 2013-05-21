@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Infrastructure.Crosscutting.IoC;
+using MyTools.Framework.Common;
 using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
 using Top.Api;
@@ -38,16 +39,23 @@ namespace MyTools.TaoBao.Impl
         public string GetCid(string parentCatalog,string childCatalog)
         {
             var parentItemCat = GetAllItemCatByApi(0).Find(c => c.Name.Contains(parentCatalog));
-
+              
             if (parentItemCat == null)
             {
-                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty, new System.Diagnostics.StackTrace().ToString()));
+                //如果在淘宝中没有找到就在映射中找 
+                parentItemCat = GetAllItemCatByApi(0).Find(c => c.Name.Contains(SysUtils.GetCustomCategoryMap(parentCatalog)));
+    
+                if (parentItemCat == null)
+                    throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty, new System.Diagnostics.StackTrace().ToString()));
             }
 
             var childItemCat = GetAllItemCatByApi(parentItemCat.Cid).Find(c => c.Name.Contains(childCatalog));
 
-            if (childItemCat == null)
-                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,new System.Diagnostics.StackTrace().ToString()));
+            if (childItemCat == null) 
+            { 
+                //没有找到然后在到GetCustomCidMap中查找 
+                return SysUtils.GetCustomCidMap(parentCatalog, childCatalog); 
+            }
 
             return childItemCat.Cid.ToString(CultureInfo.InvariantCulture);
         }

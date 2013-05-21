@@ -7,6 +7,7 @@
  *备注：
  */
 
+using System;
 using RestSharp;
 
 namespace MyTools.Framework.Common
@@ -48,5 +49,56 @@ namespace MyTools.Framework.Common
 
             return response.RawBytes;
         }
+
+        /// <summary>
+        /// 在自定义的集合中找是否有相关配置
+        /// </summary>
+        /// <param name="parentCatalog">父目录，如 男装</param>
+        /// <param name="childCatalog">子目录，如T恤</param>
+        /// <returns>没有找到者返回 null </returns>
+        public static string GetCustomCidMap(string parentCatalog, string childCatalog)
+        {
+            string result = null;
+            switch (parentCatalog)
+            {
+                case "男装":
+                    if (!SysConst.ManCatalogBanggoToTaobaoCid.TryGetValue(childCatalog, out result))
+                    {
+                        throw new Exception(string.Format("ManCatalogBanggoToTaobaoCid中没有配置{0}->{1}，请配置!", parentCatalog, childCatalog));
+                    } 
+                    break;
+                case "女装":
+                     if (!SysConst.WomenCatalogBanggoToTaobaoCid.TryGetValue(childCatalog, out result))
+                    {
+                        throw new Exception(string.Format("WomenCatalogBanggoToTaobaoCid中没有配置{0}->{1}，请配置!", parentCatalog, childCatalog));
+                    }  
+                    break;
+                case "男童":
+                case "女童":
+                    if (!SysConst.ChildCatalogBanggoToTaobaoCid.TryGetValue(childCatalog, out result))
+                    {
+                        throw new Exception(string.Format("ChildCatalogBanggoToTaobaoCid中没有配置{0}->{1}，请配置!", parentCatalog, childCatalog));
+                    }   
+                    break; 
+            }
+            return result;
+        }
+
+
+        // <summary>
+        /// 在自定义类别集合中找是否有相关配置 
+        /// <param name="parentCatalog">父目录，如 男童</param>
+        /// <returns>没有找到者返回 null </returns>
+        public static string GetCustomCategoryMap(string parentCatalog)
+        {
+            string result;
+            if (!SysConst.CategoryBanggoToTaobaoMap.TryGetValue(parentCatalog, out result))
+            {
+                throw new Exception(string.Format("CategoryBanggoToTaobaoMap中没有配置{0}，请配置!", parentCatalog));
+            }
+
+            return result;
+        }
+
     }
 }

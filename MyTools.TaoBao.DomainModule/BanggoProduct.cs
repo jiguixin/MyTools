@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using MyTools.Framework.Common;
 
 namespace MyTools.TaoBao.DomainModule
 {
@@ -34,20 +35,16 @@ namespace MyTools.TaoBao.DomainModule
         {
             get
             {
-                string startTitle = string.Format("{0} {1} {2} ", Brand, Category, Catalog);
-                //标题字符不能大于60满足款号所以长度只能是24个字符
-                if (startTitle.Length > 54)
+                string startTitle = string.Format("{0} {1} {2} {3} {4} 原价:{5}", SysConst.PrefixTitle, Brand, Category, ParentCatalog, GoodsSn, MarketPrice);
+                //标题字符不能大于60满足款号所以长度只能是54个字符
+                if (startTitle.Length > 60)
                 {
-                    int moreThanNum = startTitle.Length - 24;
-                    string finalCatalog = "";
-                    if (moreThanNum < Catalog.Length)
-                    {
-                        finalCatalog = Catalog.Remove(0, moreThanNum);
-                    }
-                    return string.Format("{0} {1} {2} {3}", Brand, Category, finalCatalog, GoodsSn);
+                    int moreThanNum = startTitle.Length - 60;
+
+                    return startTitle.Remove(0, moreThanNum);
                 }
-                 
-                return string.Format("{0} {1} {2} {3}", Brand, Category, Catalog, GoodsSn);
+
+                return startTitle;
             }  
         }
 

@@ -286,6 +286,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 //*[@id=&apos;productinfo_div&apos;]//img[@src=&apos;http://s.mb-go.com/pub7/style/images/grey.gif&apos;] 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetProductInfoImgGreyXPath {
+            get {
+                return ResourceManager.GetString("SysConfig_GetProductInfoImgGreyXPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 sale_price 的本地化字符串。
         /// </summary>
         public static string SysConfig_GetSalePriceId {
@@ -340,6 +349,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 2000:4146697; 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_ME_CITY_BrandProp {
+            get {
+                return ResourceManager.GetString("SysConfig_ME-CITY_BrandProp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 2000:29504; 的本地化字符串。
         /// </summary>
         public static string SysConfig_METERSBONWE_BrandProp {
@@ -363,6 +381,15 @@ namespace MyTools.TaoBao.DomainModule {
         public static string SysConfig_ProductCodeProp {
             get {
                 return ResourceManager.GetString("SysConfig_ProductCodeProp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 productinfo_div 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_ProductInfoId {
+            get {
+                return ResourceManager.GetString("SysConfig_ProductInfoId", resourceCulture);
             }
         }
         

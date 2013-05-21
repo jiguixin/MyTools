@@ -260,4 +260,16 @@
     <value>\d{6}</value>
     <comment>根据URL地址得到款号的的正则表达式</comment>
   </data>
+  <data name="SysConfig_ME-CITY_BrandProp" xml:space="preserve">
+    <value>2000:4146697;</value>
+    <comment>ME-CITY 品牌，对应的淘宝属性串</comment>
+  </data>
+  <data name="SysConfig_GetProductInfoImgGreyXPath" xml:space="preserve">
+    <value>//*[@id='productinfo_div']//img[@src='http://s.mb-go.com/pub7/style/images/grey.gif']</value>
+    <comment>获得产品描述中grey.git的图片，该描述模版id是productinfo_div </comment>
+  </data>
+  <data name="SysConfig_ProductInfoId" xml:space="preserve">
+    <value>productinfo_div</value>
+    <comment>产品描述ID</comment>
+  </data>
 </root>

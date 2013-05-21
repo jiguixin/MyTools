@@ -7,6 +7,7 @@
  *备注：
  */
 
+using System.Collections.Generic;
 using System.Configuration;
 
 namespace MyTools.Framework.Common
@@ -18,6 +19,43 @@ namespace MyTools.Framework.Common
         public static readonly string PostageId = ConfigurationManager.AppSettings["PostageId"];
 
         public static readonly string DiscountRatio = ConfigurationManager.AppSettings["DiscountRatio"];
+
+        public static readonly string PrefixTitle = ConfigurationManager.AppSettings["PrefixTitle"];
+
+
+        public static readonly Dictionary<string, string> CategoryBanggoToTaobaoMap = new Dictionary<string, string>();
+        public static readonly Dictionary<string, string> ChildCatalogBanggoToTaobaoCid = new Dictionary<string, string>();
+
+        public static readonly Dictionary<string, string> ManCatalogBanggoToTaobaoCid = new Dictionary<string, string>();
+
+        public static readonly Dictionary<string, string> WomenCatalogBanggoToTaobaoCid = new Dictionary<string, string>();
+
+        static SysConst()
+        {
+            CategoryBanggoToTaobaoMap.Add("男童", "童装");
+            CategoryBanggoToTaobaoMap.Add("女童", "童装");
+            CategoryBanggoToTaobaoMap.Add("ME-CITY", "ME&CITY");
+             
+            ChildCatalogBanggoToTaobaoCid.Add("休闲裤", "50013618"); //对应的是裤子
+            ChildCatalogBanggoToTaobaoCid.Add("牛仔裤", "50013618"); //对应的是裤子
+            ChildCatalogBanggoToTaobaoCid.Add("针织裤", "50013618"); //对应的是裤子
+            ChildCatalogBanggoToTaobaoCid.Add("裤类", "50013618"); //对应的是裤子 
+            ChildCatalogBanggoToTaobaoCid.Add("茄克", "50010519"); //夹克\/皮衣 
+            ChildCatalogBanggoToTaobaoCid.Add("大衣", "50010520"); //呢大衣
+            ChildCatalogBanggoToTaobaoCid.Add("开衫", "50010539"); //毛衣\/针织衫 
+            ChildCatalogBanggoToTaobaoCid.Add("裙类", "50013693"); //裙子
+
+
+            WomenCatalogBanggoToTaobaoCid.Add("裙类", "50010850"); //连衣裙
+            WomenCatalogBanggoToTaobaoCid.Add("裤类", "162205"); //牛仔裤
+
+
+            ManCatalogBanggoToTaobaoCid.Add("裤类", "50010167");//牛仔裤
+            ManCatalogBanggoToTaobaoCid.Add("西装", "50011130");//西服套装
+            ManCatalogBanggoToTaobaoCid.Add("茄克", "50010158");//夹克
+              
+
+        }
 
     }
 }
