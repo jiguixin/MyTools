@@ -84,3 +84,9 @@ req.Properties = "1627207:3232483";
 req.PicPath = "i4/820330575/T2qamQXX0bXXXXXXXX_!!820330575.jpg_100x100.jpg";
 req.NumIid = 18220473644L;
 ItemJointPropimgResponse response = client.Execute(req, sessionKey);
+
+
+
+---------------------------------------------------------------
+获取banggo产品列表下所有产品的URL的XPATH：
+/html/body/div[7]/div[2]/div[2]/div[2]/ul/li/a/@href
