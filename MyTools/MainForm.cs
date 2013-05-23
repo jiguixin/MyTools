@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Utility;
@@ -161,8 +162,8 @@ namespace MyTools
         }
 
         private void MainForm_Load(object sender, EventArgs e)
-        { 
-            authorizeUrl = string.Format(Resource.SysConfig_AuthorizeUrl, SysConst.AppKey);
+        {
+            authorizeUrl = Resource.SysConfig_AuthorizeUrl.StringFormat(SysConst.AppKey);
               
         }
 

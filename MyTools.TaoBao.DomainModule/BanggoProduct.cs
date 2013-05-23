@@ -7,35 +7,34 @@
  *备注：
  */
 
-using System;
-using System.Collections.Generic;
+using Infrastructure.Crosscutting.Declaration;
 using MyTools.Framework.Common;
 
 namespace MyTools.TaoBao.DomainModule
 {
-    public class BanggoProduct:Product
+    public class BanggoProduct : Product
     {
-
         #region Members
 
         /// <summary>
-        /// 品牌
+        ///     品牌
         /// </summary>
         public string Brand { get; set; }
 
         /// <summary>
-        /// 款号
+        ///     款号
         /// </summary>
         public string GoodsSn { get; set; }
 
         /// <summary>
-        /// 产品标题
+        ///     产品标题
         /// </summary>
         public override string Title
         {
             get
             {
-                string startTitle = string.Format("{0} {1} {2} {3} {4} 原价:{5}", SysConst.PrefixTitle, Brand, Category, ParentCatalog, GoodsSn, MarketPrice);
+                string startTitle = "{0} {1} {2} {3} {4} 原价:{5}".StringFormat(SysConst.PrefixTitle, Brand, Category,
+                                                                              ParentCatalog, GoodsSn, MarketPrice);
                 //标题字符不能大于60满足款号所以长度只能是54个字符
                 if (startTitle.Length > 60)
                 {
@@ -45,63 +44,56 @@ namespace MyTools.TaoBao.DomainModule
                 }
 
                 return startTitle;
-            }  
+            }
         }
 
         /// <summary>
-        /// VIP价
+        ///     VIP价
         /// </summary>
         public double VipPrice { get; set; }
 
         /// <summary>
-        ///VIP价
+        ///     VIP价
         /// </summary>
         public double SvipPrice { get; set; }
-         
+
         /// <summary>
-        /// 折扣
+        ///     折扣
         /// </summary>
         public string GoodsDiscount { get; set; }
 
         /// <summary>
-        /// 类别，如男装、女装
+        ///     类别，如男装、女装
         /// </summary>
         public string Category { get; set; }
 
         /// <summary>
-        /// 得到banggo的父目录，如 T恤
+        ///     得到banggo的父目录，如 T恤
         /// </summary>
         public string ParentCatalog { get; set; }
 
         /// <summary>
-        /// 商品目录，如 针织短袖恤	
+        ///     商品目录，如 针织短袖恤
         /// </summary>
         public string Catalog { get; set; }
 
         /// <summary>
-        /// 商品主图 url
+        ///     商品主图 url
         /// </summary>
         public string ThumbUrl { get; set; }
 
         #endregion
 
-
         #region Constructor
 
         #endregion
-
 
         #region Public Methods
 
         #endregion
 
-
         #region Private Methods
 
         #endregion
-
-
     }
-
-
 }

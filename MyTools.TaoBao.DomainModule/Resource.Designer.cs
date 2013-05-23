@@ -88,6 +88,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 该商品已经存在不能再上传 by {0} 的本地化字符串。
+        /// </summary>
+        public static string Log_GoodsAlreadyExist {
+            get {
+                return ResourceManager.GetString("Log_GoodsAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 发布产品：{0} 已发布成功。numId:{1} 的本地化字符串。
         /// </summary>
         public static string Log_PublishGoodsSuccess {

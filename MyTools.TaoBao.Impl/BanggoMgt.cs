@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Infrastructure.Crosscutting.Declaration;
@@ -24,6 +25,7 @@ namespace MyTools.TaoBao.Impl
 {
     public class BanggoMgt : IBanggoMgt
     {
+        private StringBuilder sbDesc = new StringBuilder();
         /// <summary>
         ///     得到单个产品信息
         /// </summary>
@@ -51,10 +53,10 @@ namespace MyTools.TaoBao.Impl
         {
             #region 得到banggo数据
 
-            product.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            product.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                               new StackTrace()));
 
-            requestModel.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            requestModel.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                    new StackTrace()));
 
             var restClient = new RestClient(requestModel.Referer);
@@ -74,7 +76,7 @@ namespace MyTools.TaoBao.Impl
 
             HtmlNode selectNodesForProductBrandCode =
                 doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductBrandCodeXPath);
-            selectNodesForProductBrandCode.ThrowIfNull(string.Format(Resource.Exception_XPathGetDataError,
+            selectNodesForProductBrandCode.ThrowIfNull(Resource.Exception_XPathGetDataError.StringFormat(
                                                                      new StackTrace()));
 
             product.Brand = selectNodesForProductBrandCode.InnerText;
@@ -86,7 +88,7 @@ namespace MyTools.TaoBao.Impl
             HtmlNode selectNodesForProductCategory =
                 doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductCategoryXPath);
 
-            selectNodesForProductCategory.ThrowIfNull(string.Format(Resource.Exception_XPathGetDataError,
+            selectNodesForProductCategory.ThrowIfNull(Resource.Exception_XPathGetDataError.StringFormat(
                                                                     new StackTrace()));
 
             product.Category = selectNodesForProductCategory.InnerText;
@@ -98,7 +100,7 @@ namespace MyTools.TaoBao.Impl
             HtmlNode selectNodeForProductParentCatalog =
                 doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductParentCatalogXPath);
 
-            selectNodeForProductParentCatalog.ThrowIfNull(string.Format(Resource.Exception_XPathGetDataError,
+            selectNodeForProductParentCatalog.ThrowIfNull(Resource.Exception_XPathGetDataError.StringFormat(
                                                                         new StackTrace()));
 
             product.ParentCatalog = selectNodeForProductParentCatalog.InnerHtml;
@@ -110,7 +112,7 @@ namespace MyTools.TaoBao.Impl
             HtmlNode selectNodesForProductCatalog =
                 doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductCatalogXPath);
 
-            selectNodesForProductCatalog.ThrowIfNull(string.Format(Resource.Exception_XPathGetDataError,
+            selectNodesForProductCatalog.ThrowIfNull(Resource.Exception_XPathGetDataError.StringFormat(
                                                                    new StackTrace()));
 
             product.Catalog = selectNodesForProductCatalog.InnerText;
@@ -122,21 +124,26 @@ namespace MyTools.TaoBao.Impl
             //修改获取的HTML img 的SRC URL
             HtmlNodeCollection imgNodes = doc.DocumentNode.SelectNodes(Resource.SysConfig_GetGoodsModeImgGreyXPath);
 
-            string banggoGoodsUrl = string.Format("Banggo 产品地址：{0}", requestModel.Referer);
+            sbDesc.Clear();
+            sbDesc.AppendLine(SysConst.PrefixGoodsDesc);
 
+            
+            sbDesc.AppendLine("Banggo 产品地址：<a href=\"{0}\" target=\"_blank\" title=\"{0}\">{0}</a> <br/>".StringFormat( requestModel.Referer)); 
             if (imgNodes != null)
             { 
-                product.Desc =banggoGoodsUrl + GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_GoodsDescId);
+                 sbDesc.AppendLine(GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_GoodsDescId));
             }
             else
             {
+                #region 处理请求HTML 没有grey.gif的情况，以及产品描述节点ID不为Goods_Mode的情况
+                
                 //有可能是没有grey.gif文件，检查是否有描述结点。如果有，直接返回
 
                 var desNode = doc.GetElementbyId(Resource.SysConfig_GoodsDescId);
 
                 if (desNode != null)
                 {
-                    product.Desc = banggoGoodsUrl + desNode.OuterHtml;
+                    sbDesc.AppendLine(desNode.OuterHtml);
                 }
                 else //说明是该描述id为productinfo_div
                 {
@@ -147,7 +154,7 @@ namespace MyTools.TaoBao.Impl
 
                     if (imgNodes != null)
                     {
-                        product.Desc = banggoGoodsUrl + GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_ProductInfoId);
+                        sbDesc.AppendLine(GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_ProductInfoId));
                     }
                     else
                     {
@@ -156,15 +163,19 @@ namespace MyTools.TaoBao.Impl
 
                         if (descNode != null)
                         {
-                            product.Desc = banggoGoodsUrl + descNode.OuterHtml;
+                            sbDesc.AppendLine( descNode.OuterHtml);
                         }
                         else
                         {  
-                            product.Desc = "详情到：" + requestModel.Referer;
+                            sbDesc.AppendLine("详情到：" + requestModel.Referer);
                         } 
                     }
                 }
+
+                #endregion
             }
+
+            product.Desc = sbDesc.ToString();
 
             #endregion
         }
@@ -244,8 +255,8 @@ namespace MyTools.TaoBao.Impl
         {
             var cookieJar = new CookieContainer();
 
-            string url = string.Format(
-                Resource.SysConfig_GetGoodsPriceByBanggoUrl, DateTime.Now.Ticks,
+            string url =
+                Resource.SysConfig_GetGoodsPriceByBanggoUrl.StringFormat(DateTime.Now.Ticks,
                 requestModel.GoodsSn);
 
             var restClient = new RestClient(url) {CookieContainer = cookieJar};
@@ -282,13 +293,13 @@ namespace MyTools.TaoBao.Impl
         {
             var lstResult = new List<ProductSize>();
 
-            string url = string.Format(
-                Resource.SysConfig_GetProductByBanggoAvailableColorUrl,
+            string url =
+                Resource.SysConfig_GetProductByBanggoAvailableColorUrl.StringFormat(
                 DateTime.Now.Ticks, requestModel.ColorCode, requestModel.GoodsSn);
 
             string responseContent = GetBanggoReponseContent(url, requestModel.Referer);
 
-            responseContent.ThrowIfNullOrEmpty(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            responseContent.ThrowIfNullOrEmpty(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                              new StackTrace()));
 
             string result = responseContent.TrimStart('(').TrimEnd(')');
@@ -376,8 +387,8 @@ namespace MyTools.TaoBao.Impl
         //得到该颜色下和该大小下的库存大小
         private int GetAvlNum(BanggoRequestModel requestModel)
         {
-            string url = string.Format(
-                Resource.SysConfig_GetProductByBanggoAvailableSizeUrl,
+            string url =
+                Resource.SysConfig_GetProductByBanggoAvailableSizeUrl.StringFormat(
                 DateTime.Now.Ticks, requestModel.SizeCode, requestModel.ColorCode, requestModel.GoodsSn);
 
             string responseContent = GetBanggoReponseContent(url, requestModel.Referer);
@@ -396,21 +407,21 @@ namespace MyTools.TaoBao.Impl
         {
             HtmlNode htmlNodeColorList = doc.GetElementbyId(Resource.SysConfig_ColorListId);
 
-            htmlNodeColorList.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            htmlNodeColorList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                         new StackTrace()));
 
             HtmlNodeCollection colors = htmlNodeColorList.SelectNodes("li/a");
 
-            colors.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            colors.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                              new StackTrace()));
 
 
             HtmlNode htmlNodeSizeList = doc.GetElementbyId(Resource.SysConfig_SizeListId);
-            htmlNodeSizeList.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            htmlNodeSizeList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                        new StackTrace()));
 
             HtmlNodeCollection sizes = htmlNodeSizeList.SelectNodes("a");
-            sizes.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            sizes.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                             new StackTrace()));
 
             product.BSizeToTSize = new Dictionary<string, string>();
@@ -471,7 +482,7 @@ namespace MyTools.TaoBao.Impl
         {
             HtmlNode nodeSalesVolume = doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetSalesVolumeXPath);
 
-            nodeSalesVolume.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            nodeSalesVolume.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                       new StackTrace()));
 
             return nodeSalesVolume.InnerText.ToInt32();
@@ -482,7 +493,7 @@ namespace MyTools.TaoBao.Impl
         {
             HtmlNode htmlNodeSvipPrice = doc.GetElementbyId(Resource.SysConfig_GetSvipPriceId);
 
-            htmlNodeSvipPrice.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            htmlNodeSvipPrice.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                         new StackTrace()));
 
             return htmlNodeSvipPrice.InnerText.ToDouble();
@@ -493,7 +504,7 @@ namespace MyTools.TaoBao.Impl
         {
             HtmlNode htmlNodeVipPrice = doc.GetElementbyId(Resource.SysConfig_GetVipPriceId);
 
-            htmlNodeVipPrice.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            htmlNodeVipPrice.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                        new StackTrace()));
 
             return htmlNodeVipPrice.InnerText.ToDouble();
@@ -504,7 +515,7 @@ namespace MyTools.TaoBao.Impl
         {
             HtmlNode htmlNodeSalePrice = doc.GetElementbyId(Resource.SysConfig_GetSalePriceId);
 
-            htmlNodeSalePrice.ThrowIfNull(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
+            htmlNodeSalePrice.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                         new StackTrace()));
             double salePrice = htmlNodeSalePrice.InnerText.Remove(0, 1).ToDouble();
             return salePrice;

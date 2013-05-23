@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
 using MyTools.TaoBao.Interface;
@@ -16,10 +12,10 @@ namespace MyTools
 {
     public partial class FrmPublishGoods : Form
     {
-        ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
+        private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
 
 
-        private IGoodsApi goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
+        private readonly IGoodsApi _goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
 
         public FrmPublishGoods()
         {
@@ -27,55 +23,53 @@ namespace MyTools
         }
 
         private void btnPublish_Click(object sender, EventArgs e)
-        { 
+        {
             if (!bgwRun.IsBusy)
             {
                 bgwRun.RunWorkerAsync(txtUrls.Text);
-
-            } 
+            }
         }
 
         private void bgwRun_DoWork(object sender, DoWorkEventArgs e)
         {
-            try
+
+            var urlResult = e.Argument as string;
+
+            if (urlResult != null)
             {
-                var txtUrls = e.Argument as string;
+                string[] urls = urlResult.Split(';');
 
-                if (txtUrls != null)
+                foreach (string url in urls)
                 {
-                    var urls = txtUrls.Split(';');
-
-                    foreach (var url in urls)
+                    try
                     {
                         if (string.IsNullOrWhiteSpace(url))
                         {
                             continue;
                         }
-                        var item = goodsApi.PublishGoodsForBanggoToTaobao(url);
+                        Item item = _goodsApi.PublishGoodsForBanggoToTaobao(url);
 
-                        this.bgwRun.ReportProgress(100, item);
+                        bgwRun.ReportProgress(100, item);
 
                         Thread.Sleep(1000);
-
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.LogError(ex.Message, ex);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(ex.Message, ex);
             }
         }
 
         private void bgwRun_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             var item = e.UserState as Item;
-            if (item != null) txtLog.AppendText(string.Format("{0} 已发布成功->{1}", item.Title, item.NumIid));
+            if (item != null) txtLog.AppendText("{0} 已发布成功->{1}".StringFormat(item.Title, item.NumIid));
         }
 
         private void bgwRun_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            txtLog.AppendText("发布成功");
+            txtLog.AppendText("操作结束");
         }
-
     }
 }

@@ -8,6 +8,7 @@
  */
 
 using System;
+using Infrastructure.Crosscutting.Declaration;
 
 namespace MyTools.Framework.Common.ExceptionDef
 {
@@ -58,6 +59,17 @@ namespace MyTools.Framework.Common.ExceptionDef
 
 
         #region Public Methods
+
+        public override string ToString()
+        { 
+            return base.ToString() +
+                   "   ( ErrCode->'{0}'; ErrMsg->'{1}'; SubErrCode->'{2}'; SubErrMsg->'{3}'; TopForbiddenFields->'{4}' )".StringFormat(
+                       ErrCode,
+                       ErrMsg,
+                       SubErrCode,
+                       SubErrMsg,
+                       TopForbiddenFields);
+        }
 
         #endregion
 

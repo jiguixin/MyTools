@@ -89,6 +89,14 @@ namespace MyTools.TaoBao.Impl
         {
             string goodsSn = _banggoMgt.ResolveProductUrl(banggoProductUrl);
 
+            goodsSn.ThrowIfNullOrEmpty(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+            
+            if (VerifyGoodsExist(goodsSn))
+            {
+                _log.LogWarning(Resource.Log_GoodsAlreadyExist.StringFormat(" PublishGoodsForBanggoToTaobao"));
+                return null; 
+            }
+
             BanggoProduct banggoProduct =
                 _banggoMgt.GetGoodsInfo(new BanggoRequestModel {GoodsSn = goodsSn, Referer = banggoProductUrl});
               
@@ -109,6 +117,21 @@ namespace MyTools.TaoBao.Impl
             return item;
         }
 
+        public bool VerifyGoodsExist(string goodsSn)
+        {
+            var req = new ItemsOnsaleGetRequest();
+            req.Fields = "num_iid,title";
+            req.Q = goodsSn;
+            req.PageSize = 10;
+            var onSaleGoods = GetOnSaleGoods(req);
+
+            if (onSaleGoods != null && onSaleGoods.Count > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         ///     更新和添加销售商品图片
         /// </summary>
@@ -121,8 +144,8 @@ namespace MyTools.TaoBao.Impl
             #region validation
 
             if (numId <= 0 || string.IsNullOrEmpty(properties) || string.IsNullOrEmpty(imgPath))
-                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty,
-                                                  new StackTrace()));
+                throw new Exception((Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+                                                  new StackTrace())));
 
             #endregion
 
@@ -143,7 +166,7 @@ namespace MyTools.TaoBao.Impl
             int len = urlImg.Segments.Length;
             string fileName = len > 0
                                   ? urlImg.Segments[len - 1]
-                                  : string.Format("{0}-{1}.jpg", numId.ToString(CultureInfo.InvariantCulture), properties);
+                                  : "{0}-{1}.jpg".StringFormat(numId.ToString(CultureInfo.InvariantCulture), properties);
 
             var fItem = new FileItem(fileName, SysUtils.GetImgByte(urlImg.ToString()));
             return UploadItemPropimgInternal(numId, properties, fItem);
@@ -203,7 +226,7 @@ namespace MyTools.TaoBao.Impl
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
 
             bProduct.SellerCids = _shop.GetSellerCids(tContext.UserNick,
-                                                      string.Format("{0} - {1}", bProduct.Brand, bProduct.Category),
+                                                      "{0} - {1}".StringFormat(bProduct.Brand, bProduct.Category),
                                                       bProduct.ParentCatalog);
 
             //得到运费模版
@@ -232,7 +255,7 @@ namespace MyTools.TaoBao.Impl
         {
             var rm = new ResourceManager(typeof(Resource).FullName,
                                          typeof(Resource).Assembly);
-            string brandProp = rm.GetString(string.Format("SysConfig_{0}_BrandProp", bProduct.Brand));
+            string brandProp = rm.GetString("SysConfig_{0}_BrandProp".StringFormat(bProduct.Brand));
 
             if (!brandProp.IsNullOrEmpty())
             {
@@ -300,7 +323,7 @@ namespace MyTools.TaoBao.Impl
                 _dicColorMap.Add(bColor.ColorCode, pColor);
 
                 sbSkuToProps.AppendFormat("{0}{1}", pColor, CommomConst.SEMI);
-                lstSkuAlias.Add(string.Format("{0}{1}{2}({3}色){4}", pColor, CommomConst.COLON, bColor.Title,
+                lstSkuAlias.Add("{0}{1}{2}({3}色){4}".StringFormat(pColor, CommomConst.COLON, bColor.Title,
                                               bColor.ColorCode,
                                               CommomConst.SEMI));
 
@@ -329,7 +352,7 @@ namespace MyTools.TaoBao.Impl
 
                     // 不用为每个尺码都加别名
                     if (lstSkuAlias.Find(a => a.Contains(pSize)) == null)
-                        lstSkuAlias.Add(string.Format("{0}{1}{2}({3}){4}", pSize, CommomConst.COLON, bSize.Alias,
+                        lstSkuAlias.Add("{0}{1}{2}({3}){4}".StringFormat(pSize, CommomConst.COLON, bSize.Alias,
                                                       bSize.SizeCode, CommomConst.SEMI));
 
                     lstSkuQuantities.Add(bSize.AvlNum.ToString(CultureInfo.InvariantCulture));

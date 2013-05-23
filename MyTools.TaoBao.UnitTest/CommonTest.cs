@@ -19,6 +19,7 @@ using NUnit.Framework;
 using RestSharp;
 using Top.Api.Request;
 using Product = MyTools.TaoBao.DomainModule.Product;
+using Infrastructure.Crosscutting.Declaration;
 
 namespace MyTools.TaoBao.UnitTest
 {
@@ -94,7 +95,7 @@ namespace MyTools.TaoBao.UnitTest
             string BrandCode = "Metersbonwe";
             string Category = "女装";
             string Catalog = "1234567890针织短袖恤	";
-            string startTitle = string.Format("{0} {1} {2} ", BrandCode.Trim(), Category.Trim(), Catalog.Trim());
+            string startTitle = "{0} {1} {2} ".StringFormat(BrandCode.Trim(), Category.Trim(), Catalog.Trim());
 
             if (startTitle.Length > 24)
             {
@@ -190,6 +191,15 @@ namespace MyTools.TaoBao.UnitTest
  
         }
 
+        [Test]
+        public void FormatTest()
+        {
+            string s = "this is {0}  My Name is {1}".StringFormat("pen","jim ji"); 
+
+            Console.WriteLine(s);
+
+            
+        }
         #endregion
 
 

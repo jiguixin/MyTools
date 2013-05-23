@@ -8,8 +8,10 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using HtmlAgilityPack;
+using Infrastructure.Crosscutting.Declaration;
 using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
 using Top.Api.Util;
@@ -17,26 +19,31 @@ using Top.Api.Util;
 namespace MyTools.TaoBao.Impl
 {
     /// <summary>
-    ///通用API
+    ///     通用API
     /// </summary>
     public class DefaultCommonApi : ICommonApi
     {
-        ///获得taobao认证，用于客户端应用程序
+        /// 获得taobao认证，用于客户端应用程序
         /// <param name="authHtml">授权码</param>
         public TopContext Authorized(string authHtml)
         {
             if (string.IsNullOrWhiteSpace(authHtml))
-                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty, new System.Diagnostics.StackTrace().ToString()));
+                throw new Exception(
+                    Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+                        new StackTrace().ToString()));
 
-            HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            var doc = new HtmlDocument();
             doc.LoadHtml(authHtml);
-            var selectNodes =
+            HtmlNodeCollection selectNodes =
                 doc.DocumentNode.SelectNodes(Resource.SysConfig_AuthorizedCodeXPath);
 
             if (selectNodes == null)
                 throw new Exception(Resource.Exception_NotFoundAuthorizedCode);
 
-            return (from value in selectNodes select value.Attributes[1].Value into authCode where !string.IsNullOrEmpty(authCode) && authCode.IndexOf("TOP-") >= 0 select TopUtils.GetTopContext(authCode)).FirstOrDefault();
+            return (from value in selectNodes
+                    select value.Attributes[1].Value
+                    into authCode where !string.IsNullOrEmpty(authCode) && authCode.IndexOf("TOP-") >= 0
+                    select TopUtils.GetTopContext(authCode)).FirstOrDefault();
 
 
             /*等价于：

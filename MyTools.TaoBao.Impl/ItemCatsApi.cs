@@ -46,7 +46,7 @@ namespace MyTools.TaoBao.Impl
                 parentItemCat = GetAllItemCatByApi(0).Find(c => c.Name.Contains(SysUtils.GetCustomCategoryMap(parentCatalog)));
     
                 if (parentItemCat == null)
-                    throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty, new System.Diagnostics.StackTrace().ToString()));
+                    throw new Exception(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new System.Diagnostics.StackTrace().ToString()));
             }
 
             var childItemCat = GetAllItemCatByApi(parentItemCat.Cid).Find(c => c.Name.Contains(childCatalog));
@@ -93,7 +93,7 @@ namespace MyTools.TaoBao.Impl
 
             var prop = (from p in props where p.Name.Contains(propName) select p).First();
 
-            return prop.PropValues.Select(pValue => string.Format("{0}:{1}", prop.Pid, pValue.Vid)).ToList();
+            return prop.PropValues.Select(pValue => "{0}:{1}".StringFormat(prop.Pid, pValue.Vid)).ToList();
 
             #region 原始方法
 
@@ -118,7 +118,7 @@ namespace MyTools.TaoBao.Impl
         {
             var prop = GetPropsByCid(cid.ToLong(),isColorProp,true).First();
 
-            return prop.PropValues.Select(pValue => string.Format("{0}:{1}", prop.Pid, pValue.Vid)).ToList(); 
+            return prop.PropValues.Select(pValue => "{0}:{1}".StringFormat(prop.Pid, pValue.Vid)).ToList(); 
         }
 
 

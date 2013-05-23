@@ -9,8 +9,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
 using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
@@ -26,22 +28,18 @@ namespace MyTools.TaoBao.Impl
     /// </summary>
     public class ShopApi : IShopApi
     {
-        ITopClient client = InstanceLocator.Current.GetInstance<ITopClient>();
-         
-        public ShopApi()
-        {
-        }
+        private readonly ITopClient client = InstanceLocator.Current.GetInstance<ITopClient>();
 
         ////店铺API，taobao.sellercats.list.get; 获取卖家自己的产品类目
         /// <summary>
-        ///店铺API，taobao.sellercats.list.get; 获取卖家自己的产品类目
+        ///     店铺API，taobao.sellercats.list.get; 获取卖家自己的产品类目
         /// </summary>
         /// <param name="userNick">淘宝昵称</param>
         public List<SellerCat> GetSellercatsList(string userNick)
         {
             if (string.IsNullOrEmpty(userNick))
-                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty
-                                                 , new System.Diagnostics.StackTrace().ToString()));
+                throw new Exception(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty
+                                            .StringFormat(new StackTrace().ToString()));
 
             var reqCats = new SellercatsListGetRequest {Nick = userNick};
             SellercatsListGetResponse responseCats = client.Execute(reqCats);
@@ -50,7 +48,7 @@ namespace MyTools.TaoBao.Impl
         }
 
         /// <summary>
-        /// 获取商品所属的店铺类目列表
+        ///     获取商品所属的店铺类目列表
         /// </summary>
         /// <param name="userNick">淘宝用户名</param>
         /// <param name="parentSellCatName">店铺的父组类目</param>
@@ -63,22 +61,26 @@ namespace MyTools.TaoBao.Impl
         }
 
         /// <summary>
-        /// 获取商品所属的店铺类目列表
+        ///     获取商品所属的店铺类目列表
         /// </summary>
         /// <param name="sellerCats">卖家的类目列表</param>
         /// <param name="parentSellCatName">店铺的父组类目</param>
         /// <param name="childSellCatsNames">子类目列表</param>
         public string GetSellerCids(List<SellerCat> sellerCats, string parentSellCatName,
                                     params string[] childSellCatsNames)
-        { 
+        {
             if (string.IsNullOrEmpty(parentSellCatName))
-                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty, new System.Diagnostics.StackTrace().ToString()));
+                throw new Exception(
+                    Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+                        new StackTrace().ToString()));
 
             // 获取父节点
             SellerCat parentSellerCat = sellerCats.FirstOrDefault(s => s.Name.ToUpper() == parentSellCatName);
 
             if (parentSellerCat == null)
-                throw new Exception(string.Format(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty, new System.Diagnostics.StackTrace().ToString()));
+                throw new Exception(
+                    Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+                        new StackTrace().ToString()));
 
             //如果用户数据有误，将子节点放到了父结点中，如果发现是子节点，就直接返回CID
             if (parentSellerCat.ParentCid != 0)
@@ -91,9 +93,9 @@ namespace MyTools.TaoBao.Impl
             {
                 return parentSellerCat.Cid.ToString(CultureInfo.InvariantCulture);
             }
-              
+
             #region 原始版
-            
+
             //1, 获取该parentName对应的Cid
             //            var parentCid = sellerCats.FirstOrDefault(s=>s.Name == parentSellCatName);
             //
@@ -118,13 +120,15 @@ namespace MyTools.TaoBao.Impl
             //return result;
 
             //等同于下面表达式
+
             #endregion
-            
+
             string result = null;
             foreach (
                 SellerCat sellerCat in
                     childSellCatsNames.Select(
-                        cat => sellerCats.FirstOrDefault(s => s.ParentCid == parentSellerCat.Cid && s.Name.Contains(cat)))
+                        cat =>
+                        sellerCats.FirstOrDefault(s => s.ParentCid == parentSellerCat.Cid && s.Name.Contains(cat)))
                                       .Where(sellerCat => sellerCat != null))
             {
                 if (!string.IsNullOrEmpty(result))
@@ -141,10 +145,6 @@ namespace MyTools.TaoBao.Impl
         public string GetShopRemainshowcase()
         {
             return "";
-        }
-
-        ~ShopApi()
-        {
         }
 
         public virtual void Dispose()

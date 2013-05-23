@@ -23,6 +23,9 @@ namespace MyTools.Framework.Common
         public static readonly string LocationState = ConfigurationManager.AppSettings["LocationState"];
         public static readonly string LocationCity = ConfigurationManager.AppSettings["LocationCity"];
 
+        public static readonly string PrefixGoodsDesc = ConfigurationManager.AppSettings["PrefixGoodsDesc"];
+
+
         
         
 

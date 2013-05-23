@@ -8,6 +8,7 @@
  */
 
 using System;
+using Infrastructure.Crosscutting.Declaration;
 using RestSharp;
 
 namespace MyTools.Framework.Common
@@ -51,7 +52,7 @@ namespace MyTools.Framework.Common
         }
 
         /// <summary>
-        /// 在自定义的集合中找是否有相关配置
+        ///     在自定义的集合中找是否有相关配置
         /// </summary>
         /// <param name="parentCatalog">父目录，如 男装</param>
         /// <param name="childCatalog">子目录，如T恤</param>
@@ -64,29 +65,32 @@ namespace MyTools.Framework.Common
                 case "男装":
                     if (!SysConst.ManCatalogBanggoToTaobaoCid.TryGetValue(childCatalog, out result))
                     {
-                        throw new Exception(string.Format("ManCatalogBanggoToTaobaoCid中没有配置{0}->{1}，请配置!", parentCatalog, childCatalog));
-                    } 
+                        throw new Exception("ManCatalogBanggoToTaobaoCid中没有配置{0}->{1}，请配置!".StringFormat(parentCatalog,
+                                                                                                         childCatalog));
+                    }
                     break;
                 case "女装":
-                     if (!SysConst.WomenCatalogBanggoToTaobaoCid.TryGetValue(childCatalog, out result))
+                    if (!SysConst.WomenCatalogBanggoToTaobaoCid.TryGetValue(childCatalog, out result))
                     {
-                        throw new Exception(string.Format("WomenCatalogBanggoToTaobaoCid中没有配置{0}->{1}，请配置!", parentCatalog, childCatalog));
-                    }  
+                        throw new Exception("WomenCatalogBanggoToTaobaoCid中没有配置{0}->{1}，请配置!".StringFormat(
+                            parentCatalog, childCatalog));
+                    }
                     break;
                 case "男童":
                 case "女童":
                     if (!SysConst.ChildCatalogBanggoToTaobaoCid.TryGetValue(childCatalog, out result))
                     {
-                        throw new Exception(string.Format("ChildCatalogBanggoToTaobaoCid中没有配置{0}->{1}，请配置!", parentCatalog, childCatalog));
-                    }   
-                    break; 
+                        throw new Exception("ChildCatalogBanggoToTaobaoCid中没有配置{0}->{1}，请配置!".StringFormat(
+                            parentCatalog, childCatalog));
+                    }
+                    break;
             }
             return result;
         }
 
 
         // <summary>
-        /// 在自定义类别集合中找是否有相关配置 
+        /// 在自定义类别集合中找是否有相关配置
         /// <param name="parentCatalog">父目录，如 男童</param>
         /// <returns>没有找到者返回 null </returns>
         public static string GetCustomCategoryMap(string parentCatalog)
@@ -94,11 +98,10 @@ namespace MyTools.Framework.Common
             string result;
             if (!SysConst.CategoryBanggoToTaobaoMap.TryGetValue(parentCatalog, out result))
             {
-                throw new Exception(string.Format("CategoryBanggoToTaobaoMap中没有配置{0}，请配置!", parentCatalog));
+                throw new Exception("CategoryBanggoToTaobaoMap中没有配置{0}，请配置!".StringFormat(parentCatalog));
             }
 
             return result;
         }
-
     }
 }
