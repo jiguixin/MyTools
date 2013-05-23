@@ -1,5 +1,5 @@
 ﻿/*
- *名称：DefaultAuthorization
+ *名称：DefaultCommonApi
  *功能：
  *创建人：吉桂昕
  *创建时间：2013-05-05 05:29:00
@@ -8,20 +8,20 @@
  */
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using HtmlAgilityPack;
 using MyTools.TaoBao.DomainModule;
-using MyTools.TaoBao.Interface.Authorization;
+using MyTools.TaoBao.Interface;
 using Top.Api.Util;
 
-namespace MyTools.TaoBao.Impl.Authorization
+namespace MyTools.TaoBao.Impl
 {
     /// <summary>
-    ///默认认证方式的实现，用于客户端应用程序
+    ///通用API
     /// </summary>
-    public class DefaultAuthorization : IAuthorization
+    public class DefaultCommonApi : ICommonApi
     {
+        ///获得taobao认证，用于客户端应用程序
         /// <param name="authHtml">授权码</param>
         public TopContext Authorized(string authHtml)
         {
@@ -56,5 +56,5 @@ namespace MyTools.TaoBao.Impl.Authorization
         }
     }
 
-//end DefaultAuthorization
+//end DefaultCommonApi
 }

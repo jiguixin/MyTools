@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using MyTools.Framework.Common;
 using Top.Api.Request;
 using Top.Api.Util;
 
@@ -208,8 +209,8 @@ namespace MyTools.TaoBao.DomainModule
             FreightPayer = "buyer";
             Type = "fixed";
             StuffStatus = "new";
-            LocationState = "四川";
-            LocationCity = "成都";
+            LocationState = SysConst.LocationState;
+            LocationCity = SysConst.LocationCity;
         }
 
         public virtual void Dispose()

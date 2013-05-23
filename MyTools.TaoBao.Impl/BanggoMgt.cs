@@ -122,9 +122,11 @@ namespace MyTools.TaoBao.Impl
             //修改获取的HTML img 的SRC URL
             HtmlNodeCollection imgNodes = doc.DocumentNode.SelectNodes(Resource.SysConfig_GetGoodsModeImgGreyXPath);
 
+            string banggoGoodsUrl = string.Format("Banggo 产品地址：{0}", requestModel.Referer);
+
             if (imgNodes != null)
-            {
-                product.Desc = GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_GoodsDescId);
+            { 
+                product.Desc =banggoGoodsUrl + GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_GoodsDescId);
             }
             else
             {
@@ -134,7 +136,7 @@ namespace MyTools.TaoBao.Impl
 
                 if (desNode != null)
                 {
-                    product.Desc = desNode.OuterHtml;
+                    product.Desc = banggoGoodsUrl + desNode.OuterHtml;
                 }
                 else //说明是该描述id为productinfo_div
                 {
@@ -145,7 +147,7 @@ namespace MyTools.TaoBao.Impl
 
                     if (imgNodes != null)
                     {
-                        product.Desc = GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_ProductInfoId);
+                        product.Desc = banggoGoodsUrl + GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_ProductInfoId);
                     }
                     else
                     {
@@ -154,7 +156,7 @@ namespace MyTools.TaoBao.Impl
 
                         if (descNode != null)
                         {
-                            product.Desc = descNode.OuterHtml;
+                            product.Desc = banggoGoodsUrl + descNode.OuterHtml;
                         }
                         else
                         {  

@@ -16,11 +16,15 @@ namespace MyTools.Framework.Common
     {
         public static readonly string AppKey = ConfigurationManager.AppSettings["appKey"];
         public static readonly string AppSecret = ConfigurationManager.AppSettings["appSecret"];
-        public static readonly string PostageId = ConfigurationManager.AppSettings["PostageId"];
-
-        public static readonly string DiscountRatio = ConfigurationManager.AppSettings["DiscountRatio"];
-
+        public static readonly string PostageId = ConfigurationManager.AppSettings["PostageId"]; 
+        public static readonly string DiscountRatio = ConfigurationManager.AppSettings["DiscountRatio"]; 
         public static readonly string PrefixTitle = ConfigurationManager.AppSettings["PrefixTitle"];
+
+        public static readonly string LocationState = ConfigurationManager.AppSettings["LocationState"];
+        public static readonly string LocationCity = ConfigurationManager.AppSettings["LocationCity"];
+
+        
+        
 
 
         public static readonly Dictionary<string, string> CategoryBanggoToTaobaoMap = new Dictionary<string, string>();

@@ -70,7 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authorization\DefaultAuthorization.cs" />
+    <Compile Include="DefaultAuthorization.cs" />
     <Compile Include="CatalogLocalData.cs" />
     <Compile Include="DeliveryApi.cs" />
     <Compile Include="DeliveryLocalData.cs" />

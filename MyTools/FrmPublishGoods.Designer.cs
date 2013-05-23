@@ -31,6 +31,8 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.btnPublish = new System.Windows.Forms.Button();
             this.txtUrls = new System.Windows.Forms.TextBox();
+            this.txtLog = new System.Windows.Forms.TextBox();
+            this.bgwRun = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -50,6 +52,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.txtLog);
             this.splitContainer1.Panel2.Controls.Add(this.txtUrls);
             this.splitContainer1.Size = new System.Drawing.Size(874, 467);
             this.splitContainer1.SplitterDistance = 28;
@@ -67,12 +70,28 @@
             // 
             // txtUrls
             // 
-            this.txtUrls.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtUrls.Dock = System.Windows.Forms.DockStyle.Top;
             this.txtUrls.Location = new System.Drawing.Point(0, 0);
             this.txtUrls.Multiline = true;
             this.txtUrls.Name = "txtUrls";
-            this.txtUrls.Size = new System.Drawing.Size(874, 435);
+            this.txtUrls.Size = new System.Drawing.Size(874, 185);
             this.txtUrls.TabIndex = 0;
+            // 
+            // txtLog
+            // 
+            this.txtLog.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.txtLog.Location = new System.Drawing.Point(0, 191);
+            this.txtLog.Multiline = true;
+            this.txtLog.Name = "txtLog";
+            this.txtLog.Size = new System.Drawing.Size(874, 244);
+            this.txtLog.TabIndex = 1;
+            // 
+            // bgwRun
+            // 
+            this.bgwRun.WorkerReportsProgress = true;
+            this.bgwRun.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwRun_DoWork);
+            this.bgwRun.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwRun_ProgressChanged);
+            this.bgwRun.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwRun_RunWorkerCompleted);
             // 
             // FrmPublishGoods
             // 
@@ -96,5 +115,7 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button btnPublish;
         private System.Windows.Forms.TextBox txtUrls;
+        private System.Windows.Forms.TextBox txtLog;
+        private System.ComponentModel.BackgroundWorker bgwRun;
     }
 }

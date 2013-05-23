@@ -13,10 +13,8 @@ using Infrastructure.Crosscutting.Utility;
 using MyTools.Framework.Common;
 using MyTools.TaoBao;
 using MyTools.TaoBao.Impl;
-using MyTools.TaoBao.Impl.Authorization;
 using MyTools.TaoBao.Impl.NinjectModuleConfig;
 using MyTools.TaoBao.Interface;
-using MyTools.TaoBao.Interface.Authorization;
 using Ninject;
 using Top.Api;
 using Top.Api.Util;
@@ -134,22 +132,22 @@ namespace MyTools
          
         private string authorizeUrl;
          
-        private IAuthorization auth = InstanceLocator.Current.GetInstance<IAuthorization>();
+        private ICommonApi _comApi = InstanceLocator.Current.GetInstance<ICommonApi>();
 
-        ILogger log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
+        ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
            
         #endregion
           
         private void btnAuthorization_Click(object sender, EventArgs e)
         {
-            log.LogInfo("正在执行验证方法-{0}", "btnAuthorization_Click");
+            _log.LogInfo("正在执行验证方法-{0}", "btnAuthorization_Click");
 
             FrmLogin login = new FrmLogin(authorizeUrl);
             if (login.ShowDialog() == DialogResult.OK)
             {
-                log.LogInfo("数据获取完成，结果为：{0}",login.resultHtml); 
+                _log.LogInfo("获取淘宝的认证数据完成！"); 
 
-                context = auth.Authorized(login.resultHtml);
+                context = _comApi.Authorized(login.resultHtml);
                    
                 InstanceLocator.Current.RegisterInstance<TopContext>(context);
                   
@@ -159,7 +157,7 @@ namespace MyTools
         private void btnGetCats_Click(object sender, EventArgs e)
         { 
             var sellCatsList = shopApi.GetSellercatsList(context.UserNick);
-            log.LogInfo("数据获取完成，卖家自定列表个数：{0}", sellCatsList.Count); 
+            _log.LogInfo("数据获取完成，卖家自定列表个数：{0}", sellCatsList.Count); 
         }
 
         private void MainForm_Load(object sender, EventArgs e)

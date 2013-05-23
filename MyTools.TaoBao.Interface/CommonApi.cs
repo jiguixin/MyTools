@@ -1,5 +1,5 @@
 ﻿/*
- *名称：IAuthorization
+ *名称：ICommonApi
  *功能：
  *创建人：吉桂昕
  *创建时间：2013-05-05 05:27:28
@@ -7,18 +7,17 @@
  *备注：
  */
 
-using System;
 using Top.Api.Util;
 
-namespace MyTools.TaoBao.Interface.Authorization
+namespace MyTools.TaoBao.Interface
 { 
     /// <summary>
-    /// 获得taobao认证接口
+    /// 通用API
     /// </summary>
-    public interface IAuthorization
-    { 
-        /// 
+    public interface ICommonApi
+    {
+        /// 获得taobao认证接口
         /// <param name="authHtml">授权码</param>
         TopContext Authorized(string authHtml);
-    }//end IAuthorization
+    }//end ICommonApi
 }

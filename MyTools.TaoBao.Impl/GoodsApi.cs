@@ -149,6 +149,43 @@ namespace MyTools.TaoBao.Impl
             return UploadItemPropimgInternal(numId, properties, fItem);
         }
 
+        /// <summary>
+        /// 获取当前会话用户出售中的商品列表 
+        /// taobao.items.onsale.get 
+        /// </summary> 
+        /// <param name="req">要查询传入的参数</param>
+        public List<Item> GetOnSaleGoods(ItemsOnsaleGetRequest req)
+        {
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+            ItemsOnsaleGetResponse response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+            {
+                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                               response.SubErrMsg, response.TopForbiddenFields);
+            }
+
+            return response.Items; 
+        }
+
+        //得到卖家仓库中的商品
+        public List<Item> GetInventoryGoods(ItemsInventoryGetRequest req)
+        {
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+            ItemsInventoryGetResponse response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+            {
+                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                               response.SubErrMsg, response.TopForbiddenFields);
+            }
+
+            return response.Items; 
+               
+        }
+
         #endregion
 
         #region Private Methods

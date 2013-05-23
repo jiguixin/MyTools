@@ -11,7 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04 Reference", "04 Referenc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 Solution Items", "05 Solution Items", "{18E643D1-D20C-497D-B2AA-3073FB46D2BA}"
 	ProjectSection(SolutionItems) = preProject
-		ReadMe.txt = ReadMe.txt
 		Solution Items\TaoBao\taobao API 调用示例代码.txt = Solution Items\TaoBao\taobao API 调用示例代码.txt
 	EndProjectSection
 EndProject

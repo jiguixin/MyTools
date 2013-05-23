@@ -11,9 +11,7 @@ using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Logging.TraceSource;
 using MyTools.Framework.Common;
 using MyTools.TaoBao.DomainModule;
-using MyTools.TaoBao.Impl.Authorization;
 using MyTools.TaoBao.Interface;
-using MyTools.TaoBao.Interface.Authorization;
 using Ninject.Modules;
 using Top.Api;
 using Top.Api.Util;
@@ -40,7 +38,7 @@ namespace MyTools.TaoBao.Impl.NinjectModuleConfig
 
              
             this.Bind<IItemCatsApi>().To<ItemCatsApi>().InSingletonScope();
-            this.Bind<IAuthorization>().To<DefaultAuthorization>().InSingletonScope();
+            this.Bind<ICommonApi>().To<DefaultCommonApi>().InSingletonScope();
 
             this.Bind<IGoodsApi>().To<GoodsApi>().InSingletonScope();
 
