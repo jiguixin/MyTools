@@ -58,6 +58,7 @@
             this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.btnAuthorization = new System.Windows.Forms.ToolStripMenuItem();
             this.btnGetCats = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnPublishProduct = new System.Windows.Forms.ToolStripMenuItem();
             this.windowsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.newWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cascadeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,6 +72,8 @@
             this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiCommonTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnSetAlpha = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.newToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -83,7 +86,7 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnPublishProduct = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnRestoreAlpha = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -97,7 +100,8 @@
             this.viewMenu,
             this.toolsMenu,
             this.windowsMenu,
-            this.helpMenu});
+            this.helpMenu,
+            this.tsmiCommonTools});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.MdiWindowListItem = this.windowsMenu;
             this.menuStrip.Name = "menuStrip";
@@ -300,7 +304,7 @@
             this.toolBarToolStripMenuItem.CheckOnClick = true;
             this.toolBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolBarToolStripMenuItem.Name = "toolBarToolStripMenuItem";
-            this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.toolBarToolStripMenuItem.Text = "工具栏(&T)";
             this.toolBarToolStripMenuItem.Click += new System.EventHandler(this.ToolBarToolStripMenuItem_Click);
             // 
@@ -310,7 +314,7 @@
             this.statusBarToolStripMenuItem.CheckOnClick = true;
             this.statusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.statusBarToolStripMenuItem.Name = "statusBarToolStripMenuItem";
-            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.statusBarToolStripMenuItem.Text = "状态栏(&S)";
             this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.StatusBarToolStripMenuItem_Click);
             // 
@@ -327,16 +331,23 @@
             // btnAuthorization
             // 
             this.btnAuthorization.Name = "btnAuthorization";
-            this.btnAuthorization.Size = new System.Drawing.Size(152, 22);
+            this.btnAuthorization.Size = new System.Drawing.Size(148, 22);
             this.btnAuthorization.Text = "认证";
             this.btnAuthorization.Click += new System.EventHandler(this.btnAuthorization_Click);
             // 
             // btnGetCats
             // 
             this.btnGetCats.Name = "btnGetCats";
-            this.btnGetCats.Size = new System.Drawing.Size(152, 22);
+            this.btnGetCats.Size = new System.Drawing.Size(148, 22);
             this.btnGetCats.Text = "获取店铺类目";
             this.btnGetCats.Click += new System.EventHandler(this.btnGetCats_Click);
+            // 
+            // btnPublishProduct
+            // 
+            this.btnPublishProduct.Name = "btnPublishProduct";
+            this.btnPublishProduct.Size = new System.Drawing.Size(148, 22);
+            this.btnPublishProduct.Text = "发布产品";
+            this.btnPublishProduct.Click += new System.EventHandler(this.btnPublishProduct_Click);
             // 
             // windowsMenu
             // 
@@ -439,6 +450,22 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.aboutToolStripMenuItem.Text = "关于(&A) ... ...";
             // 
+            // tsmiCommonTools
+            // 
+            this.tsmiCommonTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnSetAlpha,
+            this.btnRestoreAlpha});
+            this.tsmiCommonTools.Name = "tsmiCommonTools";
+            this.tsmiCommonTools.Size = new System.Drawing.Size(68, 21);
+            this.tsmiCommonTools.Text = "通用工具";
+            // 
+            // btnSetAlpha
+            // 
+            this.btnSetAlpha.Name = "btnSetAlpha";
+            this.btnSetAlpha.Size = new System.Drawing.Size(152, 22);
+            this.btnSetAlpha.Text = "设置透明度";
+            this.btnSetAlpha.Click += new System.EventHandler(this.btnSetAlpha_Click);
+            // 
             // toolStrip
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -538,12 +565,12 @@
             this.toolStripStatusLabel.Size = new System.Drawing.Size(32, 17);
             this.toolStripStatusLabel.Text = "状态";
             // 
-            // btnPublishProduct
+            // btnRestoreAlpha
             // 
-            this.btnPublishProduct.Name = "btnPublishProduct";
-            this.btnPublishProduct.Size = new System.Drawing.Size(152, 22);
-            this.btnPublishProduct.Text = "发布产品";
-            this.btnPublishProduct.Click += new System.EventHandler(this.btnPublishProduct_Click);
+            this.btnRestoreAlpha.Name = "btnRestoreAlpha";
+            this.btnRestoreAlpha.Size = new System.Drawing.Size(152, 22);
+            this.btnRestoreAlpha.Text = "恢复透明度";
+            this.btnRestoreAlpha.Click += new System.EventHandler(this.btnRestoreAlpha_Click);
             // 
             // MainForm
             // 
@@ -625,6 +652,9 @@
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ToolStripMenuItem btnGetCats;
         private System.Windows.Forms.ToolStripMenuItem btnPublishProduct;
+        private System.Windows.Forms.ToolStripMenuItem tsmiCommonTools;
+        private System.Windows.Forms.ToolStripMenuItem btnSetAlpha;
+        private System.Windows.Forms.ToolStripMenuItem btnRestoreAlpha;
     }
 }
 

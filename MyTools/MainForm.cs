@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
+using Infrastructure.Crosscutting.Utility;
 using MyTools.Framework.Common;
 using MyTools.TaoBao;
 using MyTools.TaoBao.Impl;
@@ -173,5 +174,22 @@ namespace MyTools
             frm.MdiParent = this; 
             frm.Show(); 
         }
+
+        private void btnSetAlpha_Click(object sender, EventArgs e)
+        {
+            WindowsApiHelper.SetWindowsOpacity("Shell_TrayWnd"); //Shell_TrayWnd 任务栏 
+            WindowsApiHelper.SetWindowsOpacity("StandardWindow"); //工作台
+            WindowsApiHelper.SetWindowsOpacity("StandardFrame");   //主窗口
+            WindowsApiHelper.SetWindowsOpacity(null, "系统消息");//系统提示消息 
+        }
+
+        private void btnRestoreAlpha_Click(object sender, EventArgs e)
+        {
+            WindowsApiHelper.RestoreOpacity("StandardWindow");//恢复工作台
+            WindowsApiHelper.RestoreOpacity("StandardFrame");//恢复主窗口
+            WindowsApiHelper.RestoreOpacity("Shell_TrayWnd"); //恢复任务栏 
+            WindowsApiHelper.RestoreOpacity(null, "系统消息");
+        }
+
     }
 }
