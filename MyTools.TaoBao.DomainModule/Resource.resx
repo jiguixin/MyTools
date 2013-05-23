@@ -272,4 +272,8 @@
     <value>productinfo_div</value>
     <comment>产品描述ID</comment>
   </data>
+  <data name="Log_GoodsAlreadyExist" xml:space="preserve">
+    <value>该商品已经存在不能再上传 by {0}</value>
+    <comment>该商品已经存在不能再上传 </comment>
+  </data>
 </root>
