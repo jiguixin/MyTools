@@ -59,41 +59,58 @@ namespace MyTools.TaoBao.Interface
         /// <returns></returns>
         PropImg UploadItemPropimg(long numId, string properties, Uri urlImg);
 
+        /// <summary>
+        /// 得到单个商品信息
+        /// taobao.item.get
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns>商品详情</returns>
+        Item GetGoods(ItemGetRequest req);
 
+        /// <summary>
+        /// 通过商品编号得到常用的Item数据
+        /// 调用的GetGoods(ItemGetRequest req)
+        /// </summary>
+        /// <param name="numId">商品编号</param>
+        /// <returns>商品详情</returns>
+        Item GetGoods(string numId);
 
         /// <summary>
         /// 获取当前会话用户出售中的商品列表 
         /// taobao.items.onsale.get 
         /// </summary>
         /// <example>
-        /// ItemsOnsaleGetRequest req = new ItemsOnsaleGetRequest();
-        /// req.Fields = "num_iid,title,price";
-        /// req.Q = "N97";
-        /// req.Cid = 1512L;
-        /// req.SellerCids = "11";
-        /// req.PageNo = 10L;
-        /// req.HasDiscount = true;
-        /// req.HasShowcase = true;
-        /// req.OrderBy = "list_time:desc";
-        /// req.IsTaobao = true;
-        /// req.IsEx = true;
-        /// req.PageSize = 100L;
-        /// DateTime dateTime = DateTime.Parse("2000-01-01 00:00:00");
-        /// req.StartModified = dateTime;
-        /// DateTime dateTime = DateTime.Parse("2000-01-01 00:00:00");
-        /// req.EndModified = dateTime;
-        /// ItemsOnsaleGetResponse response = client.Execute(req, sessionKey);
+        /* example
+        ItemsOnsaleGetRequest req = new ItemsOnsaleGetRequest();
+        req.Fields = "num_iid,title,price";
+        req.Q = "N97";
+        req.Cid = 1512L;
+        req.SellerCids = "11";
+        req.PageNo = 10L;
+        req.HasDiscount = true;
+        req.HasShowcase = true;
+        req.OrderBy = "list_time:desc";
+        req.IsTaobao = true;
+        req.IsEx = true;
+        req.PageSize = 100L;
+        DateTime dateTime = DateTime.Parse("2000-01-01 00:00:00");
+        req.StartModified = dateTime;
+        DateTime dateTime = DateTime.Parse("2000-01-01 00:00:00");
+        req.EndModified = dateTime;
+        ItemsOnsaleGetResponse response = client.Execute(req, sessionKey);
+        */ 
         /// </example>
         /// <param name="req">要查询传入的参数</param>
         List<Item> GetOnSaleGoods(ItemsOnsaleGetRequest req);
-
+         
         /// <summary>
         /// 得到当前会话用户库存中的商品列表 
         /// taobao.items.inventory.get
         /// </summary>
         /// <example>
-        /* ITopClient client = new DefaultTopClient(url, appkey, appsecret);
-          ItemsInventoryGetRequest req=new ItemsInventoryGetRequest();
+        /* example
+           ITopClient client = new DefaultTopClient(url, appkey, appsecret);
+           ItemsInventoryGetRequest req=new ItemsInventoryGetRequest();
            req.Fields = "pic_url,num,props,valid_thru";
            req.Q = "nike";
            req.Banner = "for_shelved";

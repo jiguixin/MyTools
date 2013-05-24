@@ -171,6 +171,47 @@ namespace MyTools.TaoBao.Impl
             var fItem = new FileItem(fileName, SysUtils.GetImgByte(urlImg.ToString()));
             return UploadItemPropimgInternal(numId, properties, fItem);
         }
+         
+        /// <summary>
+        /// 得到单个商品信息
+        /// taobao.item.get
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns>商品详情</returns>
+        public Item GetGoods(ItemGetRequest req)
+        {
+            req.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+           ItemGetResponse response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                             response.SubErrMsg, response.TopForbiddenFields);
+
+            return response.Item;
+
+        }
+
+        /// <summary>
+        /// 通过商品编号得到常用的Item数据
+        /// 调用的GetGoods(ItemGetRequest req)
+        /// </summary>
+        /// <param name="numId">商品编号</param>
+        /// <returns>商品详情</returns>
+        public Item GetGoods(string numId)
+        {
+            numId.ThrowIfNullOrEmpty(
+                Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+
+            var req = new ItemGetRequest();
+            req.Fields = "num_iid,title,nick,outer_id,price,num,location,post_fee,express_fee,ems_fee,sku,props_name,props,input_pids,input_str,pic_url,property_alias,item_weight,item_size,created,has_showcase,item_img,prop_img,desc";
+
+            req.NumIid = numId.ToLong();
+
+            return GetGoods(req);
+        }
 
         /// <summary>
         /// 获取当前会话用户出售中的商品列表 
