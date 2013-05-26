@@ -8,7 +8,12 @@
  */
 
 using System;
+using System.Data;
+using System.Linq;
+using System.Text;
+using HtmlAgilityPack;
 using Infrastructure.Crosscutting.Declaration;
+using Infrastructure.Crosscutting.Utility.CommomHelper;
 using RestSharp;
 
 namespace MyTools.Framework.Common
@@ -87,8 +92,7 @@ namespace MyTools.Framework.Common
             }
             return result;
         }
-
-
+         
         // <summary>
         /// 在自定义类别集合中找是否有相关配置
         /// <param name="parentCatalog">父目录，如 男童</param>
@@ -102,6 +106,61 @@ namespace MyTools.Framework.Common
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 通过调用RestRequest Get方式得到网页中的内容
+        /// </summary>
+        /// <param name="searchUrl"></param>
+        /// <returns></returns>
+        public static HtmlDocument GetHtmlDocumentByHttpGet(string searchUrl)
+        {
+            var restClient = new RestClient(searchUrl);
+            restClient.CookieContainer = new System.Net.CookieContainer();
+            var request = new RestRequest(Method.GET); 
+            IRestResponse response = restClient.Execute(request);
+             
+            if (response.ErrorException != null)
+                throw response.ErrorException;
+            
+            var doc = new HtmlDocument();
+
+            doc.LoadHtml(Encoding.Default.GetString(response.RawBytes));
+
+            return doc;
+        }
+
+        /// <summary>
+        /// 通过调用RestRequest Get方式得到网页中的内容
+        /// </summary>
+        /// <param name="searchUrl"></param>
+        /// <returns></returns>
+        public static string GetHtmlByHttpGet(string searchUrl)
+        {
+            var restClient = new RestClient(searchUrl);
+            restClient.CookieContainer = new System.Net.CookieContainer();
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = restClient.Execute(request);
+
+            if (response.ErrorException != null)
+                throw response.ErrorException;
+             
+            return  Encoding.Default.GetString(response.RawBytes);
+        }
+
+
+        //检查该EXCEL是否有该表存在
+        /// <summary>
+        /// 检查该EXCEL是否有该表存在
+        /// </summary>
+        /// <param name="excel"></param>
+        /// <param name="shellName"></param>
+        /// <returns></returns>
+        public static bool CheckTableExsit(ExcelHelper excel, string shellName)
+        {
+            DataTable dtSchema = excel.GetSchema();
+
+            return (from DataRow dr in dtSchema.Rows select dr["TABLE_NAME"].ToString()).Select(name => name == shellName).FirstOrDefault();
         }
     }
 }

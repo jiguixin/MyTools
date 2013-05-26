@@ -8,10 +8,14 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Resources;
+using System.Text.RegularExpressions;
 using Infrastructure.Crosscutting.Utility;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.TaoBao.DomainModule;
@@ -200,6 +204,86 @@ namespace MyTools.TaoBao.UnitTest
 
             
         }
+
+        [Test]
+        public void XmlEncode()
+        {
+            string s = XmlHelper.XmlEncode(
+                "http://s.taobao.com/search?spm=a230r.1.8.6.jyjgfa&promote=0&sort=price-asc&initiative_id=staobaoz_20130524&tab=all&q=233722&stats_click=search_radio_all%3A1#J_relative");
+
+            string ds = XmlHelper.XmlDecode(s);
+
+             s = XmlHelper.XmlEncodeAttribute(
+               "http://s.taobao.com/search?spm=a230r.1.8.6.jyjgfa&promote=0&sort=price-asc&initiative_id=staobaoz_20130524&tab=all&q=233722&stats_click=search_radio_all%3A1#J_relative");
+
+            string ds1 = XmlHelper.XmlDecode(s);
+        }
+
+        [Test]
+        public void ConverPrice()
+        {
+//            string s = "运费：15.50";
+            string s = "运费：15 元：125 /r/n 15.20";
+            
+            Console.WriteLine(s.GetNumberInt()); 
+            Console.WriteLine(s.GetNumberDouble());
+            Console.WriteLine(s.GetNumber());
+            Console.WriteLine(s.GetNumberStr());
+
+        }
+
+
+        [Test]
+        public void CreateExcel()
+        {
+            ExcelHelper excel = new ExcelHelper(@"C:\Users\Administrator\Desktop\{0}分析.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd HH-MM")));
+
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("款号", "varchar(255)");
+            dic.Add("成本价", "varchar(255)");
+            dic.Add("我的售价", "varchar(255)");
+            dic.Add("标题", "varchar(255)");
+            dic.Add("销量", "varchar(255)");
+            dic.Add("价格", "varchar(255)");
+            dic.Add("成交记录", "varchar(255)");
+            dic.Add("评价数", "varchar(255)");
+            dic.Add("最近几天成交记录", "varchar(255)"); 
+
+            excel.WriteTable("shell", dic);
+
+        }
+
+        [Test]
+        public void SwichRow()
+        {
+//            string s = "adfasdf \r\nsafdasdf";
+            string s = "价格数据{0}".StringFormat(DateTime.Now.ToString("HHmm"));
+            Console.WriteLine(s);
+        }
+
+        [Test]
+        public bool ExcelHelperTest()
+        {
+            ExcelHelper excel =
+               new ExcelHelper(@"C:\Users\Administrator\Desktop\{0} 分析.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd")));
+
+            string tName = "";
+
+            DataTable dtSchema = excel.GetSchema();
+
+            foreach (var name in from DataRow dr in dtSchema.Rows select dr["TABLE_NAME"].ToString())
+            {
+                if (name == tName)
+                    return true;
+                else
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
         #endregion
 
 

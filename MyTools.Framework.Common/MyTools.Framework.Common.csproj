@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\Assemblies\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="RestSharp">
       <HintPath>..\Assemblies\RestSharp.dll</HintPath>
     </Reference>

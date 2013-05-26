@@ -75,6 +75,10 @@
       <Project>{106c7f00-c03f-4e29-87af-acd1ba292078}</Project>
       <Name>Infrastructure.Crosscutting</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MyTools.Framework.Common\MyTools.Framework.Common.csproj">
+      <Project>{c85b7cbd-be38-4d55-921d-8c6ea200c911}</Project>
+      <Name>MyTools.Framework.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MyTools.TaoBao.DomainModule\MyTools.TaoBao.DomainModule.csproj">
       <Project>{cfda5730-0420-430f-bf57-312b716afa17}</Project>
       <Name>MyTools.TaoBao.DomainModule</Name>

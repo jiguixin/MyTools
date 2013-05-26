@@ -36,6 +36,9 @@ namespace MyTools.TaoBao.Impl.NinjectModuleConfig
             this.Bind<IDelivery>().To<DeliveryLocalData>().InSingletonScope().Named(Resource.SysConfig_GetDataByLocal);
             this.Bind<IDelivery>().To<DeliveryApi>().InSingletonScope().Named(Resource.SysConfig_GetDataByApi);
 
+
+            this.Bind<IAnalysis>().To<TaoBaoAnalysis>().InSingletonScope();
+
              
             this.Bind<IItemCatsApi>().To<ItemCatsApi>().InSingletonScope();
             this.Bind<ICommonApi>().To<DefaultCommonApi>().InSingletonScope();

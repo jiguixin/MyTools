@@ -21,10 +21,22 @@ namespace MyTools.TaoBao.Interface
 7.1	如果根据步骤6的结果发现skus没有相应的都需要重新添加改sku属性。
 8	得到符合要求的sku修改其价格和数量。
 9	再次执行步骤2*/
-
-
+     
     public interface IAnalysis
     {
-        double RivalAnalysis(string query);
+        /// <summary>
+        /// 得到分析后的价格
+        /// </summary>
+        /// <param name="query">查询条件</param>
+        /// <returns></returns>
+        double GetAnalysisPrice(string query);
+
+        /// <summary>
+        /// 导出竞争对手的产品信息
+        /// </summary>
+        /// <param name="query">在淘宝中输入的产品信息</param>
+        /// <param name="marketPrice">该产品的市场价</param>
+        /// <param name="salePrice">我的售价</param>
+        void ExportRivalGoodsInfo(string query, double marketPrice = 0, double salePrice = 0);
     }
 }

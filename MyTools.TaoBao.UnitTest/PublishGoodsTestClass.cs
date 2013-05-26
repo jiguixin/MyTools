@@ -158,6 +158,15 @@ namespace MyTools.TaoBao.UnitTest
         }
 
         [Test]
+        public void ExportProductColorForExcelTest()
+        {
+
+            var mgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
+            mgt.ExportProductColorForExcel("ad", "http://metersbonwe.banggo.com/Goods/207707.shtml");
+
+        }
+
+        [Test]
         public void GetSellerCid()
         {
             string sellerCid = "T恤 - 短袖T恤";
@@ -180,5 +189,17 @@ namespace MyTools.TaoBao.UnitTest
             string parentCid1 = client.GetCid("T恤", "女装");
             Console.WriteLine(parentCid);
         }
+
+        #region IAnalysisTest
+
+        [Test]
+        public void GetAnalysisPriceTest()
+        {
+            var client = InstanceLocator.Current.GetInstance<IAnalysis>();
+            client.ExportRivalGoodsInfo("ME CITY 510957",199,139);
+
+        }
+
+        #endregion
     }
 }

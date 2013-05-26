@@ -7,6 +7,7 @@
  *备注：
  */
 
+using System.Collections.Generic;
 using MyTools.TaoBao.DomainModule;
 
 namespace MyTools.TaoBao.Interface
@@ -34,14 +35,28 @@ namespace MyTools.TaoBao.Interface
         /// <param name="product">产品</param>
         /// <param name="requestModel">请求模型</param>
         void GetProductSku(BanggoProduct product, BanggoRequestModel requestModel);
-
+         
         /// <summary>
         /// 解析产品的URL 得到款号
         /// </summary>
         /// <param name="url">产品的URL</param>
         /// <returns></returns>
         string ResolveProductUrl(string url);
+         
+        /// <summary>
+        /// 得到产品的颜色和大小数据，通过在线读取
+        /// 该方法主要用于为手动干预价格，提供SKU数据
+        /// </summary>
+        /// <param name="requestModel">Referer\GoodsSn 必须传入</param>
+        /// <returns></returns>
+        List<ProductColor> GetProductColorByOnline(BanggoRequestModel requestModel);
 
+        /// <summary>
+        /// 将该产品的SKU数据导出为EXCEL
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="productUrl"></param>
+        void ExportProductColorForExcel(string fileName, string productUrl);
 
     }
 }

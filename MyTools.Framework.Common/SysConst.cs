@@ -9,15 +9,18 @@
 
 using System.Collections.Generic;
 using System.Configuration;
+using Infrastructure.Crosscutting.Declaration;
 
 namespace MyTools.Framework.Common
 {
     public class SysConst
     {
+        #region Config
+
         public static readonly string AppKey = ConfigurationManager.AppSettings["appKey"];
         public static readonly string AppSecret = ConfigurationManager.AppSettings["appSecret"];
         public static readonly string PostageId = ConfigurationManager.AppSettings["PostageId"]; 
-        public static readonly string DiscountRatio = ConfigurationManager.AppSettings["DiscountRatio"]; 
+        public static readonly double DiscountRatio = ConfigurationManager.AppSettings["DiscountRatio"].ToDouble(); 
         public static readonly string PrefixTitle = ConfigurationManager.AppSettings["PrefixTitle"];
 
         public static readonly string LocationState = ConfigurationManager.AppSettings["LocationState"];
@@ -25,10 +28,17 @@ namespace MyTools.Framework.Common
 
         public static readonly string PrefixGoodsDesc = ConfigurationManager.AppSettings["PrefixGoodsDesc"];
 
-
-        
-        
-
+        public static readonly string TaoBaoSearchUrl = ConfigurationManager.AppSettings["TaoBaoSearchUrl"];
+        /// <summary>
+        /// 买该产品的成本折扣是多少，如打折卷是5折的
+        /// </summary>
+        public static readonly double CostRatio = ConfigurationManager.AppSettings["CostRatio"].ToDouble(); //成果折扣
+        /// <summary>
+        /// 额外的成果价，如，购买打折卷的钱，以及 电话、车费、请人吃饭等。
+        /// </summary>
+        public static readonly double CostExtraPrice = ConfigurationManager.AppSettings["CostExtraPrice"].ToDouble();
+         
+        #endregion
 
         public static readonly Dictionary<string, string> CategoryBanggoToTaobaoMap = new Dictionary<string, string>();
         public static readonly Dictionary<string, string> ChildCatalogBanggoToTaobaoCid = new Dictionary<string, string>();
