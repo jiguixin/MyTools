@@ -20,6 +20,8 @@ using Infrastructure.Crosscutting.Utility;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.TaoBao.DomainModule;
 using NUnit.Framework;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using Top.Api.Request;
 using Product = MyTools.TaoBao.DomainModule.Product;
@@ -286,6 +288,127 @@ namespace MyTools.TaoBao.UnitTest
 
         #endregion
 
+        #region Json Net Demo
+
+        [Test]
+        public void JsonNetTest()
+        {
+            var pc = ConstructModel();
+
+
+            var settings = new JsonSerializerSettings();
+
+            string result = JsonConvert.SerializeObject(pc, Formatting.Indented, settings);//需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。
+
+
+            var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
+
+
+            //JObject jo = JObject.Parse(result);
+
+
+
+            
+
+
+            Console.WriteLine(result);
+
+        }
+
+      
+
+        #region helper
+
+        private List<ProductColor> ConstructModel()
+        {
+            var pcList = new List<ProductColor>();
+
+            var pc = new ProductColor
+                {
+                    ColorCode = "90",
+                    ImgUrl = "http://www.baidu.com",
+                    MapProps = "abc",
+                    Title = "fooTitle",
+                    SizeList = new List<ProductSize>
+                        {
+                            new ProductSize()
+                                {
+                                    Alias = "S",
+                                    AvlNum = 11,
+                                    SizeCode = "144",
+                                    Price = 222,
+                                    SalePrice = 34.3
+                                },
+                            new ProductSize()
+                                {
+                                    Alias = "M",
+                                    AvlNum = 22,
+                                    SizeCode = "146",
+                                    Price = 333,
+                                    SalePrice = 33.3
+                                },
+                            new ProductSize()
+                                {
+                                    Alias = "L",
+                                    AvlNum = 33,
+                                    SizeCode = "148",
+                                    Price = 444,
+                                    SalePrice = 44.4
+                                }
+                        }
+                };
+
+            #region size
+
+            #endregion
+
+            pcList.Add(pc);
+
+            pc = new ProductColor();
+            pc.ColorCode = "80";
+            pc.ImgUrl = "http://www.baidu1.com";
+            pc.MapProps = "abc12";
+            pc.Title = "fooTitl123";
+
+            #region size
+
+            pc.SizeList = new List<ProductSize>();
+            pc.SizeList.Add(new ProductSize()
+            {
+                Alias = "S",
+                AvlNum = 11,
+                SizeCode = "144",
+                Price = 111,
+                SalePrice = 11
+            });
+            pc.SizeList.Add(new ProductSize()
+            {
+                Alias = "M",
+                AvlNum = 22,
+                SizeCode = "146",
+                Price = 222,
+                SalePrice = 22
+            });
+            pc.SizeList.Add(new ProductSize()
+            {
+                Alias = "L",
+                AvlNum = 33,
+                SizeCode = "148",
+                Price = 333,
+                SalePrice = 33
+            });
+
+            #endregion
+             
+            pcList.Add(pc);
+
+            return pcList; 
+        }
+         
+        #endregion
+
+
+        #endregion
 
         #region Private Methods
 

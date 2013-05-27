@@ -23,7 +23,7 @@ using RestSharp;
 namespace MyTools.TaoBao.UnitTest
 {
     [TestFixture]
-    public class PublishGoodsTestClass
+    public class PgTestClass
     {
         /// <summary>
         ///     为每个Test方法创建资源

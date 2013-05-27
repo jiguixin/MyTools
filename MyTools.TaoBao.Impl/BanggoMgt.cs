@@ -20,6 +20,7 @@ using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.Framework.Common;
 using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
@@ -277,10 +278,16 @@ namespace MyTools.TaoBao.Impl
             var request = new BanggoRequestModel() { GoodsSn = ResolveProductUrl(productUrl), Referer = productUrl };
 
             var lstProductColor = GetProductColorByOnline(request);
-              
-            JObject json = new JObject(lstProductColor);
 
-            //todo 将对象转换为JSON
+            var settings = new JsonSerializerSettings();
+
+            string result = JsonConvert.SerializeObject(lstProductColor, Formatting.Indented, settings);//需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。
+
+
+            //转回为对象
+            var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
+
+            //todo 创建EXCEL表格,SKU内容用JSON格式
 
 /*
             string sheelName = "";
