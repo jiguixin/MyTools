@@ -41,7 +41,14 @@ namespace MyTools.TaoBao.Interface
         /// </summary>
         /// <param name="url">产品的URL</param>
         /// <returns></returns>
-        string ResolveProductUrl(string url);
+        string ResolveProductUrlRetGoodsSn(string url);
+
+        /// <summary>
+        /// 解析产品的URL 得到品牌
+        /// </summary>
+        /// <param name="url">产品的URL</param>
+        /// <returns></returns>
+        string ResolveProductUrlRetBrand(string url);
          
         /// <summary>
         /// 得到产品的颜色和大小数据，通过在线读取
@@ -54,9 +61,20 @@ namespace MyTools.TaoBao.Interface
         /// <summary>
         /// 将该产品的SKU数据导出为EXCEL
         /// </summary>
-        /// <param name="fileName"></param>
         /// <param name="productUrl"></param>
-        void ExportProductColorForExcel(string fileName, string productUrl);
+        List<ProductColor> ExportProductColorForExcel(string productUrl);
 
+        /// <summary>
+        /// 将多个产品的SKU数据导出为EXCEL
+        /// </summary>
+        /// <param name="productUrls"></param>
+        void ExportProductColorsForExcel(params string[] productUrls);
+
+        /// <summary>
+        /// 通过款号搜索得到该产品的URL
+        /// </summary>
+        /// <param name="goodsSn">款号</param>
+        /// <returns></returns>
+        string GetGoodsUrl(string goodsSn);
     }
 }

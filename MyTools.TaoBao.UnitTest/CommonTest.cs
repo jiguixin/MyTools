@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using System.Text;
 using System.Text.RegularExpressions;
 using Infrastructure.Crosscutting.Utility;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
@@ -286,6 +287,18 @@ namespace MyTools.TaoBao.UnitTest
             return false;
         }
 
+        [Test]
+        public void StringBuilderTest()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 10; i++)
+            {
+                sb.AppendLine("test:{0}".StringFormat(i));
+            }
+            Console.WriteLine(sb.ToString().TrimEnd('\n'));
+
+
+        }
         #endregion
 
         #region Json Net Demo
@@ -336,24 +349,24 @@ namespace MyTools.TaoBao.UnitTest
                                     Alias = "S",
                                     AvlNum = 11,
                                     SizeCode = "144",
-                                    Price = 222,
-                                    SalePrice = 34.3
+                                    MySalePrice = 222,
+                                    MarketPrice = 34.3
                                 },
                             new ProductSize()
                                 {
                                     Alias = "M",
                                     AvlNum = 22,
                                     SizeCode = "146",
-                                    Price = 333,
-                                    SalePrice = 33.3
+                                    MySalePrice = 333,
+                                    MarketPrice = 33.3
                                 },
                             new ProductSize()
                                 {
                                     Alias = "L",
                                     AvlNum = 33,
                                     SizeCode = "148",
-                                    Price = 444,
-                                    SalePrice = 44.4
+                                    MySalePrice = 444,
+                                    MarketPrice = 44.4
                                 }
                         }
                 };
@@ -378,24 +391,24 @@ namespace MyTools.TaoBao.UnitTest
                 Alias = "S",
                 AvlNum = 11,
                 SizeCode = "144",
-                Price = 111,
-                SalePrice = 11
+                MySalePrice = 111,
+                MarketPrice = 11
             });
             pc.SizeList.Add(new ProductSize()
             {
                 Alias = "M",
                 AvlNum = 22,
                 SizeCode = "146",
-                Price = 222,
-                SalePrice = 22
+                MySalePrice = 222,
+                MarketPrice = 22
             });
             pc.SizeList.Add(new ProductSize()
             {
                 Alias = "L",
                 AvlNum = 33,
                 SizeCode = "148",
-                Price = 333,
-                SalePrice = 33
+                MySalePrice = 333,
+                MarketPrice = 33
             });
 
             #endregion

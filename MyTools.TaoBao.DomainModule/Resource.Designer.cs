@@ -70,6 +70,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 产入的Url无效 的本地化字符串。
+        /// </summary>
+        public static string Exception_UrlInvalid {
+            get {
+                return ResourceManager.GetString("Exception_UrlInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 通过该XPATH没有获取到正确的数据,{0} 的本地化字符串。
         /// </summary>
         public static string Exception_XPathGetDataError {
@@ -268,6 +277,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 market_price 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_GetMarketPriceId {
+            get {
+                return ResourceManager.GetString("SysConfig_GetMarketPriceId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 div[@class=&apos;goods_price&apos;]/del 的本地化字符串。
         /// </summary>
         public static string SysConfig_GetMarketPriceXPath {
@@ -417,6 +435,15 @@ namespace MyTools.TaoBao.DomainModule {
         public static string SysConfig_SizeListId {
             get {
                 return ResourceManager.GetString("SysConfig_SizeListId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Sku 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_Sku {
+            get {
+                return ResourceManager.GetString("SysConfig_Sku", resourceCulture);
             }
         }
     }

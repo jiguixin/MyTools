@@ -32,14 +32,14 @@ namespace MyTools.TaoBao.DomainModule
         public int AvlNum { get; set; }
 
         /// <summary>
-        /// 售价
+        /// 市场价
         /// </summary>
-        public double SalePrice { get; set; }
+        public double MarketPrice { get; set; }
 
         /// <summary>
         /// 我的售价
         /// </summary>
-        public double Price { get; set; }
+        public double MySalePrice { get; set; }
 
         #endregion
 

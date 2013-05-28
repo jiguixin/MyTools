@@ -78,7 +78,14 @@ namespace MyTools.TaoBao.UnitTest
         public void BanggoMgt_ResolveProductUrl()
         {
             var mgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
-            Console.WriteLine(mgt.ResolveProductUrl("http://235589metersbonwe.banggo.com/Goods/238395.shtml"));
+            Console.WriteLine(mgt.ResolveProductUrlRetGoodsSn("http://235589metersbonwe.banggo.com/Goods/238395.shtml"));
+        }
+
+        [Test]
+        public void GetGoodsUrl_Test()
+        {
+            var mgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
+            Console.WriteLine(mgt.GetGoodsUrl("510957"));
         }
 
         [Test]
@@ -159,11 +166,9 @@ namespace MyTools.TaoBao.UnitTest
 
         [Test]
         public void ExportProductColorForExcelTest()
-        {
-
+        { 
             var mgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
-            mgt.ExportProductColorForExcel("ad", "http://metersbonwe.banggo.com/Goods/207707.shtml");
-
+            mgt.ExportProductColorsForExcel("http://me-city.banggo.com/Goods/510960.shtml", "http://metersbonwe.banggo.com/Goods/207707.shtml","http://metersbonwe.banggo.com/Goods/254010.shtml"); 
         }
 
         [Test]
@@ -196,9 +201,22 @@ namespace MyTools.TaoBao.UnitTest
         public void GetAnalysisPriceTest()
         {
             var client = InstanceLocator.Current.GetInstance<IAnalysis>();
-            client.ExportRivalGoodsInfo("ME CITY 510957",199,139);
+            client.ExportRivalGoodsInfo("me city 510957", 249, 174);
+             
+            //client.ExportRivalGoodsInfo("me city 510960", 249, 174);
+            //client.ExportRivalGoodsInfo("metersbonwe 207707", 179, 125);
+            //client.ExportRivalGoodsInfo("metersbonwe 254010", 199, 139);
 
         }
+
+        [Test]
+        public void ExportBanggoAndTaobaoGoodsInfoTest()
+        {
+            var client = InstanceLocator.Current.GetInstance<IAnalysis>();
+            client.ExportBanggoAndTaobaoGoodsInfo("http://me-city.banggo.com/Goods/510957.shtml");
+            
+        }
+         
 
         #endregion
     }

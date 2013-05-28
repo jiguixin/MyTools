@@ -35,9 +35,14 @@ namespace MyTools.TaoBao.DomainModule
         public List<ProductSize> SizeList;
 
         /// <summary>
-        /// 对应的props属性值
+        /// 对应淘宝的props属性值
         /// </summary>
         public string MapProps { get; set; }
+
+        /// <summary>
+        /// 该颜色下库存
+        /// </summary>
+        public int AvlNumForColor { get; set; }
 
         #endregion
 

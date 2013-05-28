@@ -38,5 +38,11 @@ namespace MyTools.TaoBao.Interface
         /// <param name="marketPrice">该产品的市场价</param>
         /// <param name="salePrice">我的售价</param>
         void ExportRivalGoodsInfo(string query, double marketPrice = 0, double salePrice = 0);
+
+        /// <summary>
+        /// 导出该产品banggo的数据及淘宝竞争对手的数据，并生成EXCEL
+        /// </summary>
+        /// <param name="goodsUrl">产品URL</param>
+        void ExportBanggoAndTaobaoGoodsInfo(string goodsUrl);
     }
 }

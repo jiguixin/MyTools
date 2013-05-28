@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using HtmlAgilityPack;
+using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.Framework.Common;
 using MyTools.TaoBao.DomainModule;
@@ -31,7 +32,8 @@ namespace MyTools.TaoBao.Impl
         #region Members
 
         private static StringBuilder sbRivalSkuData = new StringBuilder();
-
+        IBanggoMgt _mgtBanggo = InstanceLocator.Current.GetInstance<IBanggoMgt>();
+         
         #endregion
  
         #region Constructor
@@ -51,7 +53,29 @@ namespace MyTools.TaoBao.Impl
 
             return 0;
         }
-       
+
+        /// <summary>
+        /// 导出该产品banggo的数据及淘宝竞争对手的数据，并生成EXCEL
+        /// </summary>
+        /// <param name="goodsUrl">产品URL</param>
+        public void ExportBanggoAndTaobaoGoodsInfo(string goodsUrl)
+        {
+           var lstProductColor = _mgtBanggo.ExportProductColorForExcel(goodsUrl);
+
+            string brand = _mgtBanggo.ResolveProductUrlRetBrand(goodsUrl);
+
+            string goodsSn = _mgtBanggo.ResolveProductUrlRetGoodsSn(goodsUrl);
+
+            if (lstProductColor != null && lstProductColor.Count > 0 && lstProductColor[0].SizeList.Count > 0)
+            {
+                var productSize = lstProductColor[0].SizeList[0];
+                ExportRivalGoodsInfo("{0} {1}".StringFormat(brand, goodsSn), productSize.MarketPrice, productSize.MySalePrice);
+            }
+
+
+//            ExportRivalGoodsInfo();
+        }
+
         // 导出竞争对手的产品信息
         /// <summary>
         /// 导出竞争对手的产品信息
@@ -71,7 +95,7 @@ namespace MyTools.TaoBao.Impl
 
             itemBoxs.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
 
-            //            string sheetName = "价格数据{0}".StringFormat(DateTime.Now.ToString("HHmm"));
+            // string sheetName = "价格数据{0}".StringFormat(DateTime.Now.ToString("HHmm"));
             string sheetName = "价格数据{0}".StringFormat("");
 
             var excel = CreateExcelForRivalPrice(sheetName);
@@ -90,10 +114,12 @@ namespace MyTools.TaoBao.Impl
                     drNew["成本价"] = (marketPrice * SysConst.CostRatio).ToInt32() + SysConst.CostExtraPrice;
                 }
                 drNew["售价"] = salePrice;
+                drNew["利润"] = drNew["售价"].ToDouble() - drNew["成本价"].ToDouble();
                 excel.AddNewRow(drNew);
             }
         }
          
+
         #endregion
 
         #region Private Methods
@@ -132,92 +158,121 @@ namespace MyTools.TaoBao.Impl
 
             #endregion
 
-            //如果有销售情况，就提取他的销售详情
-            if (salesVolume > 0)
+            ////如果有销售情况，就提取他的销售详情
+            //if (salesVolume > 0)
+            //{
+            var saleDetail = SysUtils.GetHtmlDocumentByHttpGet(url);
+
+            #region 获取SKU数据
+
+            dr["SKU"] = "";
+            dr["成交记录"] = "";
+
+            sbRivalSkuData.Clear();
+
+            var nodeStock = saleDetail.DocumentNode.SelectSingleNode("//*[@id=\"J_SpanStock\"]");
+
+            if (nodeStock != null)
             {
-                var saleDetail = SysUtils.GetHtmlDocumentByHttpGet(url);
-
-                #region 获取SKU数据
-
-                sbRivalSkuData.Clear();
-
-                var nodeColors = saleDetail.DocumentNode.SelectNodes("//*[@id=\"J_isku\"]/div/dl[2]/dd/ul/li");
-                if (nodeColors != null)
-                {
-                    foreach (var nColor in nodeColors)
-                    {
-                        var color =
-                            "颜色:{0}".StringFormat(nColor.InnerText.Trim().Replace("已选中", "").Replace("\\t", "").Replace("\\r\\n", "").Trim());
-                        if (!color.IsNullOrEmpty())
-                            sbRivalSkuData.AppendLine(color);
-                    }
-                }
-
-                var nodeSizes = saleDetail.DocumentNode.SelectNodes("//*[@id=\"J_isku\"]/div/dl[1]/dd/ul/li");
-                if (nodeSizes != null)
-                {
-                    foreach (var nSize in nodeSizes)
-                    {
-                        var size =
-                            "尺码:{0}".StringFormat(
-                                nSize.InnerText.Trim().Replace("已选中", "").Replace("\\t", "").Replace("\\r\\n", "").Trim());
-                        if (!size.IsNullOrEmpty())
-                            sbRivalSkuData.AppendLine(size);
-                    }
-                }
-
-                var nodeStock = saleDetail.DocumentNode.SelectSingleNode("//*[@id=\"J_SpanStock\"]");
-
-                if (nodeStock != null)
-                {
-                    sbRivalSkuData.AppendLine("库存:{0}".StringFormat(nodeStock.InnerText));
-                }
-
-                dr["SKU"] = sbRivalSkuData.ToString();
-
-                sbRivalSkuData.Clear();
-
-                #endregion
-
-
-                #region 提取详细销售记录数据
-
-                var saleRecordUrl =
-                    saleDetail.GetElementbyId("J_listBuyerOnView").Attributes["detail:params"].Value.Replace(
-                        ",showBuyerList", "&t={0}&callback=Hub.data.records_reload".StringFormat(DateTime.Now.Ticks));
-
-                var saleDetailHtml =
-                    SysUtils.GetHtmlByHttpGet(saleRecordUrl)
-                            .Trim()
-                            .Replace("Hub.data.records_reload(", "")
-                            .TrimEnd(')');
-
-                if (saleDetailHtml.StartsWith("{html:"))
-                {
-                    JObject jObj = JObject.Parse(saleDetailHtml);
-
-                    saleDetail.LoadHtml(jObj.SelectToken("html").Value<string>());
-
-                    var nodes =
-                        saleDetail.DocumentNode.SelectNodes("/table/tbody/tr");
-                    var sbContent = new StringBuilder();
-
-                    foreach (var node in nodes)
-                    {
-                        sbContent.AppendLine(XmlHelper.XmlDecode(node.InnerText.Trim()));
-                    }
-
-                    dr["成交记录"] = sbContent.ToString();
-                }
-
-                #endregion
+                sbRivalSkuData.AppendLine("库存:{0}；".StringFormat(nodeStock.InnerText));
             }
+
+            var nodeColors = saleDetail.DocumentNode.SelectNodes("//*[@id=\"J_isku\"]/div/dl[2]/dd/ul/li");
+            if (nodeColors != null)
+            {
+                foreach (var nColor in nodeColors)
+                {
+                    var color =
+                        "颜色:{0}；".StringFormat(
+                            nColor.InnerText.Trim()
+                                  .Replace("已选中", "")
+                                  .Replace("\\t", "")
+                                  .Replace("\\r\\n", "")
+                                  .Trim());
+                    if (!color.IsNullOrEmpty())
+                        sbRivalSkuData.AppendLine(color);
+                }
+            }
+
+            var nodeSizes = saleDetail.DocumentNode.SelectNodes("//*[@id=\"J_isku\"]/div/dl[1]/dd/ul/li");
+            if (nodeSizes != null)
+            {
+                foreach (var nSize in nodeSizes)
+                {
+                    var size =
+                        "尺码:{0}；".StringFormat(
+                            nSize.InnerText.Trim()
+                                 .Replace("已选中", "")
+                                 .Replace("\\t", "")
+                                 .Replace("\\r\\n", "")
+                                 .Trim());
+                    if (!size.IsNullOrEmpty())
+                        sbRivalSkuData.AppendLine(size);
+                }
+            }
+
+
+            dr["SKU"] = TextHelper.TrimEndLf(sbRivalSkuData.ToString());
+
+            sbRivalSkuData.Clear();
+
+            #endregion
+
+
+            #region 提取详细销售记录数据
+
+        /*可以提取数量和邮费等信息
+         * http://ajax.tbcdn.cn/json/ifq.htm?id=20651779110&sid=820330575&sbn=fe93d967b0bacbda0f41f3eb67d4c0f4&p=1&al=false&ap=1&ss=0&free=0&q=1&ex=0&exs=0&shid=&at=b&ct=1*/
+
+            var saleRecordUrl =
+                saleDetail.GetElementbyId("J_listBuyerOnView").Attributes["detail:params"].Value.Replace(
+                    ",showBuyerList", "&t={0}&callback=Hub.data.records_reload".StringFormat(DateTime.Now.Ticks));
+
+            var saleDetailHtml =
+                SysUtils.GetHtmlByHttpGet(saleRecordUrl)
+                        .Trim()
+                        .Replace("Hub.data.records_reload(", "")
+                        .TrimEnd(')');
+
+            if (saleDetailHtml.StartsWith("{html:"))
+            {
+                JObject jObj = JObject.Parse(saleDetailHtml);
+
+                saleDetail.LoadHtml(jObj.SelectToken("html").Value<string>());
+
+                var nodes =
+                    saleDetail.DocumentNode.SelectNodes("/table/tbody/tr");
+
+                if (nodes == null)
+                    return;
+
+                var sbContent = new StringBuilder();
+
+                foreach (var node in nodes)
+                {
+                    sbContent.AppendLine(XmlHelper.XmlDecode(node.InnerText.Trim()));
+                }
+
+                dr["成交记录"] = TextHelper.TrimEndLf(sbContent.ToString());
+            }
+
+            #endregion
+
+            //}
+            //else
+            //{
+            //    dr["SKU"] = "";
+
+            //    dr["成交记录"] = "";
+            //}
         }
 
         //创建ExcelHelper
         private static ExcelHelper CreateExcelForRivalPrice(string sheetName)
-        {
-            string filePath = @"{0} 分析.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd"));
+        { 
+            FileHelper.CreateDirectory("Sku");
+
+            string filePath = @"Sku\{0} 分析淘宝.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd"));
 
             var excel = new ExcelHelper(filePath);
             excel.Imex = "0";
@@ -230,20 +285,20 @@ namespace MyTools.TaoBao.Impl
                     return excel;
                 }
             }
-
-
+             
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add("款号", "varchar(255)");
-            dic.Add("成本价", "varchar(255)");
-            dic.Add("售价", "varchar(255)");
-            dic.Add("标题", "varchar(255)");
-            dic.Add("价格", "varchar(255)");
-            dic.Add("邮费", "varchar(255)");
-            dic.Add("总价", "varchar(255)");
-            dic.Add("销量", "varchar(255)");
-            dic.Add("评价数", "varchar(255)");
+            dic.Add("款号", "double");
+            dic.Add("售价", "double");
+            dic.Add("成本价", "double");
+            dic.Add("利润", "double");
+            dic.Add("价格", "double");
+            dic.Add("邮费", "double");
+            dic.Add("总价", "double");
+            dic.Add("销量", "double");
+            dic.Add("评价数", "double");
             dic.Add("用户名", "varchar(255)");
-            dic.Add("地点", "varchar(255)");
+            dic.Add("地点", "varchar(255)"); 
+            dic.Add("标题", "varchar(255)");
             dic.Add("网址", "varchar(255)");
             dic.Add("SKU", "varchar(255)");
             dic.Add("成交记录", "text");
@@ -251,8 +306,7 @@ namespace MyTools.TaoBao.Impl
             excel.WriteTable(sheetName, dic);
             return excel;
         }
-
-
+          
         #endregion
 
     }

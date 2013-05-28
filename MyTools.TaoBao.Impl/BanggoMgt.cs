@@ -9,8 +9,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,7 +30,13 @@ namespace MyTools.TaoBao.Impl
 {
     public class BanggoMgt : IBanggoMgt
     {
+        #region Var
+         
         private StringBuilder sbDesc = new StringBuilder();
+         
+        #endregion
+
+        #region Public Method
 
         /// <summary>
         ///     得到单个产品信息
@@ -176,31 +184,7 @@ namespace MyTools.TaoBao.Impl
 
             #endregion
         }
-
-        //读取Desc数据，因为有些产品描述的Id是productinfo_div
-        private static string GetProductDesc(BanggoRequestModel requestModel, HtmlNodeCollection imgNodes,
-                                             HtmlDocument doc, string detailId)
-        {
-            string desc;
-            foreach (HtmlNode imgNode in imgNodes)
-            {
-                imgNode.SetAttributeValue("src", imgNode.GetAttributeValue("original", ""));
-            }
-
-            var desNode = doc.GetElementbyId(detailId);
-
-            if (desNode != null)
-            {
-                desc = desNode.OuterHtml;
-            }
-            else
-            {
-                desc = "详情到：" + requestModel.Referer;
-            }
-            return desc;
-        }
-
-
+         
         /// <summary>
         ///     得到可售商品Sku
         /// </summary>
@@ -234,8 +218,10 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="url">产品的URL</param>
         /// <returns></returns>
-        public string ResolveProductUrl(string url)
+        public string ResolveProductUrlRetGoodsSn(string url)
         {
+            CheckGoodsUrl(url);
+
             var r = new Regex(Resource.SysConfig_GetGoodsSnByUrlRegex, RegexOptions.Multiline);
             MatchCollection m = r.Matches(url);
 
@@ -248,6 +234,18 @@ namespace MyTools.TaoBao.Impl
                 return value;
             }
             return null;
+        }
+
+        /// <summary>
+        /// 解析产品的URL 得到品牌
+        /// </summary>
+        /// <param name="url">产品的URL</param>
+        /// <returns></returns>
+        public string ResolveProductUrlRetBrand(string url)
+        {
+            CheckGoodsUrl(url);
+
+            return url.Replace(@"http://", "").Split('.')[0]; 
         }
 
         /// <summary>
@@ -271,42 +269,134 @@ namespace MyTools.TaoBao.Impl
             return GetProductColorByOnline(requestModel, doc);
         }
 
-        public void ExportProductColorForExcel(string fileName, string productUrl)
+        /// <summary>
+        /// 将该产品的SKU数据导出为EXCEL
+        /// </summary>
+        /// <param name="productUrl"></param>
+        public List<ProductColor> ExportProductColorForExcel(string productUrl)
         {
-            if (fileName.IsNullOrEmpty() || productUrl.IsNullOrEmpty())
+            if (productUrl.IsNullOrEmpty())
                 throw new Exception(Resource.Exception_NotFoundAuthorizedCode.StringFormat(new StackTrace()));
-            var request = new BanggoRequestModel() { GoodsSn = ResolveProductUrl(productUrl), Referer = productUrl };
+            //const 
+            string sheetName = Resource.SysConfig_Sku;
+
+            var excel = CreateExcelForBanggoSku(sheetName);
+
+            DataTable dt = excel.ReadTable(sheetName);
+
+            string goodsSn = ResolveProductUrlRetGoodsSn(productUrl);
+
+            var request = new BanggoRequestModel {GoodsSn = goodsSn, Referer = productUrl};
 
             var lstProductColor = GetProductColorByOnline(request);
 
             var settings = new JsonSerializerSettings();
 
-            string result = JsonConvert.SerializeObject(lstProductColor, Formatting.Indented, settings);//需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。
-
-
+            string result = JsonConvert.SerializeObject(lstProductColor, Formatting.Indented, settings);
+            //需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。 
             //转回为对象
-            var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
+            //var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
 
-            //todo 创建EXCEL表格,SKU内容用JSON格式
+            DataRow drNew = dt.NewRow();
 
-/*
-            string sheelName = "";
+            drNew["产品地址"] = productUrl;
+            drNew["款号"] = goodsSn;
+            drNew["SKU"] = result;
+            drNew["库存"] = lstProductColor.Sum(productColor => productColor.AvlNumForColor);
 
-            ExcelHelper excel = CreateExcelForBanggoSku(sheelName);
-           */
-             
+            excel.AddNewRow(drNew);
 
-
-            throw new NotImplementedException();
+            return lstProductColor;
         }
 
+        /// <summary>
+        /// 将多个产品的SKU数据导出为EXCEL
+        /// </summary>
+        /// <param name="productUrls"></param>
+        public void ExportProductColorsForExcel(params string[] productUrls)
+        {
+            if (productUrls.IsNullOrEmpty())
+                throw new Exception(Resource.Exception_NotFoundAuthorizedCode.StringFormat(new StackTrace()));
+            string sheetName = Resource.SysConfig_Sku;
+
+            var excel = CreateExcelForBanggoSku(sheetName);
+
+            DataTable dt = excel.ReadTable(sheetName);
+
+            foreach (var productUrl in productUrls)
+            {
+                string goodsSn = ResolveProductUrlRetGoodsSn(productUrl);
+
+                var request = new BanggoRequestModel { GoodsSn = goodsSn, Referer = productUrl };
+
+                var lstProductColor = GetProductColorByOnline(request);
+
+                var settings = new JsonSerializerSettings();
+
+                string result = JsonConvert.SerializeObject(lstProductColor, Formatting.Indented, settings);
+                //需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。 
+                //转回为对象
+                //var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
+                  
+                DataRow drNew = dt.NewRow();
+
+                drNew["产品地址"] = productUrl;
+                drNew["款号"] = goodsSn;
+                drNew["SKU"] = result;
+                drNew["库存"] = lstProductColor.Sum(productColor => productColor.AvlNumForColor);
+                 
+                excel.AddNewRow(drNew);
+            }
+        }
+
+        /// <summary>
+        /// 通过款号搜索得到该产品的URL
+        /// </summary>
+        /// <param name="goodsSn">款号</param>
+        /// <returns></returns>
+        public string GetGoodsUrl(string goodsSn)
+        {
+            string searchUrl = "http://search.banggo.com/Search/a_a.shtml?clickType=1&word={0}";
+
+            var htmlDocument = new HtmlDocument();
+             
+            string result = HttpHelper.GETDataToUrl(searchUrl.StringFormat(goodsSn), Encoding.UTF8); ;
+
+            htmlDocument.LoadHtml(result);
+
+            var searchResultNode =
+                htmlDocument.DocumentNode.SelectSingleNode("/html/body/div[@class='wrapper']/div[@class='contentWrapper']/div[@id='content']/div[@class='search_list ']/ul/li/a");
+
+            searchResultNode.ThrowIfNull(
+                Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+
+            return searchResultNode.Attributes["href"].Value.Trim();
+
+        }
+
+        #endregion
+
+        #region helper
+
+        //检查产品的URL是否正确
+        private static void CheckGoodsUrl(string url)
+        {
+            url.ThrowIfNullOrEmpty(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+
+            if (!url.IsValidateUrl())
+            {
+                throw new Exception(Resource.Exception_UrlInvalid);
+            }
+        }
+         
+        //创建ExcelHelper 该EXCEL是用于存放SKU数据
         private ExcelHelper CreateExcelForBanggoSku(string sheetName)
         {
-            string filePath = @"{0} banggo.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd"));
+            FileHelper.CreateDirectory(Resource.SysConfig_Sku); 
 
-            var excel = new ExcelHelper(filePath);
-            excel.Imex = "0";
-            excel.Hdr = "YES";
+            string filePath = @"Sku\{0} banggoSku.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd"));
+
+            var excel = new ExcelHelper(filePath) { Imex = "0", Hdr = "YES" };
 
             if (File.Exists(filePath))
             {
@@ -315,20 +405,19 @@ namespace MyTools.TaoBao.Impl
                     return excel;
                 }
             }
-            var dic = new Dictionary<string, string>();
-            dic.Add("售价", "varchar(255)"); 
-            dic.Add("颜色名字", "varchar(255)");
-            dic.Add("色码", "varchar(255)");
-            dic.Add("图片地址", "varchar(255)");
-            dic.Add("属性值", "varchar(255)");
-            dic.Add("尺码", "varchar(255)");
-            
+            var dic = new Dictionary<string, string>
+                {
+                    {"产品地址", "varchar(255)"},
+                    {"款号", "Double"},
+                    {"售价", "Double"},
+                    {"库存","Double"},
+                    {"SKU", "text"}
+                };
+
             excel.WriteTable(sheetName, dic);
             return excel;
         }
-
-        #region helper
-
+         
         //得到Price/getGoodsPrice(获得该商品的价格、颜色)的响应内容
         private static string GetGoodsPriceAndColorContent(BanggoRequestModel requestModel)
         {
@@ -405,9 +494,10 @@ namespace MyTools.TaoBao.Impl
                         {
                             Alias = sName,
                             SizeCode = sCode,
-                            SalePrice = goodsInfo.SelectToken(Resource.SysConfig_GetSalePriceId).Value<double>(),
-                            Price =
-                                (goodsInfo.SelectToken("market_price").Value<double>()*SysConst.DiscountRatio)
+                            //此处提取市场价，在将导出EXCEL时，需要根据市场价来进行分析，因为分析banggo的市场价无意义
+                            MarketPrice = goodsInfo.SelectToken(Resource.SysConfig_GetMarketPriceId).Value<double>(),
+                            MySalePrice =
+                                (goodsInfo.SelectToken(Resource.SysConfig_GetMarketPriceId).Value<double>()*SysConst.DiscountRatio)
                                       .ToInt32(),
                             AvlNum = avlNum
                         });
@@ -464,6 +554,30 @@ namespace MyTools.TaoBao.Impl
             return response.Content;
         }
 
+
+        //读取Desc数据，因为有些产品描述的Id是productinfo_div
+        private static string GetProductDesc(BanggoRequestModel requestModel, HtmlNodeCollection imgNodes,
+                                             HtmlDocument doc, string detailId)
+        {
+            string desc;
+            foreach (HtmlNode imgNode in imgNodes)
+            {
+                imgNode.SetAttributeValue("src", imgNode.GetAttributeValue("original", ""));
+            }
+
+            var desNode = doc.GetElementbyId(detailId);
+
+            if (desNode != null)
+            {
+                desc = desNode.OuterHtml;
+            }
+            else
+            {
+                desc = "详情到：" + requestModel.Referer;
+            }
+            return desc;
+        }
+
         //得到该颜色下和该大小下的库存大小
         private int GetAvlNum(BanggoRequestModel requestModel)
         {
@@ -493,14 +607,7 @@ namespace MyTools.TaoBao.Impl
             sizes.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                 new StackTrace()));
 
-            var bSizeToTSize = new Dictionary<string, string>();
-
-            foreach (HtmlNode sizeNode in sizes)
-            {
-                bSizeToTSize.Add(sizeNode.InnerText.Trim(), null);
-            }
-
-            return bSizeToTSize;
+            return sizes.ToDictionary<HtmlNode, string, string>(sizeNode => sizeNode.InnerText.Trim(), sizeNode => null);
         }
 
 
@@ -570,8 +677,14 @@ namespace MyTools.TaoBao.Impl
 
                 ProductColor productColor = CreateProductColor(colorInfo);
 
-                requestModel.ColorCode = productColor.ColorCode;
+                requestModel.ColorCode = productColor.ColorCode; 
                 productColor.SizeList = GetAvailableSize(requestModel);
+                
+                foreach (var size in productColor.SizeList)
+                {
+                    productColor.AvlNumForColor += size.AvlNum;
+                }
+
                 colorList.Add(productColor);
             }
 

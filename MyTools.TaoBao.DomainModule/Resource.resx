@@ -276,4 +276,16 @@
     <value>该商品已经存在不能再上传 by {0}</value>
     <comment>该商品已经存在不能再上传 </comment>
   </data>
+  <data name="Exception_UrlInvalid" xml:space="preserve">
+    <value>产入的Url无效</value>
+    <comment>URL 无效</comment>
+  </data>
+  <data name="SysConfig_GetMarketPriceId" xml:space="preserve">
+    <value>market_price</value>
+    <comment>banggo 市场的ID</comment>
+  </data>
+  <data name="SysConfig_Sku" xml:space="preserve">
+    <value>Sku</value>
+    <comment>SKU 名字常量</comment>
+  </data>
 </root>

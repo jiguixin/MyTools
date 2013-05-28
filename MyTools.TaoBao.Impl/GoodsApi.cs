@@ -87,7 +87,7 @@ namespace MyTools.TaoBao.Impl
         /// <returns></returns>
         public Item PublishGoodsForBanggoToTaobao(string banggoProductUrl)
         {
-            string goodsSn = _banggoMgt.ResolveProductUrl(banggoProductUrl);
+            string goodsSn = _banggoMgt.ResolveProductUrlRetGoodsSn(banggoProductUrl);
 
             goodsSn.ThrowIfNullOrEmpty(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
             
@@ -363,6 +363,8 @@ namespace MyTools.TaoBao.Impl
 
                 _dicColorMap.Add(bColor.ColorCode, pColor);
 
+                num += bColor.AvlNumForColor;
+
                 sbSkuToProps.AppendFormat("{0}{1}", pColor, CommomConst.SEMI);
                 lstSkuAlias.Add("{0}{1}{2}({3}色){4}".StringFormat(pColor, CommomConst.COLON, bColor.Title,
                                               bColor.ColorCode,
@@ -372,6 +374,8 @@ namespace MyTools.TaoBao.Impl
                 int sizeCount = bColor.SizeList.Count;
                 for (int j = 0; j < sizeCount; j++)
                 {
+                    #region 构造尺码
+                    
                     ProductSize bSize = bColor.SizeList[j];
                     string pSize;
                     if (!bProduct.BSizeToTSize.TryGetValue(bSize.Alias, out pSize))
@@ -397,12 +401,14 @@ namespace MyTools.TaoBao.Impl
                                                       bSize.SizeCode, CommomConst.SEMI));
 
                     lstSkuQuantities.Add(bSize.AvlNum.ToString(CultureInfo.InvariantCulture));
-                    num += bSize.AvlNum;
+                    //num += bSize.AvlNum; 通过在颜色中去读取有效库存
 
                     if (bProduct.Price.IsNullOrEmpty())
-                        bProduct.Price = bSize.Price.ToString(CultureInfo.InvariantCulture);
+                        bProduct.Price = bSize.MySalePrice.ToString(CultureInfo.InvariantCulture);
 
-                    lstSkuPrices.Add(bSize.Price.ToString(CultureInfo.InvariantCulture));
+                    lstSkuPrices.Add(bSize.MySalePrice.ToString(CultureInfo.InvariantCulture));
+
+                    #endregion
                 }
             }
 
