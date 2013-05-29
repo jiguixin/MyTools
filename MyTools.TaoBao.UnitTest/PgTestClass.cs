@@ -59,6 +59,8 @@ namespace MyTools.TaoBao.UnitTest
         {
         }
 
+        #region BanggoMgt
+         
         [Test]
         public void BanggoMgt_GetGoodsInfo()
         {
@@ -136,7 +138,6 @@ namespace MyTools.TaoBao.UnitTest
             Console.WriteLine(response.Content);
         }
 
-
         [Test]
         public void GetBanggoDataByRest1()
         {
@@ -166,10 +167,31 @@ namespace MyTools.TaoBao.UnitTest
 
         [Test]
         public void ExportProductColorForExcelTest()
+        {
+            var mgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
+            mgt.ExportProductColorForExcel("http://me-city.banggo.com/Goods/510960.shtml");
+        }
+
+        [Test]
+        public void ExportProductColorsForExcelTest()
         { 
             var mgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
-            mgt.ExportProductColorsForExcel("http://me-city.banggo.com/Goods/510960.shtml", "http://metersbonwe.banggo.com/Goods/207707.shtml","http://metersbonwe.banggo.com/Goods/254010.shtml"); 
+            mgt.ExportProductColorsForExcel("http://me-city.banggo.com/Goods/510960.shtml", "http://metersbonwe.banggo.com/Goods/207707.shtml", "http://metersbonwe.banggo.com/Goods/238286.shtml"); 
         }
+
+        [Test]
+        public void GetProductColorByOnline_Test()
+        {
+            var mgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
+            mgt.GetProductColorByOnline(new BanggoRequestModel
+                {
+                    GoodsSn = "238286",
+                    Referer = "http://metersbonwe.banggo.com/Goods/238286.shtml"
+                });
+        }
+
+
+        #endregion
 
         [Test]
         public void GetSellerCid()

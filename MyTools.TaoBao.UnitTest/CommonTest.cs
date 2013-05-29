@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -234,8 +235,7 @@ namespace MyTools.TaoBao.UnitTest
             Console.WriteLine(s.GetNumberStr());
 
         }
-
-
+         
         [Test]
         public void CreateExcel()
         {
@@ -286,6 +286,46 @@ namespace MyTools.TaoBao.UnitTest
 
             return false;
         }
+
+        [Test]
+        public void GetExcel()
+        {
+            DataTable dt = ExcelHelper.GetExcelData(@"Sku\2013-05-29 banggoSku.xls", "Sku");
+
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                PublishGoods pg = new PublishGoods(dr);
+
+
+            }  
+        }
+
+
+        [Test]
+        public void ConvertType()
+        {
+            Console.WriteLine(CommonTest.FromType<string>(23.20));
+
+            object o = new object();
+
+            o.ToLong();
+
+        }
+
+
+        public static T FromType<T>(object text)
+        {
+            try
+            {
+                return (T)Convert.ChangeType(text, typeof(T), CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
+
 
         [Test]
         public void StringBuilderTest()
@@ -440,5 +480,36 @@ namespace MyTools.TaoBao.UnitTest
         }
 
         #endregion
+    }
+
+    public class PublishGoods
+    {
+        public PublishGoods(DataRow dr)
+        {
+            Url = Util.Get<string>(dr, "产品地址");
+            GoodsSn = Util.Get<string>(dr, "款号");
+            SalePrice = Util.Get<Double>(dr, "售价");
+            Stock = Util.Get<int>(dr, "库存");
+            string suk;
+            if ((suk = Util.Get<string>(dr, "SKU")) != null)
+            {
+                ProductColors = JsonConvert.DeserializeObject<List<ProductColor>>(suk);
+                foreach (var size in ProductColors.SelectMany(color => color.SizeList))
+                {
+                    size.MySalePrice = SalePrice;
+                }
+            } 
+
+            IsSoldOut = Util.Get<bool>(dr, "售完");
+
+           
+        }
+
+        public string Url { get; private set; }
+        public string GoodsSn { get; private set; }
+        public double SalePrice { get; private set; }
+        public int Stock { get; private set; }
+        public List<ProductColor> ProductColors { get; private set; }
+        public bool IsSoldOut { get; private set; } 
     }
 }

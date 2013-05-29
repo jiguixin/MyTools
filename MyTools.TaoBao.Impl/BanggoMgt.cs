@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -290,23 +291,39 @@ namespace MyTools.TaoBao.Impl
 
             var lstProductColor = GetProductColorByOnline(request);
 
-            var settings = new JsonSerializerSettings();
-
-            string result = JsonConvert.SerializeObject(lstProductColor, Formatting.Indented, settings);
-            //需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。 
-            //转回为对象
-            //var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
-
             DataRow drNew = dt.NewRow();
 
             drNew["产品地址"] = productUrl;
             drNew["款号"] = goodsSn;
-            drNew["SKU"] = result;
-            drNew["库存"] = lstProductColor.Sum(productColor => productColor.AvlNumForColor);
+            drNew["售价"] = 0;
 
+            CheckStock(lstProductColor, drNew);
+             
             excel.AddNewRow(drNew);
 
             return lstProductColor;
+        }
+
+        private static void CheckStock(List<ProductColor> lstProductColor, DataRow drNew)
+        {
+            if (!lstProductColor.IsNullOrEmpty())
+            {
+                var settings = new JsonSerializerSettings();
+
+                string result = JsonConvert.SerializeObject(lstProductColor, Formatting.Indented, settings);
+                //需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。 
+                //转回为对象
+                //var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
+
+                drNew["SKU"] = result;
+                drNew["库存"] = lstProductColor.Sum(productColor => productColor.AvlNumForColor);
+                drNew["售完"] = 0;
+            }
+            else
+            {
+                drNew["售完"] = 1;
+                drNew["库存"] = 0;
+            }
         }
 
         /// <summary>
@@ -330,20 +347,14 @@ namespace MyTools.TaoBao.Impl
                 var request = new BanggoRequestModel { GoodsSn = goodsSn, Referer = productUrl };
 
                 var lstProductColor = GetProductColorByOnline(request);
-
-                var settings = new JsonSerializerSettings();
-
-                string result = JsonConvert.SerializeObject(lstProductColor, Formatting.Indented, settings);
-                //需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。 
-                //转回为对象
-                //var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
                   
                 DataRow drNew = dt.NewRow();
 
                 drNew["产品地址"] = productUrl;
                 drNew["款号"] = goodsSn;
-                drNew["SKU"] = result;
-                drNew["库存"] = lstProductColor.Sum(productColor => productColor.AvlNumForColor);
+                drNew["售价"] = 0;
+
+                CheckStock(lstProductColor, drNew);
                  
                 excel.AddNewRow(drNew);
             }
@@ -411,7 +422,8 @@ namespace MyTools.TaoBao.Impl
                     {"款号", "Double"},
                     {"售价", "Double"},
                     {"库存","Double"},
-                    {"SKU", "text"}
+                    {"SKU", "text"},
+                    {"售完","Double"}
                 };
 
             excel.WriteTable(sheetName, dic);
@@ -660,13 +672,19 @@ namespace MyTools.TaoBao.Impl
         {
             HtmlNode htmlNodeColorList = doc.GetElementbyId(Resource.SysConfig_ColorListId);
 
+            if (htmlNodeColorList.IsNull())
+                return null;
+/*
             htmlNodeColorList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-                new StackTrace()));
+                new StackTrace()));*/
 
             HtmlNodeCollection colors = htmlNodeColorList.SelectNodes("li/a");
 
+            if (colors.IsNull())
+                return null;
+/*
             colors.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-                new StackTrace()));
+                new StackTrace()));*/
              
 
             var colorList = new List<ProductColor>();
