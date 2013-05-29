@@ -169,7 +169,7 @@ namespace MyTools.TaoBao.UnitTest
         public void ExportProductColorForExcelTest()
         {
             var mgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
-            mgt.ExportProductColorForExcel("http://me-city.banggo.com/Goods/510960.shtml");
+            mgt.ExportProductColorForExcel("http://metersbonwe.banggo.com/Goods/242591.shtml");
         }
 
         [Test]
@@ -217,6 +217,14 @@ namespace MyTools.TaoBao.UnitTest
             Console.WriteLine(parentCid);
         }
 
+        [Test]
+        public void PublishGoodsFromExcelTest()
+        {
+
+
+        }
+        // "Sku/2013-05-29 banggoSku.xls"
+
         #region IAnalysisTest
 
         [Test]
@@ -235,7 +243,7 @@ namespace MyTools.TaoBao.UnitTest
         public void ExportBanggoAndTaobaoGoodsInfoTest()
         {
             var client = InstanceLocator.Current.GetInstance<IAnalysis>();
-            client.ExportBanggoAndTaobaoGoodsInfo("http://me-city.banggo.com/Goods/510957.shtml");
+            client.ExportBanggoAndTaobaoGoodsInfo("http://metersbonwe.banggo.com/Goods/242591.shtml");
             
         }
          

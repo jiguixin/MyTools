@@ -87,8 +87,9 @@ namespace MyTools.TaoBao.Impl
         {
             var searchUrl = SysConst.TaoBaoSearchUrl.StringFormat(query);
 
-            var docSearchGoodsList = SysUtils.GetHtmlDocumentByHttpGet(searchUrl);
 
+            var docSearchGoodsList = SysUtils.GetHtmlDocumentByHttpGet(searchUrl);
+               
             var itemBoxs =
                 docSearchGoodsList.DocumentNode.SelectNodes(
                     "//*[@class='col item icon-datalink']/div[@class='item-box']");
@@ -162,6 +163,7 @@ namespace MyTools.TaoBao.Impl
             //if (salesVolume > 0)
             //{
             var saleDetail = SysUtils.GetHtmlDocumentByHttpGet(url);
+           
 
             #region 获取SKU数据
 
@@ -228,11 +230,17 @@ namespace MyTools.TaoBao.Impl
                 saleDetail.GetElementbyId("J_listBuyerOnView").Attributes["detail:params"].Value.Replace(
                     ",showBuyerList", "&t={0}&callback=Hub.data.records_reload".StringFormat(DateTime.Now.Ticks));
 
-            var saleDetailHtml =
+           /* var saleDetailHtml =
                 SysUtils.GetHtmlByHttpGet(saleRecordUrl)
                         .Trim()
                         .Replace("Hub.data.records_reload(", "")
-                        .TrimEnd(')');
+                        .TrimEnd(')');*/
+
+            var saleDetailHtml =
+               HttpHelper.GETDataToUrl(saleRecordUrl)
+                       .Trim()
+                       .Replace("Hub.data.records_reload(", "")
+                       .TrimEnd(')');
 
             if (saleDetailHtml.StartsWith("{html:"))
             {

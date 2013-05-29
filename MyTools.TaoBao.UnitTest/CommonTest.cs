@@ -482,34 +482,5 @@ namespace MyTools.TaoBao.UnitTest
         #endregion
     }
 
-    public class PublishGoods
-    {
-        public PublishGoods(DataRow dr)
-        {
-            Url = Util.Get<string>(dr, "产品地址");
-            GoodsSn = Util.Get<string>(dr, "款号");
-            SalePrice = Util.Get<Double>(dr, "售价");
-            Stock = Util.Get<int>(dr, "库存");
-            string suk;
-            if ((suk = Util.Get<string>(dr, "SKU")) != null)
-            {
-                ProductColors = JsonConvert.DeserializeObject<List<ProductColor>>(suk);
-                foreach (var size in ProductColors.SelectMany(color => color.SizeList))
-                {
-                    size.MySalePrice = SalePrice;
-                }
-            } 
-
-            IsSoldOut = Util.Get<bool>(dr, "售完");
-
-           
-        }
-
-        public string Url { get; private set; }
-        public string GoodsSn { get; private set; }
-        public double SalePrice { get; private set; }
-        public int Stock { get; private set; }
-        public List<ProductColor> ProductColors { get; private set; }
-        public bool IsSoldOut { get; private set; } 
-    }
+   
 }

@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -17,6 +18,7 @@ using System.Text;
 using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
+using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.Framework.Common;
 using MyTools.Framework.Common.ExceptionDef;
 using MyTools.TaoBao.DomainModule;
@@ -64,6 +66,8 @@ namespace MyTools.TaoBao.Impl
         /// <returns>商品编号</returns>
         public Item PublishGoods(Product product)
         {  
+
+
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
             ItemAddResponse response = _client.Execute(product, tContext.SessionKey);
 
@@ -89,17 +93,25 @@ namespace MyTools.TaoBao.Impl
         {
             string goodsSn = _banggoMgt.ResolveProductUrlRetGoodsSn(banggoProductUrl);
 
-            goodsSn.ThrowIfNullOrEmpty(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
-            
-            if (VerifyGoodsExist(goodsSn))
+            if (VerifyGoodsExist(goodsSn).IsNotNull())
             {
-                _log.LogWarning(Resource.Log_GoodsAlreadyExist.StringFormat(" PublishGoodsForBanggoToTaobao"));
+                //调用更新商品库存方法
                 return null; 
             }
 
             BanggoProduct banggoProduct =
                 _banggoMgt.GetGoodsInfo(new BanggoRequestModel {GoodsSn = goodsSn, Referer = banggoProductUrl});
-              
+
+            if (banggoProduct.ColorList.IsNullOrEmpty())
+                return null;
+
+            return PublishGoodsAndUploadPic(banggoProduct);
+             
+        }
+
+        //发布商品并上传图片
+        private Item PublishGoodsAndUploadPic(BanggoProduct banggoProduct)
+        {
             StuffProductInfo(banggoProduct);
 
             Item item = PublishGoods(banggoProduct);
@@ -113,12 +125,55 @@ namespace MyTools.TaoBao.Impl
                 else
                     _log.LogInfo(Resource.Log_PublishSaleImgFailure);
             }
-
             return item;
         }
 
-        public bool VerifyGoodsExist(string goodsSn)
+        public void PublishGoodsFromExcel(string filePath)
         {
+            var lstPublishGoods = GetPublishGoodsFromExcel(filePath);
+
+            foreach (var pgModel in lstPublishGoods)
+            {
+                var item = VerifyGoodsExist(pgModel.GoodsSn);
+                if (item.IsNotNull())
+                {
+                    //todo:调用更新商品库存方法
+
+                    continue;
+                }
+                else
+                {
+                    var product = new BanggoProduct {GoodsSn = pgModel.GoodsSn};
+
+                    var requestModel = new BanggoRequestModel {Referer = pgModel.Url, GoodsSn = pgModel.GoodsSn};
+
+                    _banggoMgt.GetProductBaseInfo(product, requestModel);
+
+                    _banggoMgt.GetProductSkuBase(product, requestModel);
+
+                    product.ColorList = pgModel.ProductColors;
+
+                    PublishGoodsAndUploadPic(product); 
+                }
+            } 
+        }
+
+        //重EXCEL中读取要发布的数据用于发布或更新商品SKU
+        private static IEnumerable<PublishGoods> GetPublishGoodsFromExcel(string filePath)
+        {
+            filePath.ThrowIfNullOrEmpty(
+                Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+
+            var dtSource = ExcelHelper.GetExcelData(filePath, Resource.SysConfig_Sku);
+
+            dtSource.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+            return  (from DataRow dr in dtSource.Rows select new PublishGoods(dr)).ToList(); 
+        }
+
+        public Item VerifyGoodsExist(string goodsSn)
+        {
+            goodsSn.ThrowIfNullOrEmpty(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace())); 
+
             var req = new ItemsOnsaleGetRequest();
             req.Fields = "num_iid,title";
             req.Q = goodsSn;
@@ -127,9 +182,11 @@ namespace MyTools.TaoBao.Impl
 
             if (onSaleGoods != null && onSaleGoods.Count > 0)
             {
-                return true;
+                _log.LogWarning(Resource.Log_GoodsAlreadyExist.StringFormat(" VerifyGoodsExist"));
+                return onSaleGoods[0];
             }
-            return false;
+
+            return null;
         }
 
         /// <summary>

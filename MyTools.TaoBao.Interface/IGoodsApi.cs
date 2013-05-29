@@ -35,11 +35,17 @@ namespace MyTools.TaoBao.Interface
         Item PublishGoodsForBanggoToTaobao(string banggoProductUrl);
 
         /// <summary>
+        /// 从EXCEL读取产品信息并发布
+        /// </summary>
+        /// <param name="filePath"></param>
+        void PublishGoodsFromExcel(string filePath);
+
+        /// <summary>
         /// 检查该商品是否已经发布
         /// </summary>
         /// <param name="goodsSn">款号</param>
         /// <returns>已经发布返回true</returns>
-        bool VerifyGoodsExist(string goodsSn);
+        Item VerifyGoodsExist(string goodsSn);
 
         /// <summary>
         /// 更新和添加销售商品图片

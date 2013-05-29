@@ -71,9 +71,9 @@ namespace MyTools.TaoBao.Impl
 
             requestModel.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                 new StackTrace()));
-
-            var doc = SysUtils.GetHtmlDocumentByHttpGet(requestModel.Referer);
-
+             
+            var doc = SysUtils.GetHtmlDocumentByHttpGet(requestModel.Referer,Encoding.UTF8); 
+              
             #endregion
 
             #region 获得品牌
@@ -193,6 +193,19 @@ namespace MyTools.TaoBao.Impl
         /// <param name="requestModel">请求模型</param>
         public void GetProductSku(BanggoProduct product, BanggoRequestModel requestModel)
         {
+            var doc = GetProductSkuBase(product, requestModel);
+             
+            product.ColorList = GetProductColorByOnline(requestModel, doc);
+             
+        }
+
+        /// <summary>
+        /// 得到SKU基本信息不包括，颜色和尺码, 主要用于手动发布产品功能
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="requestModel"></param>
+        public HtmlDocument GetProductSkuBase(BanggoProduct product, BanggoRequestModel requestModel)
+        {
             string result = GetGoodsPriceAndColorContent(requestModel);
 
             JObject jObj = JObject.Parse(result);
@@ -208,11 +221,10 @@ namespace MyTools.TaoBao.Impl
 
             product.BSizeToTSize = GetBSizeToTSize(doc);
 
-            product.ColorList = GetProductColorByOnline(requestModel, doc);
+            return doc;
 
-
-            //GetProductAndSize(product, requestModel, doc);
         }
+
          
         /// <summary>
         ///     解析产品的URL 得到款号

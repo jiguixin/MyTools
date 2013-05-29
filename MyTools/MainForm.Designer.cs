@@ -74,6 +74,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCommonTools = new System.Windows.Forms.ToolStripMenuItem();
             this.btnSetAlpha = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnRestoreAlpha = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.newToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -86,7 +87,7 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnRestoreAlpha = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnPublishGoodsFromExcel = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -323,7 +324,8 @@
             this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnAuthorization,
             this.btnGetCats,
-            this.btnPublishProduct});
+            this.btnPublishProduct,
+            this.btnPublishGoodsFromExcel});
             this.toolsMenu.Name = "toolsMenu";
             this.toolsMenu.Size = new System.Drawing.Size(59, 21);
             this.toolsMenu.Text = "工具(&T)";
@@ -331,21 +333,21 @@
             // btnAuthorization
             // 
             this.btnAuthorization.Name = "btnAuthorization";
-            this.btnAuthorization.Size = new System.Drawing.Size(148, 22);
+            this.btnAuthorization.Size = new System.Drawing.Size(184, 22);
             this.btnAuthorization.Text = "认证";
             this.btnAuthorization.Click += new System.EventHandler(this.btnAuthorization_Click);
             // 
             // btnGetCats
             // 
             this.btnGetCats.Name = "btnGetCats";
-            this.btnGetCats.Size = new System.Drawing.Size(148, 22);
+            this.btnGetCats.Size = new System.Drawing.Size(184, 22);
             this.btnGetCats.Text = "获取店铺类目";
             this.btnGetCats.Click += new System.EventHandler(this.btnGetCats_Click);
             // 
             // btnPublishProduct
             // 
             this.btnPublishProduct.Name = "btnPublishProduct";
-            this.btnPublishProduct.Size = new System.Drawing.Size(148, 22);
+            this.btnPublishProduct.Size = new System.Drawing.Size(184, 22);
             this.btnPublishProduct.Text = "发布产品";
             this.btnPublishProduct.Click += new System.EventHandler(this.btnPublishProduct_Click);
             // 
@@ -365,42 +367,42 @@
             // newWindowToolStripMenuItem
             // 
             this.newWindowToolStripMenuItem.Name = "newWindowToolStripMenuItem";
-            this.newWindowToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.newWindowToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newWindowToolStripMenuItem.Text = "新建窗口(&N)";
             this.newWindowToolStripMenuItem.Click += new System.EventHandler(this.ShowNewForm);
             // 
             // cascadeToolStripMenuItem
             // 
             this.cascadeToolStripMenuItem.Name = "cascadeToolStripMenuItem";
-            this.cascadeToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.cascadeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.cascadeToolStripMenuItem.Text = "层叠(&C)";
             this.cascadeToolStripMenuItem.Click += new System.EventHandler(this.CascadeToolStripMenuItem_Click);
             // 
             // tileVerticalToolStripMenuItem
             // 
             this.tileVerticalToolStripMenuItem.Name = "tileVerticalToolStripMenuItem";
-            this.tileVerticalToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.tileVerticalToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.tileVerticalToolStripMenuItem.Text = "垂直平铺(&V)";
             this.tileVerticalToolStripMenuItem.Click += new System.EventHandler(this.TileVerticalToolStripMenuItem_Click);
             // 
             // tileHorizontalToolStripMenuItem
             // 
             this.tileHorizontalToolStripMenuItem.Name = "tileHorizontalToolStripMenuItem";
-            this.tileHorizontalToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.tileHorizontalToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.tileHorizontalToolStripMenuItem.Text = "水平平铺(&H)";
             this.tileHorizontalToolStripMenuItem.Click += new System.EventHandler(this.TileHorizontalToolStripMenuItem_Click);
             // 
             // closeAllToolStripMenuItem
             // 
             this.closeAllToolStripMenuItem.Name = "closeAllToolStripMenuItem";
-            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.closeAllToolStripMenuItem.Text = "全部关闭(&L)";
             this.closeAllToolStripMenuItem.Click += new System.EventHandler(this.CloseAllToolStripMenuItem_Click);
             // 
             // arrangeIconsToolStripMenuItem
             // 
             this.arrangeIconsToolStripMenuItem.Name = "arrangeIconsToolStripMenuItem";
-            this.arrangeIconsToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.arrangeIconsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.arrangeIconsToolStripMenuItem.Text = "排列图标(&A)";
             this.arrangeIconsToolStripMenuItem.Click += new System.EventHandler(this.ArrangeIconsToolStripMenuItem_Click);
             // 
@@ -462,9 +464,16 @@
             // btnSetAlpha
             // 
             this.btnSetAlpha.Name = "btnSetAlpha";
-            this.btnSetAlpha.Size = new System.Drawing.Size(152, 22);
+            this.btnSetAlpha.Size = new System.Drawing.Size(136, 22);
             this.btnSetAlpha.Text = "设置透明度";
             this.btnSetAlpha.Click += new System.EventHandler(this.btnSetAlpha_Click);
+            // 
+            // btnRestoreAlpha
+            // 
+            this.btnRestoreAlpha.Name = "btnRestoreAlpha";
+            this.btnRestoreAlpha.Size = new System.Drawing.Size(136, 22);
+            this.btnRestoreAlpha.Text = "恢复透明度";
+            this.btnRestoreAlpha.Click += new System.EventHandler(this.btnRestoreAlpha_Click);
             // 
             // toolStrip
             // 
@@ -565,12 +574,12 @@
             this.toolStripStatusLabel.Size = new System.Drawing.Size(32, 17);
             this.toolStripStatusLabel.Text = "状态";
             // 
-            // btnRestoreAlpha
+            // btnPublishGoodsFromExcel
             // 
-            this.btnRestoreAlpha.Name = "btnRestoreAlpha";
-            this.btnRestoreAlpha.Size = new System.Drawing.Size(152, 22);
-            this.btnRestoreAlpha.Text = "恢复透明度";
-            this.btnRestoreAlpha.Click += new System.EventHandler(this.btnRestoreAlpha_Click);
+            this.btnPublishGoodsFromExcel.Name = "btnPublishGoodsFromExcel";
+            this.btnPublishGoodsFromExcel.Size = new System.Drawing.Size(184, 22);
+            this.btnPublishGoodsFromExcel.Text = "从EXCEL中发布产品";
+            this.btnPublishGoodsFromExcel.Click += new System.EventHandler(this.btnPublishGoodsFromExcel_Click);
             // 
             // MainForm
             // 
@@ -655,6 +664,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiCommonTools;
         private System.Windows.Forms.ToolStripMenuItem btnSetAlpha;
         private System.Windows.Forms.ToolStripMenuItem btnRestoreAlpha;
+        private System.Windows.Forms.ToolStripMenuItem btnPublishGoodsFromExcel;
     }
 }
 

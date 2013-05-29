@@ -113,41 +113,15 @@ namespace MyTools.Framework.Common
         /// </summary>
         /// <param name="searchUrl"></param>
         /// <returns></returns>
-        public static HtmlDocument GetHtmlDocumentByHttpGet(string searchUrl)
-        {
-            var restClient = new RestClient(searchUrl);
-            restClient.CookieContainer = new System.Net.CookieContainer();
-            var request = new RestRequest(Method.GET); 
-            IRestResponse response = restClient.Execute(request);
-             
-            if (response.ErrorException != null)
-                throw response.ErrorException;
-            
+        public static HtmlDocument GetHtmlDocumentByHttpGet(string searchUrl,Encoding encoding = null)
+        { 
             var doc = new HtmlDocument();
 
-            doc.LoadHtml(Encoding.Default.GetString(response.RawBytes));
+            doc.LoadHtml(HttpHelper.GETDataToUrl(searchUrl, encoding));
 
             return doc;
         }
-
-        /// <summary>
-        /// 通过调用RestRequest Get方式得到网页中的内容
-        /// </summary>
-        /// <param name="searchUrl"></param>
-        /// <returns></returns>
-        public static string GetHtmlByHttpGet(string searchUrl)
-        {
-            var restClient = new RestClient(searchUrl);
-            restClient.CookieContainer = new System.Net.CookieContainer();
-            var request = new RestRequest(Method.GET);
-            IRestResponse response = restClient.Execute(request);
-
-            if (response.ErrorException != null)
-                throw response.ErrorException;
-             
-            return  Encoding.Default.GetString(response.RawBytes);
-        }
-
+         
 
         //检查该EXCEL是否有该表存在
         /// <summary>

@@ -8,6 +8,7 @@
  */
 
 using System.Collections.Generic;
+using HtmlAgilityPack;
 using MyTools.TaoBao.DomainModule;
 
 namespace MyTools.TaoBao.Interface
@@ -35,7 +36,14 @@ namespace MyTools.TaoBao.Interface
         /// <param name="product">产品</param>
         /// <param name="requestModel">请求模型</param>
         void GetProductSku(BanggoProduct product, BanggoRequestModel requestModel);
-         
+
+        /// <summary>
+        /// 得到SKU基本信息不包括，颜色和尺码, 主要用于手动发布产品功能
+        /// </summary>
+        /// <param name="product"></param>
+        /// <param name="requestModel"></param>
+        HtmlDocument GetProductSkuBase(BanggoProduct product, BanggoRequestModel requestModel);
+
         /// <summary>
         /// 解析产品的URL 得到款号
         /// </summary>

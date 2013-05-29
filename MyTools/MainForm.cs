@@ -129,6 +129,8 @@ namespace MyTools
 
         private TopContext context;
 
+        private readonly IGoodsApi _goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
+
         private IShopApi shopApi = InstanceLocator.Current.GetInstance<IShopApi>();
          
         private string authorizeUrl;
@@ -188,6 +190,16 @@ namespace MyTools
             WindowsApiHelper.RestoreOpacity("StandardFrame");//恢复主窗口
             WindowsApiHelper.RestoreOpacity("Shell_TrayWnd"); //恢复任务栏 
             WindowsApiHelper.RestoreOpacity(null, "系统消息");
+        }
+
+        private void btnPublishGoodsFromExcel_Click(object sender, EventArgs e)
+        {
+            var ofd = new OpenFileDialog();
+
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                _goodsApi.PublishGoodsFromExcel(ofd.FileName);
+            }
         }
 
     }
