@@ -22,7 +22,7 @@ namespace MyTools.TaoBao.DomainModule
     /// 要自定义品牌者加到input_str，input_pids，如：【（input_pids：input_str）（20000：莱克）】3,
     /// SUK（销售）属性，sku_properties中有的属性props也必须存在。sku_properties中以“，”分开。
     /// </summary>
-    public class Product : ItemAddRequest
+    public class Product : ProductBase
     { 
         /// <summary>
         /// 市场价
@@ -47,6 +47,10 @@ namespace MyTools.TaoBao.DomainModule
         /// </summary>
         public Dictionary<string, string> BSizeToTSize { get; set; }
 
+        /// <summary>
+        /// 商品数字id
+        /// </summary>
+        public long NumIid { get; set; }
 
         public Product()
         {

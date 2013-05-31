@@ -18,6 +18,7 @@ using System.Text;
 using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
+using Infrastructure.Crosscutting.Utility;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.Framework.Common;
 using MyTools.Framework.Common.ExceptionDef;
@@ -65,11 +66,13 @@ namespace MyTools.TaoBao.Impl
         /// <param name="product">商品</param>
         /// <returns>商品编号</returns>
         public Item PublishGoods(Product product)
-        {  
+        {
+            var req = new ItemAddRequest();
 
-
+            Util.CopyModel(product, req);
+             
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
-            ItemAddResponse response = _client.Execute(product, tContext.SessionKey);
+            ItemAddResponse response = _client.Execute(req, tContext.SessionKey);
 
             if (response.IsError)
             {
@@ -84,6 +87,58 @@ namespace MyTools.TaoBao.Impl
             return item;
         }
 
+        public Item UpdateGoods(Product product)
+        {
+            var req = new ItemUpdateRequest();
+
+            Util.CopyModel(product, req);
+            req.Price = null;
+            req.Cid = null;
+            req.OuterId = null;
+            req.Title = null;
+            req.LocationCity = null;
+            req.LocationState = null;
+
+            //todo 更新库SKU有问题
+
+    /*        <?xml version="1.0" encoding="utf-8" ?
+><error_response><code>530</code><msg>Remote service 
+error</msg><sub_code>isv.item-update-service-
+error:ERROR_PUBLISH_PERMISSION_INVALID</sub_code><sub_msg>您没有发布此
+类宝贝的权限</sub_msg></error_response><!--top049181.cm4-->
+
+18623029094
+num_iid:18623029094
+props：1627207:3232483;20509:28381;20509:28313;20509:28314
+num:8
+price：178
+sku_quantities：2,5,1
+sku_prices：178,178,178
+sku_properties：
+1627207:3232483;20509:28381,1627207:3232483;20509:28313,1627207:323248
+3;20509:28314
+sku_outer_ids：242591,242591,242591
+PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);20509:28313:160/84A(M)(24244);20509:28314:170/92A(XL)(24248);
+*/
+
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            ItemUpdateResponse response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+            {
+                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                               response.SubErrMsg, response.TopForbiddenFields);
+            }
+
+            Item item = response.Item;
+
+            _log.LogInfo(Resource.Log_UpdateGoodsSuccess, product.Title, item.NumIid);
+
+            return item;
+        }
+
+
+
         /// <summary>
         ///     从banggo上获取数据发布到淘宝
         /// </summary>
@@ -95,7 +150,9 @@ namespace MyTools.TaoBao.Impl
 
             if (VerifyGoodsExist(goodsSn).IsNotNull())
             {
-                //调用更新商品库存方法
+
+
+                //todo: 调用更新商品库存方法
                 return null; 
             }
 
@@ -139,6 +196,21 @@ namespace MyTools.TaoBao.Impl
                 {
                     //todo:调用更新商品库存方法
 
+                    BanggoProduct banggoProduct = new BanggoProduct();
+                    banggoProduct.ColorList = pgModel.ProductColors;
+
+                    Util.CopyModel(item, banggoProduct); 
+                      
+                    banggoProduct.GoodsSn = item.OuterId;
+                    banggoProduct.GoodsUrl = pgModel.Url;
+
+                    UpdateGoodsInfo(banggoProduct);
+
+                    foreach (var pColor in banggoProduct.ColorList)
+                    {
+                        UploadItemPropimg(item.NumIid, pColor.MapProps, new Uri(pColor.ImgUrl));
+                    }
+                      
                     continue;
                 }
                 else
@@ -158,24 +230,38 @@ namespace MyTools.TaoBao.Impl
             } 
         }
 
-        //重EXCEL中读取要发布的数据用于发布或更新商品SKU
-        private static IEnumerable<PublishGoods> GetPublishGoodsFromExcel(string filePath)
+        /// <summary>
+        /// 更新商品信息包括SKU信息
+        /// </summary>
+        public void UpdateGoodsInfo(BanggoProduct banggoProduct)
         {
-            filePath.ThrowIfNullOrEmpty(
-                Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+            //1，填充必填项到props
+            string itemProps = _catalog.GetItemProps(banggoProduct.Cid.ToString());
+            banggoProduct.Props = itemProps; //只先提取必填项
 
-            var dtSource = ExcelHelper.GetExcelData(filePath, Resource.SysConfig_Sku);
+            //2，读取banggo上现在还有那些尺码填充到，BanggoProduct-> BSizeToTSize
 
-            dtSource.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
-            return  (from DataRow dr in dtSource.Rows select new PublishGoods(dr)).ToList(); 
+            var req = new BanggoRequestModel {GoodsSn = banggoProduct.GoodsSn, Referer = banggoProduct.GoodsUrl};
+
+            banggoProduct.BSizeToTSize = _banggoMgt.GetBSizeToTSize(_banggoMgt.GetGoodsDetialElementData(req));
+
+            SetSkuInfo(banggoProduct);
+            //3，SetSkuInfo
+
+            //调用Taobao更新方法
+
+
+            UpdateGoods(banggoProduct);
+
         }
+
 
         public Item VerifyGoodsExist(string goodsSn)
         {
             goodsSn.ThrowIfNullOrEmpty(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace())); 
 
             var req = new ItemsOnsaleGetRequest();
-            req.Fields = "num_iid,title";
+            req.Fields = "num_iid,title,cid,outer_id";
             req.Q = goodsSn;
             req.PageSize = 10;
             var onSaleGoods = GetOnSaleGoods(req);
@@ -310,8 +396,19 @@ namespace MyTools.TaoBao.Impl
         #endregion
 
         #region Private Methods
+         
+        //重EXCEL中读取要发布的数据用于发布或更新商品SKU
+        private static IEnumerable<PublishGoods> GetPublishGoodsFromExcel(string filePath)
+        {
+            filePath.ThrowIfNullOrEmpty(
+                Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
 
+            var dtSource = ExcelHelper.GetExcelData(filePath, Resource.SysConfig_Sku);
 
+            dtSource.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+            return (from DataRow dr in dtSource.Rows select new PublishGoods(dr)).ToList();
+        }
+         
         //填充产品信息，将banggo的数据填充进相应的请求模型中
         private void StuffProductInfo(BanggoProduct bProduct)
         {
@@ -351,20 +448,19 @@ namespace MyTools.TaoBao.Impl
         //包括设置品牌、货号
         private void SetOptionalProps(BanggoProduct bProduct)
         {
-            var rm = new ResourceManager(typeof(Resource).FullName,
+            //取消在Props中增加品牌，因为在更新SKU没办法得到Brand
+           /* var rm = new ResourceManager(typeof(Resource).FullName,
                                          typeof(Resource).Assembly);
             string brandProp = rm.GetString("SysConfig_{0}_BrandProp".StringFormat(bProduct.Brand));
 
             if (!brandProp.IsNullOrEmpty())
             {
                 bProduct.Props += brandProp;
-            }
-
-
-            bProduct.InputPids = Resource.SysConfig_ProductCodeProp;
-            bProduct.InputStr = bProduct.GoodsSn;
+            }*/
+              
+            bProduct.InputPids = "{0},{1}".StringFormat(Resource.SysConfig_ProductCodeProp, "20000");
+            bProduct.InputStr = "{0},{1}".StringFormat(bProduct.GoodsSn, bProduct.Brand);
         }
-
 
         private PropImg UploadItemPropimgInternal(long numId, string properties, FileItem fItem)
         {

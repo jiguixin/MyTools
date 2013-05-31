@@ -67,6 +67,29 @@ namespace MyTools.TaoBao.Interface
         List<ProductColor> GetProductColorByOnline(BanggoRequestModel requestModel);
 
         /// <summary>
+        /// 得到产品的颜色和大小数据，通过在线读取
+        /// 
+        /// </summary>
+        /// <param name="requestModel">Referer\GoodsSn 必须传入</param>
+        /// <param name="doc">调用GetGoodsDetialElementData方法获得</param>
+        /// <returns></returns>
+        List<ProductColor> GetProductColorByOnline(BanggoRequestModel requestModel, HtmlDocument doc);
+
+        /// <summary>
+        /// 得到banggo上的尺码，主要用于和taobao上的尺码建立对应关系
+        /// </summary>
+        /// <param name="doc">调用GetGoodsDetialElementData方法获得</param>
+        /// <returns></returns>
+        Dictionary<string, string> GetBSizeToTSize(HtmlDocument doc);
+
+        /// <summary>
+        /// 得到产品详细界面的Data元素数据
+        /// </summary>
+        /// <param name="requestModel"></param>
+        /// <returns></returns>
+        HtmlDocument GetGoodsDetialElementData(BanggoRequestModel requestModel);
+
+        /// <summary>
         /// 将该产品的SKU数据导出为EXCEL
         /// </summary>
         /// <param name="productUrl"></param>

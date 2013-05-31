@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BanggoProduct.cs" />
+    <Compile Include="ProductBase.cs" />
     <Compile Include="ProductColor.cs" />
     <Compile Include="ProductSize.cs" />
     <Compile Include="BanggoRequestModel.cs" />

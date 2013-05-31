@@ -288,4 +288,8 @@
     <value>Sku</value>
     <comment>SKU 名字常量</comment>
   </data>
+  <data name="Log_UpdateGoodsSuccess" xml:space="preserve">
+    <value>更新产品：{0} 已更新成功。numId:{1}</value>
+    <comment>更新产品 成功</comment>
+  </data>
 </root>

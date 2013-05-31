@@ -133,6 +133,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 更新产品：{0} 已更新成功。numId:{1} 的本地化字符串。
+        /// </summary>
+        public static string Log_UpdateGoodsSuccess {
+            get {
+                return ResourceManager.GetString("Log_UpdateGoodsSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 /html/body/div[@class=&apos;content&apos;]/div[2]/div[@class=&apos;copy-code&apos;]/input 的本地化字符串。
         /// </summary>
         public static string SysConfig_AuthorizedCodeXPath {

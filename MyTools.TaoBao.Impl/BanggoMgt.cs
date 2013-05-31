@@ -212,11 +212,11 @@ namespace MyTools.TaoBao.Impl
 
             var data = jObj.SelectToken("data").Value<string>();
 
-            product.ThumbUrl = jObj.SelectToken("thumb_url").Value<string>();
-
             var doc = new HtmlDocument();
             doc.LoadHtml(data);
 
+            product.ThumbUrl = jObj.SelectToken("thumb_url").Value<string>();
+             
             GetPriceAndSalesVolume(product, doc);
 
             product.BSizeToTSize = GetBSizeToTSize(doc);
@@ -224,7 +224,6 @@ namespace MyTools.TaoBao.Impl
             return doc;
 
         }
-
          
         /// <summary>
         ///     解析产品的URL 得到款号
@@ -269,6 +268,56 @@ namespace MyTools.TaoBao.Impl
         /// <returns></returns>
         public List<ProductColor> GetProductColorByOnline(BanggoRequestModel requestModel)
         {
+            var doc = GetGoodsDetialElementData(requestModel);
+
+            return GetProductColorByOnline(requestModel, doc);
+        }
+
+        //得到产品的颜色和大小数据，通过在线读取，该方法主要用于以自动无干预自动上产品
+        public List<ProductColor> GetProductColorByOnline(BanggoRequestModel requestModel, HtmlDocument doc)
+        {
+            HtmlNode htmlNodeColorList = doc.GetElementbyId(Resource.SysConfig_ColorListId);
+
+            if (htmlNodeColorList.IsNull())
+                return null;
+            /*
+                        htmlNodeColorList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+                            new StackTrace()));*/
+
+            HtmlNodeCollection colors = htmlNodeColorList.SelectNodes("li/a");
+
+            if (colors.IsNull())
+                return null;
+            /*
+                        colors.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+                            new StackTrace()));*/
+
+
+            var colorList = new List<ProductColor>();
+
+            foreach (HtmlNode colorNode in colors)
+            {
+                string colorInfo = colorNode.Attributes["onclick"].Value;
+
+                ProductColor productColor = CreateProductColor(colorInfo);
+
+                requestModel.ColorCode = productColor.ColorCode;
+                productColor.SizeList = GetAvailableSize(requestModel);
+
+                foreach (var size in productColor.SizeList)
+                {
+                    productColor.AvlNumForColor += size.AvlNum;
+                }
+
+                colorList.Add(productColor);
+            }
+
+            return colorList;
+        }
+
+        //得到产品详细界面的Data元素数据
+        public HtmlDocument GetGoodsDetialElementData(BanggoRequestModel requestModel)
+        {
             //得到产品详情界面数据
             string result = GetGoodsPriceAndColorContent(requestModel);
 
@@ -278,9 +327,23 @@ namespace MyTools.TaoBao.Impl
 
             var doc = new HtmlDocument();
             doc.LoadHtml(data);
-
-            return GetProductColorByOnline(requestModel, doc);
+            return doc;
         }
+
+        //得到banggo上的尺码，主要用于和taobao上的尺码建立对应关系
+        public Dictionary<string, string> GetBSizeToTSize(HtmlDocument doc)
+        {
+            HtmlNode htmlNodeSizeList = doc.GetElementbyId(Resource.SysConfig_SizeListId);
+            htmlNodeSizeList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+                new StackTrace()));
+
+            HtmlNodeCollection sizes = htmlNodeSizeList.SelectNodes("a");
+            sizes.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+                new StackTrace()));
+
+            return sizes.ToDictionary<HtmlNode, string, string>(sizeNode => sizeNode.InnerText.Trim(), sizeNode => null);
+        }
+
 
         /// <summary>
         /// 将该产品的SKU数据导出为EXCEL
@@ -620,19 +683,7 @@ namespace MyTools.TaoBao.Impl
 
         #region GetProductSku 相关方法
          
-        //得到banggo上的大小，主要用于和taobao上的尺码建立对应关系
-        private Dictionary<string, string> GetBSizeToTSize(HtmlDocument doc)
-        {
-            HtmlNode htmlNodeSizeList = doc.GetElementbyId(Resource.SysConfig_SizeListId);
-            htmlNodeSizeList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-                new StackTrace()));
-
-            HtmlNodeCollection sizes = htmlNodeSizeList.SelectNodes("a");
-            sizes.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-                new StackTrace()));
-
-            return sizes.ToDictionary<HtmlNode, string, string>(sizeNode => sizeNode.InnerText.Trim(), sizeNode => null);
-        }
+       
 
 
         //得到产品的颜色和大小 （todo: 暂时没有用该方法）
@@ -679,47 +730,7 @@ namespace MyTools.TaoBao.Impl
             }
         }
 
-        //得到产品的颜色和大小数据，通过在线读取，该方法主要用于以自动无干预自动上产品
-        private List<ProductColor> GetProductColorByOnline(BanggoRequestModel requestModel, HtmlDocument doc)
-        {
-            HtmlNode htmlNodeColorList = doc.GetElementbyId(Resource.SysConfig_ColorListId);
-
-            if (htmlNodeColorList.IsNull())
-                return null;
-/*
-            htmlNodeColorList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-                new StackTrace()));*/
-
-            HtmlNodeCollection colors = htmlNodeColorList.SelectNodes("li/a");
-
-            if (colors.IsNull())
-                return null;
-/*
-            colors.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-                new StackTrace()));*/
-             
-
-            var colorList = new List<ProductColor>();
-
-            foreach (HtmlNode colorNode in colors)
-            {
-                string colorInfo = colorNode.Attributes["onclick"].Value;
-
-                ProductColor productColor = CreateProductColor(colorInfo);
-
-                requestModel.ColorCode = productColor.ColorCode; 
-                productColor.SizeList = GetAvailableSize(requestModel);
-                
-                foreach (var size in productColor.SizeList)
-                {
-                    productColor.AvlNumForColor += size.AvlNum;
-                }
-
-                colorList.Add(productColor);
-            }
-
-            return colorList;
-        }
+       
          
         //得到该商品的价格和销量信息
         private static void GetPriceAndSalesVolume(BanggoProduct product, HtmlDocument doc)
