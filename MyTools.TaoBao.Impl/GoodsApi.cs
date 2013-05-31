@@ -92,7 +92,7 @@ namespace MyTools.TaoBao.Impl
             var req = new ItemUpdateRequest();
 
             Util.CopyModel(product, req);
-            req.Price = null;
+            //req.Price = null;
             req.Cid = null;
             req.OuterId = null;
             req.Title = null;
@@ -101,10 +101,14 @@ namespace MyTools.TaoBao.Impl
 
             //todo 更新库SKU有问题
 
-    /*        <?xml version="1.0" encoding="utf-8" ?
-><error_response><code>530</code><msg>Remote service 
-error</msg><sub_code>isv.item-update-service-
-error:ERROR_PUBLISH_PERMISSION_INVALID</sub_code><sub_msg>您没有发布此
+    /*        <?xml version="1.0" encoding="utf-8" ?
+
+><error_response><code>530</code><msg>Remote service 
+
+error</msg><sub_code>isv.item-update-service-
+
+error:ERROR_PUBLISH_PERMISSION_INVALID</sub_code><sub_msg>您没有发布此
+
 类宝贝的权限</sub_msg></error_response><!--top049181.cm4-->
 
 18623029094
@@ -114,9 +118,7 @@ num:8
 price：178
 sku_quantities：2,5,1
 sku_prices：178,178,178
-sku_properties：
-1627207:3232483;20509:28381,1627207:3232483;20509:28313,1627207:323248
-3;20509:28314
+sku_properties：1627207:3232483;20509:28381,1627207:3232483;20509:28313,1627207:3232483;20509:28314
 sku_outer_ids：242591,242591,242591
 PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);20509:28313:160/84A(M)(24244);20509:28314:170/92A(XL)(24248);
 */
