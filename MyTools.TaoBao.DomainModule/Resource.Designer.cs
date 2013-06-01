@@ -97,11 +97,83 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 该商品已经存在不能再上传 by {0} 的本地化字符串。
+        ///   查找类似 得到产品列表失败 的本地化字符串。
+        /// </summary>
+        public static string Log_GetGoodsListFailure {
+            get {
+                return ResourceManager.GetString("Log_GetGoodsListFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 得到卖家仓库中的商品出错 的本地化字符串。
+        /// </summary>
+        public static string Log_GetInventoryGoodsFailure {
+            get {
+                return ResourceManager.GetString("Log_GetInventoryGoodsFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 得到在售商品出错 的本地化字符串。
+        /// </summary>
+        public static string Log_GetOnSaleGoodsFailure {
+            get {
+                return ResourceManager.GetString("Log_GetOnSaleGoodsFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 GoodsSn:{0}-&gt;已经存在不能再上传  的本地化字符串。
         /// </summary>
         public static string Log_GoodsAlreadyExist {
             get {
                 return ResourceManager.GetString("Log_GoodsAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 NumlId:{0}-&gt;正在下架... 的本地化字符串。
+        /// </summary>
+        public static string Log_GoodsDelisting {
+            get {
+                return ResourceManager.GetString("Log_GoodsDelisting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 NumId:{0} -&gt;产品下架失败 的本地化字符串。
+        /// </summary>
+        public static string Log_GoodsDelistingFailure {
+            get {
+                return ResourceManager.GetString("Log_GoodsDelistingFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 NumlId:{0}-&gt;下架成功 的本地化字符串。
+        /// </summary>
+        public static string Log_GoodsDelistingSuccess {
+            get {
+                return ResourceManager.GetString("Log_GoodsDelistingSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 发布产品：{0} 发布失败 的本地化字符串。
+        /// </summary>
+        public static string Log_PublishGoodsFailure {
+            get {
+                return ResourceManager.GetString("Log_PublishGoodsFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 {0}-&gt;正在发布... 的本地化字符串。
+        /// </summary>
+        public static string Log_PublishGoodsing {
+            get {
+                return ResourceManager.GetString("Log_PublishGoodsing", resourceCulture);
             }
         }
         
@@ -115,7 +187,7 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 发布产品-&gt;上传销售图片：失败。 的本地化字符串。
+        ///   查找类似 上传销售图片：失败。 的本地化字符串。
         /// </summary>
         public static string Log_PublishSaleImgFailure {
             get {
@@ -124,11 +196,38 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 发布产品-&gt;上传销售图片：成功。numId:{0},图片地址:{1} 的本地化字符串。
+        ///   查找类似 NumlId:{0}-&gt;正在上传销售图片... 的本地化字符串。
+        /// </summary>
+        public static string Log_PublishSaleImging {
+            get {
+                return ResourceManager.GetString("Log_PublishSaleImging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 上传销售图片：成功。numId:{0},图片地址:{1} 的本地化字符串。
         /// </summary>
         public static string Log_PublishSaleImgSuccess {
             get {
                 return ResourceManager.GetString("Log_PublishSaleImgSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 更新产品：更新失败。numId:{0} 的本地化字符串。
+        /// </summary>
+        public static string Log_UpdateGoodsFailure {
+            get {
+                return ResourceManager.GetString("Log_UpdateGoodsFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 NumIid:{0}-&gt;正在更新... 的本地化字符串。
+        /// </summary>
+        public static string Log_UpdateGoodsing {
+            get {
+                return ResourceManager.GetString("Log_UpdateGoodsing", resourceCulture);
             }
         }
         

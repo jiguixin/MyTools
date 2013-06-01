@@ -19,6 +19,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Infrastructure.Crosscutting.Declaration;
+using Infrastructure.Crosscutting.IoC;
+using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.Framework.Common;
 using MyTools.TaoBao.DomainModule;
@@ -32,7 +34,9 @@ namespace MyTools.TaoBao.Impl
     public class BanggoMgt : IBanggoMgt
     {
         #region Var
-         
+
+        private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create(); 
+
         private StringBuilder sbDesc = new StringBuilder();
          
         #endregion
@@ -343,8 +347,7 @@ namespace MyTools.TaoBao.Impl
 
             return sizes.ToDictionary<HtmlNode, string, string>(sizeNode => sizeNode.InnerText.Trim(), sizeNode => null);
         }
-
-
+         
         /// <summary>
         /// 将该产品的SKU数据导出为EXCEL
         /// </summary>
@@ -377,28 +380,6 @@ namespace MyTools.TaoBao.Impl
             excel.AddNewRow(drNew);
 
             return lstProductColor;
-        }
-
-        private static void CheckStock(List<ProductColor> lstProductColor, DataRow drNew)
-        {
-            if (!lstProductColor.IsNullOrEmpty())
-            {
-                var settings = new JsonSerializerSettings();
-
-                string result = JsonConvert.SerializeObject(lstProductColor, Formatting.Indented, settings);
-                //需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。 
-                //转回为对象
-                //var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
-
-                drNew["SKU"] = result;
-                drNew["库存"] = lstProductColor.Sum(productColor => productColor.AvlNumForColor);
-                drNew["售完"] = 0;
-            }
-            else
-            {
-                drNew["售完"] = 1;
-                drNew["库存"] = 0;
-            }
         }
 
         /// <summary>
@@ -439,7 +420,7 @@ namespace MyTools.TaoBao.Impl
         /// 通过款号搜索得到该产品的URL
         /// </summary>
         /// <param name="goodsSn">款号</param>
-        /// <returns></returns>
+        /// <returns>要是邦购上已经售完就返回NULL</returns>
         public string GetGoodsUrl(string goodsSn)
         {
             string searchUrl = "http://search.banggo.com/Search/a_a.shtml?clickType=1&word={0}";
@@ -453,8 +434,11 @@ namespace MyTools.TaoBao.Impl
             var searchResultNode =
                 htmlDocument.DocumentNode.SelectSingleNode("/html/body/div[@class='wrapper']/div[@class='contentWrapper']/div[@id='content']/div[@class='search_list ']/ul/li/a");
 
-            searchResultNode.ThrowIfNull(
-                Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+            if (searchResultNode.IsNull())
+            {
+                _log.LogWarning("GoodsSn:{0}->在邦购上没有找到其URL，可能是产品已售完",goodsSn);
+                return null;
+            } 
 
             return searchResultNode.Attributes["href"].Value.Trim();
 
@@ -464,6 +448,29 @@ namespace MyTools.TaoBao.Impl
 
         #region helper
 
+        //检查库存信息
+        private static void CheckStock(IEnumerable<ProductColor> lstProductColor, DataRow drNew)
+        {
+            if (!lstProductColor.IsNullOrEmpty())
+            {
+                var settings = new JsonSerializerSettings();
+
+                string result = JsonConvert.SerializeObject(lstProductColor, Formatting.Indented, settings);
+                //需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。 
+                //转回为对象
+                //var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
+
+                drNew["SKU"] = result;
+                drNew["库存"] = lstProductColor.Sum(productColor => productColor.AvlNumForColor);
+                drNew["售完"] = 0;
+            }
+            else
+            {
+                drNew["售完"] = 1;
+                drNew["库存"] = 0;
+            }
+        }
+         
         //检查产品的URL是否正确
         private static void CheckGoodsUrl(string url)
         {

@@ -28,6 +28,17 @@ namespace MyTools.TaoBao.Interface
         Item PublishGoods(Product product);
 
         /// <summary>
+        /// 从在售商品中更新库存
+        /// </summary>
+        void UpdateGoodsFromOnSale(string search = null);
+
+        /// <summary>
+        /// 通过指定部分没有更新成功的商品重新更新
+        /// </summary> 
+        /// <param name="nulIds">多个产品以“，”号分割</param>
+        void UpdateGoodsByAssign(string nulIds);
+
+        /// <summary>
         /// 从banggo上获取数据发布到淘宝
         /// </summary>
         /// <param name="banggoProductUrl"></param>
@@ -66,6 +77,13 @@ namespace MyTools.TaoBao.Interface
         PropImg UploadItemPropimg(long numId, string properties, Uri urlImg);
 
         /// <summary>
+        /// taobao.item.update.delisting 商品下架
+        /// </summary>
+        /// <param name="numId">商品编号</param>
+        /// <returns></returns>
+        Item GoodsDelisting(long numId);
+
+        /// <summary>
         /// 得到单个商品信息
         /// taobao.item.get
         /// </summary>
@@ -80,6 +98,13 @@ namespace MyTools.TaoBao.Interface
         /// <param name="numId">商品编号</param>
         /// <returns>商品详情</returns>
         Item GetGoods(string numId);
+
+        /// <summary>
+        /// 得到产品列表
+        /// </summary>
+        /// <param name="numIds"></param>
+        /// <returns></returns>
+        List<Item> GetGoodsList(string numIds);
 
         /// <summary>
         /// 获取当前会话用户出售中的商品列表 

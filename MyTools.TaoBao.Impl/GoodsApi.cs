@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Linq;
 using System.Resources;
 using System.Text;
+using System.Threading;
 using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
@@ -66,7 +67,9 @@ namespace MyTools.TaoBao.Impl
         /// <param name="product">商品</param>
         /// <returns>商品编号</returns>
         public Item PublishGoods(Product product)
-        {
+        { 
+            _log.LogInfo(Resource.Log_PublishGoodsing.StringFormat(product.Title));
+
             var req = new ItemAddRequest();
 
             Util.CopyModel(product, req);
@@ -76,8 +79,10 @@ namespace MyTools.TaoBao.Impl
 
             if (response.IsError)
             {
-                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
                                                response.SubErrMsg, response.TopForbiddenFields);
+                _log.LogError(Resource.Log_PublishGoodsFailure, product.Title,ex);
+                throw ex;
             }
 
             Item item = response.Item;
@@ -89,57 +94,102 @@ namespace MyTools.TaoBao.Impl
 
         public Item UpdateGoods(Product product)
         {
+            _log.LogInfo(Resource.Log_UpdateGoodsing.StringFormat(product.NumIid));
+
             var req = new ItemUpdateRequest();
 
             Util.CopyModel(product, req);
-            //req.Price = null;
-            req.Cid = null;
-            req.OuterId = null;
-            req.Title = null;
-            req.LocationCity = null;
-            req.LocationState = null;
-
-            //todo 更新库SKU有问题
-
-    /*        <?xml version="1.0" encoding="utf-8" ?
-
-><error_response><code>530</code><msg>Remote service 
-
-error</msg><sub_code>isv.item-update-service-
-
-error:ERROR_PUBLISH_PERMISSION_INVALID</sub_code><sub_msg>您没有发布此
-
-类宝贝的权限</sub_msg></error_response><!--top049181.cm4-->
-
-18623029094
-num_iid:18623029094
-props：1627207:3232483;20509:28381;20509:28313;20509:28314
-num:8
-price：178
-sku_quantities：2,5,1
-sku_prices：178,178,178
-sku_properties：1627207:3232483;20509:28381,1627207:3232483;20509:28313,1627207:3232483;20509:28314
-sku_outer_ids：242591,242591,242591
-PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);20509:28313:160/84A(M)(24244);20509:28314:170/92A(XL)(24248);
-*/
-
+              
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
             ItemUpdateResponse response = _client.Execute(req, tContext.SessionKey);
-
+           
             if (response.IsError)
             {
-                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
-                                               response.SubErrMsg, response.TopForbiddenFields);
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                                  response.SubErrMsg, response.TopForbiddenFields);
+                _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(product.NumIid), ex);
+                throw ex;
             }
-
+             
             Item item = response.Item;
-
+             
             _log.LogInfo(Resource.Log_UpdateGoodsSuccess, product.Title, item.NumIid);
 
             return item;
         }
 
+        /// <summary>
+        /// 从在售商品中更新库存
+        /// </summary>
+        public void UpdateGoodsFromOnSale(string search = null)
+        { 
+            //得到当前用户的在售商品列表 
+            var req = new ItemsOnsaleGetRequest();
+            req.Fields = "num_iid,cid,title,price,outer_id";
+            if (!search.IsNullOrEmpty())
+                req.Q=search;
+            req.PageSize = 180;
+           // req.PageNo = 10;
+            
+            var lstItem = GetOnSaleGoods(req);
 
+            UpdateGoodsInternal(lstItem);
+        }
+
+        /// <summary>
+        /// 通过指定部分没有更新成功的商品重新更新
+        /// </summary> 
+        /// <param name="numIds">多个产品以“，”号分割</param>
+        public void UpdateGoodsByAssign(string numIds)
+        { 
+            var lstItem = GetGoodsList(numIds);
+
+            UpdateGoodsInternal(lstItem); 
+        }
+
+
+
+
+        //更新商品的内部方法
+        private void UpdateGoodsInternal(IEnumerable<Item> lstItem)
+        {
+            //遍历在售商品列表中的商品，通过outerid去查询banggo上的该产品信息
+            foreach (var item in lstItem)
+            {
+                try
+                {
+                    //通过款号查询如果没有得到产品的URL或得不到库存，就将该产品进行下架。
+                    var goodsUrl = _banggoMgt.GetGoodsUrl(item.OuterId);
+
+                    if (goodsUrl.IsNullOrEmpty())
+                    {
+                        GoodsDelisting(item.NumIid);
+
+                        continue;
+                    }
+
+                    //如果邦购上该产品还在售，就获取他的SKU信息。
+
+                    var banggoProduct = new BanggoProduct(false);
+                    banggoProduct.ColorList =
+                        _banggoMgt.GetProductColorByOnline(new BanggoRequestModel
+                            {
+                                GoodsSn = item.OuterId,
+                                Referer = goodsUrl
+                            });
+                    banggoProduct.GoodsSn = item.OuterId;
+                    banggoProduct.GoodsUrl = goodsUrl;
+                    banggoProduct.Cid = item.Cid;
+                    banggoProduct.NumIid = item.NumIid;
+
+                    UpdateGoodsAndUploadPic(banggoProduct);
+                }
+                catch
+                {
+                }
+                Thread.Sleep(500);
+            }
+        }
 
         /// <summary>
         ///     从banggo上获取数据发布到淘宝
@@ -147,14 +197,10 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
         /// <param name="banggoProductUrl"></param>
         /// <returns></returns>
         public Item PublishGoodsForBanggoToTaobao(string banggoProductUrl)
-        {
-            string goodsSn = _banggoMgt.ResolveProductUrlRetGoodsSn(banggoProductUrl);
-
+        {    
+            string goodsSn = _banggoMgt.ResolveProductUrlRetGoodsSn(banggoProductUrl); 
             if (VerifyGoodsExist(goodsSn).IsNotNull())
             {
-
-
-                //todo: 调用更新商品库存方法
                 return null; 
             }
 
@@ -164,29 +210,9 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
             if (banggoProduct.ColorList.IsNullOrEmpty())
                 return null;
 
-            return PublishGoodsAndUploadPic(banggoProduct);
-             
+            return PublishGoodsAndUploadPic(banggoProduct); 
         }
-
-        //发布商品并上传图片
-        private Item PublishGoodsAndUploadPic(BanggoProduct banggoProduct)
-        {
-            StuffProductInfo(banggoProduct);
-
-            Item item = PublishGoods(banggoProduct);
-
-            foreach (ProductColor pColor in banggoProduct.ColorList)
-            {
-                PropImg img = UploadItemPropimg(item.NumIid, pColor.MapProps, new Uri(pColor.ImgUrl));
-
-                if (img != null && img.Id > 0)
-                    _log.LogInfo(Resource.Log_PublishSaleImgSuccess, img.Id, img.Url);
-                else
-                    _log.LogInfo(Resource.Log_PublishSaleImgFailure);
-            }
-            return item;
-        }
-
+         
         public void PublishGoodsFromExcel(string filePath)
         {
             var lstPublishGoods = GetPublishGoodsFromExcel(filePath);
@@ -196,42 +222,58 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
                 var item = VerifyGoodsExist(pgModel.GoodsSn);
                 if (item.IsNotNull())
                 {
-                    //todo:调用更新商品库存方法
-
-                    BanggoProduct banggoProduct = new BanggoProduct();
-                    banggoProduct.ColorList = pgModel.ProductColors;
-
-                    Util.CopyModel(item, banggoProduct); 
-                      
-                    banggoProduct.GoodsSn = item.OuterId;
-                    banggoProduct.GoodsUrl = pgModel.Url;
-
-                    UpdateGoodsInfo(banggoProduct);
-
-                    foreach (var pColor in banggoProduct.ColorList)
+                    #region 更新现有商品
+                     
+                    try
                     {
-                        UploadItemPropimg(item.NumIid, pColor.MapProps, new Uri(pColor.ImgUrl));
+                        var banggoProduct = new BanggoProduct(false);
+                        banggoProduct.ColorList = pgModel.ProductColors;
+                        //  Util.CopyModel(item, banggoProduct); node: 不能在这赋值，这样就会造成有些为NULL的给赋成了默认值 
+                        banggoProduct.GoodsSn = item.OuterId;
+                        banggoProduct.GoodsUrl = pgModel.Url;
+                        banggoProduct.Cid = item.Cid;
+                        banggoProduct.NumIid = item.NumIid;
+                         
+                        UpdateGoodsAndUploadPic(banggoProduct);
                     }
-                      
-                    continue;
+                    catch
+                    { 
+                        continue;
+                    } 
+
+                    Thread.Sleep(500); 
+                    #endregion
                 }
                 else
                 {
-                    var product = new BanggoProduct {GoodsSn = pgModel.GoodsSn};
+                    #region 发布商品 
+                     
+                    try
+                    {
+                        var product = new BanggoProduct { GoodsSn = pgModel.GoodsSn };
 
-                    var requestModel = new BanggoRequestModel {Referer = pgModel.Url, GoodsSn = pgModel.GoodsSn};
+                        var requestModel = new BanggoRequestModel { Referer = pgModel.Url, GoodsSn = pgModel.GoodsSn };
 
-                    _banggoMgt.GetProductBaseInfo(product, requestModel);
+                        _banggoMgt.GetProductBaseInfo(product, requestModel);
 
-                    _banggoMgt.GetProductSkuBase(product, requestModel);
+                        _banggoMgt.GetProductSkuBase(product, requestModel);
 
-                    product.ColorList = pgModel.ProductColors;
+                        product.ColorList = pgModel.ProductColors;
 
-                    PublishGoodsAndUploadPic(product); 
+                        PublishGoodsAndUploadPic(product);
+                    }
+                    catch
+                    { 
+                        continue;
+                    }  
+
+                    Thread.Sleep(500); 
+
+                    #endregion
                 }
             } 
         }
-
+         
         /// <summary>
         /// 更新商品信息包括SKU信息
         /// </summary>
@@ -246,17 +288,11 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
             var req = new BanggoRequestModel {GoodsSn = banggoProduct.GoodsSn, Referer = banggoProduct.GoodsUrl};
 
             banggoProduct.BSizeToTSize = _banggoMgt.GetBSizeToTSize(_banggoMgt.GetGoodsDetialElementData(req));
-
+            //3，SetSkuInfo 
             SetSkuInfo(banggoProduct);
-            //3，SetSkuInfo
-
-            //调用Taobao更新方法
-
-
-            UpdateGoods(banggoProduct);
-
+            
+            UpdateGoods(banggoProduct); 
         }
-
 
         public Item VerifyGoodsExist(string goodsSn)
         {
@@ -270,7 +306,7 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
 
             if (onSaleGoods != null && onSaleGoods.Count > 0)
             {
-                _log.LogWarning(Resource.Log_GoodsAlreadyExist.StringFormat(" VerifyGoodsExist"));
+                _log.LogWarning(Resource.Log_GoodsAlreadyExist,goodsSn);
                 return onSaleGoods[0];
             }
 
@@ -316,7 +352,34 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
             var fItem = new FileItem(fileName, SysUtils.GetImgByte(urlImg.ToString()));
             return UploadItemPropimgInternal(numId, properties, fItem);
         }
-         
+
+        /// <summary>
+        /// taobao.item.update.delisting 商品下架
+        /// </summary>
+        /// <param name="numId">商品编号</param>
+        /// <returns></returns>
+        public Item GoodsDelisting(long numId)
+        {
+            _log.LogInfo(Resource.Log_GoodsDelisting, numId);
+
+            var req = new ItemUpdateDelistingRequest();
+            req.NumIid = numId;
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            ItemUpdateDelistingResponse response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+            {
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                              response.SubErrMsg, response.TopForbiddenFields);
+
+                _log.LogError(Resource.Log_GoodsDelistingFailure.StringFormat(numId), ex);
+            }
+
+            _log.LogInfo(Resource.Log_GoodsDelistingSuccess, numId);
+             
+            return response.Item;
+        }
+
         /// <summary>
         /// 得到单个商品信息
         /// taobao.item.get
@@ -338,7 +401,7 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
             return response.Item;
 
         }
-
+          
         /// <summary>
         /// 通过商品编号得到常用的Item数据
         /// 调用的GetGoods(ItemGetRequest req)
@@ -359,6 +422,32 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
         }
 
         /// <summary>
+        /// 得到产品列表
+        /// </summary>
+        /// <param name="numIds">各ID以","号分割</param>
+        /// <returns></returns>
+        public List<Item> GetGoodsList(string numIds)
+        {
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+            var req = new ItemsListGetRequest();
+            req.Fields = "num_iid,cid,title,price,outer_id";
+            req.NumIids = numIds;
+
+            ItemsListGetResponse response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+            {
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                             response.SubErrMsg, response.TopForbiddenFields);
+                _log.LogError(Resource.Log_GetGoodsListFailure, ex);
+                throw ex;
+            }
+
+            return response.Items;
+        }
+
+        /// <summary>
         /// 获取当前会话用户出售中的商品列表 
         /// taobao.items.onsale.get 
         /// </summary> 
@@ -371,8 +460,12 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
 
             if (response.IsError)
             {
-                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
                                                response.SubErrMsg, response.TopForbiddenFields);
+                 
+                _log.LogError(Resource.Log_GetOnSaleGoodsFailure, ex);
+
+                throw ex;
             }
 
             return response.Items; 
@@ -387,8 +480,12 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
 
             if (response.IsError)
             {
-                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
-                                               response.SubErrMsg, response.TopForbiddenFields);
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                                  response.SubErrMsg, response.TopForbiddenFields);
+
+                _log.LogError(Resource.Log_GetInventoryGoodsFailure, ex);
+
+                throw ex;
             }
 
             return response.Items; 
@@ -398,7 +495,33 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
         #endregion
 
         #region Private Methods
+
+        //更新商品并上传相应的销售图片
+        private void UpdateGoodsAndUploadPic(BanggoProduct banggoProduct)
+        {
+            UpdateGoodsInfo(banggoProduct);
+
+            foreach (var pColor in banggoProduct.ColorList)
+            {
+                if (banggoProduct.NumIid != null)
+                    UploadItemPropimg(banggoProduct.NumIid.Value, pColor.MapProps, new Uri(pColor.ImgUrl));
+            }
+        }
          
+        //发布商品并上传图片
+        private Item PublishGoodsAndUploadPic(BanggoProduct banggoProduct)
+        {
+            StuffProductInfo(banggoProduct);
+
+            Item item = PublishGoods(banggoProduct);
+
+            foreach (ProductColor pColor in banggoProduct.ColorList)
+            {
+                UploadItemPropimg(item.NumIid, pColor.MapProps, new Uri(pColor.ImgUrl));
+            }
+            return item;
+        }
+
         //重EXCEL中读取要发布的数据用于发布或更新商品SKU
         private static IEnumerable<PublishGoods> GetPublishGoodsFromExcel(string filePath)
         {
@@ -465,16 +588,23 @@ PropertyAlias:1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);
         }
 
         private PropImg UploadItemPropimgInternal(long numId, string properties, FileItem fItem)
-        {
+        { 
+            _log.LogInfo(Resource.Log_PublishSaleImging, numId);
+
             var req = new ItemPropimgUploadRequest {NumIid = numId, Image = fItem, Properties = properties};
 
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
             ItemPropimgUploadResponse response = _client.Execute(req, tContext.SessionKey);
 
             if (response.IsError)
-                throw new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+            {
+                var ex =  new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
                                                response.SubErrMsg, response.TopForbiddenFields);
-
+                _log.LogError(Resource.Log_PublishSaleImgFailure, ex);
+                throw ex;
+            }
+                 
+            _log.LogInfo(Resource.Log_PublishSaleImgSuccess, response.PropImg.Id, response.PropImg.Url);
             return response.PropImg;
         }
 

@@ -87,7 +87,8 @@ namespace MyTools.TaoBao.UnitTest
         public void GetGoodsUrl_Test()
         {
             var mgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
-            Console.WriteLine(mgt.GetGoodsUrl("510957"));
+            Console.WriteLine(mgt.GetGoodsUrl("238286"));
+            Console.WriteLine(mgt.GetGoodsUrl("242591"));
         }
 
         [Test]

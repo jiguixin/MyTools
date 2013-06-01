@@ -48,9 +48,7 @@ namespace MyTools
                             continue;
                         }
                         Item item = _goodsApi.PublishGoodsForBanggoToTaobao(url);
-
-                        bgwRun.ReportProgress(100, item);
-
+                         
                         Thread.Sleep(1000);
                     }
                     catch (Exception ex)
@@ -62,9 +60,7 @@ namespace MyTools
         }
 
         private void bgwRun_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            var item = e.UserState as Item;
-            if (item != null) txtLog.AppendText("{0} 已发布成功->{1}".StringFormat(item.Title, item.NumIid));
+        { 
         }
 
         private void bgwRun_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

@@ -84,7 +84,7 @@ namespace MyTools
 
         private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            toolStrip.Visible = toolBarToolStripMenuItem.Checked;
+            toolStrip.Visible = btnUpdateGoodsFormOnSale.Checked;
         }
 
         private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e)
@@ -200,6 +200,13 @@ namespace MyTools
             {
                 _goodsApi.PublishGoodsFromExcel(ofd.FileName);
             }
+        }
+
+        private void btnUpdateGoodsFormOnSale_Click(object sender, EventArgs e)
+        {
+            var frm = new FrmUpdateGoodsFromOnSale();
+            frm.MdiParent = this;
+            frm.Show();
         }
 
     }

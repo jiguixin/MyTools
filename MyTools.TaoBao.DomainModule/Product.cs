@@ -50,15 +50,11 @@ namespace MyTools.TaoBao.DomainModule
         /// <summary>
         /// 商品数字id
         /// </summary>
-        public long NumIid { get; set; }
+        public virtual Nullable<long> NumIid { get; set; }
 
         public Product()
         {
-            FreightPayer = "buyer";
-            Type = "fixed";
-            StuffStatus = "new";
-            LocationState = SysConst.LocationState;
-            LocationCity = SysConst.LocationCity;
+           
         }
 
         public virtual void Dispose()

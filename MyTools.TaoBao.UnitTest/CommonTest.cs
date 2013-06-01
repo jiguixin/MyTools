@@ -339,6 +339,38 @@ namespace MyTools.TaoBao.UnitTest
 
 
         }
+
+        [Test]
+        public void CopyModel()
+        {
+            BanggoProduct product = new BanggoProduct();
+            product.NumIid = 18623029094;
+            product.PropertyAlias =
+                "1627207:3232483:粉紫色组(70色);20509:28381:155/80A(S)(24242);20509:28313:160/84A(M)(24244);20509:28314:170/92A(XL)(24248);";
+            product.Props = "1627207:3232483;20509:28381;20509:28313;20509:28314;";
+            product.SkuOuterIds = "242591,242591,242591";
+            product.SkuPrices = "178,178,178";
+            product.SkuProperties =
+                "1627207:3232483;20509:28381,1627207:3232483;20509:28313,1627207:3232483;20509:28314";
+            product.SkuQuantities = "2,5,1";
+
+            ItemUpdateRequest req = new ItemUpdateRequest();
+
+            Util.CopyModel(product, req);
+
+            FileHelper.WriteText("ItemUpdateRequestTest.html", req.DumpProperties(), Encoding.UTF8);
+
+            FileHelper.WriteText("ProductTest.html", product.DumpProperties(), Encoding.UTF8);
+             
+        }
+
+        [Test]
+        public void StringFormtTest()
+        {
+            Console.WriteLine(Resource.Log_UpdateGoodsFailure);
+             
+
+        }
         #endregion
 
         #region Json Net Demo

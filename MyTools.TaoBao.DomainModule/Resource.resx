@@ -205,11 +205,11 @@
     <comment>发布的产品成功信息</comment>
   </data>
   <data name="Log_PublishSaleImgSuccess" xml:space="preserve">
-    <value>发布产品-&gt;上传销售图片：成功。numId:{0},图片地址:{1}</value>
+    <value>上传销售图片：成功。numId:{0},图片地址:{1}</value>
     <comment>上传销售图片：成功</comment>
   </data>
   <data name="Log_PublishSaleImgFailure" xml:space="preserve">
-    <value>发布产品-&gt;上传销售图片：失败。</value>
+    <value>上传销售图片：失败。</value>
     <comment>上传销售图片：失败</comment>
   </data>
   <data name="SysConfig_GetGoodsPriceByBanggoUrl" xml:space="preserve">
@@ -273,7 +273,7 @@
     <comment>产品描述ID</comment>
   </data>
   <data name="Log_GoodsAlreadyExist" xml:space="preserve">
-    <value>该商品已经存在不能再上传 by {0}</value>
+    <value>GoodsSn:{0}-&gt;已经存在不能再上传 </value>
     <comment>该商品已经存在不能再上传 </comment>
   </data>
   <data name="Exception_UrlInvalid" xml:space="preserve">
@@ -291,5 +291,49 @@
   <data name="Log_UpdateGoodsSuccess" xml:space="preserve">
     <value>更新产品：{0} 已更新成功。numId:{1}</value>
     <comment>更新产品 成功</comment>
+  </data>
+  <data name="Log_PublishGoodsFailure" xml:space="preserve">
+    <value>发布产品：{0} 发布失败</value>
+    <comment>发布产品失败</comment>
+  </data>
+  <data name="Log_UpdateGoodsFailure" xml:space="preserve">
+    <value>更新产品：更新失败。numId:{0}</value>
+    <comment>更新商品失败</comment>
+  </data>
+  <data name="Log_PublishGoodsing" xml:space="preserve">
+    <value>{0}-&gt;正在发布...</value>
+    <comment>正在发布商品</comment>
+  </data>
+  <data name="Log_UpdateGoodsing" xml:space="preserve">
+    <value>NumIid:{0}-&gt;正在更新...</value>
+    <comment>正在更新</comment>
+  </data>
+  <data name="Log_PublishSaleImging" xml:space="preserve">
+    <value>NumlId:{0}-&gt;正在上传销售图片...</value>
+    <comment>正在上传销售图片...</comment>
+  </data>
+  <data name="Log_GetOnSaleGoodsFailure" xml:space="preserve">
+    <value>得到在售商品出错</value>
+    <comment>得到在售商品出错</comment>
+  </data>
+  <data name="Log_GetInventoryGoodsFailure" xml:space="preserve">
+    <value>得到卖家仓库中的商品出错</value>
+    <comment>得到卖家仓库中的商品出错</comment>
+  </data>
+  <data name="Log_GoodsDelistingFailure" xml:space="preserve">
+    <value>NumId:{0} -&gt;产品下架失败</value>
+    <comment>产品下架失败</comment>
+  </data>
+  <data name="Log_GoodsDelisting" xml:space="preserve">
+    <value>NumlId:{0}-&gt;正在下架...</value>
+    <comment>正在下架...</comment>
+  </data>
+  <data name="Log_GoodsDelistingSuccess" xml:space="preserve">
+    <value>NumlId:{0}-&gt;下架成功</value>
+    <comment>下架成功</comment>
+  </data>
+  <data name="Log_GetGoodsListFailure" xml:space="preserve">
+    <value>得到产品列表失败</value>
+    <comment>得到产品列表失败</comment>
   </data>
 </root>

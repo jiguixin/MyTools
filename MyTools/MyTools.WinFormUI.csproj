@@ -57,6 +57,12 @@
     <Compile Include="FrmPublishGoods.Designer.cs">
       <DependentUpon>FrmPublishGoods.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmUpdateGoodsFromOnSale.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmUpdateGoodsFromOnSale.Designer.cs">
+      <DependentUpon>FrmUpdateGoodsFromOnSale.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -76,9 +82,14 @@
     <Compile Include="TaoBao\FrmLogin.Designer.cs">
       <DependentUpon>FrmLogin.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utility\TextBoxTraceListener.cs" />
+    <Compile Include="Utility\TextBoxWriter.cs" />
     <EmbeddedResource Include="FrmPublishGoods.resx">
       <DependentUpon>FrmPublishGoods.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmUpdateGoodsFromOnSale.resx">
+      <DependentUpon>FrmUpdateGoodsFromOnSale.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

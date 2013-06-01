@@ -53,12 +53,13 @@
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnUpdateGoodsFormOnSale = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.btnAuthorization = new System.Windows.Forms.ToolStripMenuItem();
             this.btnGetCats = new System.Windows.Forms.ToolStripMenuItem();
             this.btnPublishProduct = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnPublishGoodsFromExcel = new System.Windows.Forms.ToolStripMenuItem();
             this.windowsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.newWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cascadeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,7 +88,6 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnPublishGoodsFromExcel = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -293,21 +293,21 @@
             // viewMenu
             // 
             this.viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolBarToolStripMenuItem,
+            this.btnUpdateGoodsFormOnSale,
             this.statusBarToolStripMenuItem});
             this.viewMenu.Name = "viewMenu";
             this.viewMenu.Size = new System.Drawing.Size(60, 21);
             this.viewMenu.Text = "视图(&V)";
             // 
-            // toolBarToolStripMenuItem
+            // btnUpdateGoodsFormOnSale
             // 
-            this.toolBarToolStripMenuItem.Checked = true;
-            this.toolBarToolStripMenuItem.CheckOnClick = true;
-            this.toolBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.toolBarToolStripMenuItem.Name = "toolBarToolStripMenuItem";
-            this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-            this.toolBarToolStripMenuItem.Text = "工具栏(&T)";
-            this.toolBarToolStripMenuItem.Click += new System.EventHandler(this.ToolBarToolStripMenuItem_Click);
+            this.btnUpdateGoodsFormOnSale.Checked = true;
+            this.btnUpdateGoodsFormOnSale.CheckOnClick = true;
+            this.btnUpdateGoodsFormOnSale.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.btnUpdateGoodsFormOnSale.Name = "btnUpdateGoodsFormOnSale";
+            this.btnUpdateGoodsFormOnSale.Size = new System.Drawing.Size(172, 22);
+            this.btnUpdateGoodsFormOnSale.Text = "更新现有产品库存";
+            this.btnUpdateGoodsFormOnSale.Click += new System.EventHandler(this.btnUpdateGoodsFormOnSale_Click);
             // 
             // statusBarToolStripMenuItem
             // 
@@ -315,7 +315,7 @@
             this.statusBarToolStripMenuItem.CheckOnClick = true;
             this.statusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.statusBarToolStripMenuItem.Name = "statusBarToolStripMenuItem";
-            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.statusBarToolStripMenuItem.Text = "状态栏(&S)";
             this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.StatusBarToolStripMenuItem_Click);
             // 
@@ -351,6 +351,13 @@
             this.btnPublishProduct.Text = "发布产品";
             this.btnPublishProduct.Click += new System.EventHandler(this.btnPublishProduct_Click);
             // 
+            // btnPublishGoodsFromExcel
+            // 
+            this.btnPublishGoodsFromExcel.Name = "btnPublishGoodsFromExcel";
+            this.btnPublishGoodsFromExcel.Size = new System.Drawing.Size(184, 22);
+            this.btnPublishGoodsFromExcel.Text = "从EXCEL中发布产品";
+            this.btnPublishGoodsFromExcel.Click += new System.EventHandler(this.btnPublishGoodsFromExcel_Click);
+            // 
             // windowsMenu
             // 
             this.windowsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -367,42 +374,42 @@
             // newWindowToolStripMenuItem
             // 
             this.newWindowToolStripMenuItem.Name = "newWindowToolStripMenuItem";
-            this.newWindowToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newWindowToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.newWindowToolStripMenuItem.Text = "新建窗口(&N)";
             this.newWindowToolStripMenuItem.Click += new System.EventHandler(this.ShowNewForm);
             // 
             // cascadeToolStripMenuItem
             // 
             this.cascadeToolStripMenuItem.Name = "cascadeToolStripMenuItem";
-            this.cascadeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cascadeToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.cascadeToolStripMenuItem.Text = "层叠(&C)";
             this.cascadeToolStripMenuItem.Click += new System.EventHandler(this.CascadeToolStripMenuItem_Click);
             // 
             // tileVerticalToolStripMenuItem
             // 
             this.tileVerticalToolStripMenuItem.Name = "tileVerticalToolStripMenuItem";
-            this.tileVerticalToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.tileVerticalToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.tileVerticalToolStripMenuItem.Text = "垂直平铺(&V)";
             this.tileVerticalToolStripMenuItem.Click += new System.EventHandler(this.TileVerticalToolStripMenuItem_Click);
             // 
             // tileHorizontalToolStripMenuItem
             // 
             this.tileHorizontalToolStripMenuItem.Name = "tileHorizontalToolStripMenuItem";
-            this.tileHorizontalToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.tileHorizontalToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.tileHorizontalToolStripMenuItem.Text = "水平平铺(&H)";
             this.tileHorizontalToolStripMenuItem.Click += new System.EventHandler(this.TileHorizontalToolStripMenuItem_Click);
             // 
             // closeAllToolStripMenuItem
             // 
             this.closeAllToolStripMenuItem.Name = "closeAllToolStripMenuItem";
-            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.closeAllToolStripMenuItem.Text = "全部关闭(&L)";
             this.closeAllToolStripMenuItem.Click += new System.EventHandler(this.CloseAllToolStripMenuItem_Click);
             // 
             // arrangeIconsToolStripMenuItem
             // 
             this.arrangeIconsToolStripMenuItem.Name = "arrangeIconsToolStripMenuItem";
-            this.arrangeIconsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.arrangeIconsToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.arrangeIconsToolStripMenuItem.Text = "排列图标(&A)";
             this.arrangeIconsToolStripMenuItem.Click += new System.EventHandler(this.ArrangeIconsToolStripMenuItem_Click);
             // 
@@ -574,13 +581,6 @@
             this.toolStripStatusLabel.Size = new System.Drawing.Size(32, 17);
             this.toolStripStatusLabel.Text = "状态";
             // 
-            // btnPublishGoodsFromExcel
-            // 
-            this.btnPublishGoodsFromExcel.Name = "btnPublishGoodsFromExcel";
-            this.btnPublishGoodsFromExcel.Size = new System.Drawing.Size(184, 22);
-            this.btnPublishGoodsFromExcel.Text = "从EXCEL中发布产品";
-            this.btnPublishGoodsFromExcel.Click += new System.EventHandler(this.btnPublishGoodsFromExcel_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -638,7 +638,7 @@
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewMenu;
-        private System.Windows.Forms.ToolStripMenuItem toolBarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem btnUpdateGoodsFormOnSale;
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsMenu;
         private System.Windows.Forms.ToolStripMenuItem btnAuthorization;
