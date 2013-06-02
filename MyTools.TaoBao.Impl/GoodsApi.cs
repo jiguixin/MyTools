@@ -94,7 +94,7 @@ namespace MyTools.TaoBao.Impl
 
         public Item UpdateGoods(Product product)
         {
-            _log.LogInfo(Resource.Log_UpdateGoodsing.StringFormat(product.NumIid));
+            _log.LogInfo(Resource.Log_UpdateGoodsing.StringFormat(product.NumIid,product.OuterId));
 
             var req = new ItemUpdateRequest();
 
@@ -107,7 +107,7 @@ namespace MyTools.TaoBao.Impl
             {
                 var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
                                                   response.SubErrMsg, response.TopForbiddenFields);
-                _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(product.NumIid), ex);
+                _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(product.NumIid,product.OuterId), ex);
                 throw ex;
             }
              
@@ -146,10 +146,7 @@ namespace MyTools.TaoBao.Impl
 
             UpdateGoodsInternal(lstItem); 
         }
-
-
-
-
+          
         //更新商品的内部方法
         private void UpdateGoodsInternal(IEnumerable<Item> lstItem)
         {
@@ -168,8 +165,9 @@ namespace MyTools.TaoBao.Impl
                         continue;
                     }
 
-                    //如果邦购上该产品还在售，就获取他的SKU信息。
+                    //todo: 要调用删除SKU的方法，将SKU都删除掉，然后在添加
 
+                    //如果邦购上该产品还在售，就获取他的SKU信息。 
                     var banggoProduct = new BanggoProduct(false);
                     banggoProduct.ColorList =
                         _banggoMgt.GetProductColorByOnline(new BanggoRequestModel
@@ -181,6 +179,7 @@ namespace MyTools.TaoBao.Impl
                     banggoProduct.GoodsUrl = goodsUrl;
                     banggoProduct.Cid = item.Cid;
                     banggoProduct.NumIid = item.NumIid;
+                    banggoProduct.OuterId = item.OuterId;
 
                     UpdateGoodsAndUploadPic(banggoProduct);
                 }
@@ -273,7 +272,33 @@ namespace MyTools.TaoBao.Impl
                 }
             } 
         }
-         
+
+        //taobao.item.sku.delete 删除SKU 
+        /// <summary>
+        /// 删除单个SKU
+        /// </summary>
+        /// <param name="numId"></param>
+        /// <param name="properties"></param>
+        public void DeleteGoodsSku(long numId, string properties)
+        {
+            _log.LogInfo(Resource.Log_DeleteGoodsSkuing.StringFormat(numId, properties));
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var req = new ItemSkuDeleteRequest();
+            req.NumIid = numId;
+            req.Properties = properties;
+             
+            ItemSkuDeleteResponse response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+            {
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                              response.SubErrMsg, response.TopForbiddenFields);
+                _log.LogError(Resource.Log_DeleteGoodsSkuFailure.StringFormat(numId,properties), ex);
+                throw ex;
+            }
+            _log.LogInfo(Resource.Log_DeleteGoodsSkuSuccess.StringFormat(numId, properties));
+        }
+
         /// <summary>
         /// 更新商品信息包括SKU信息
         /// </summary>

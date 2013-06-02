@@ -97,6 +97,33 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 删除SKU失败，numId：{0}; properties:{1} 的本地化字符串。
+        /// </summary>
+        public static string Log_DeleteGoodsSkuFailure {
+            get {
+                return ResourceManager.GetString("Log_DeleteGoodsSkuFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在执行删除SKU..，numId：{0}; properties:{1} 的本地化字符串。
+        /// </summary>
+        public static string Log_DeleteGoodsSkuing {
+            get {
+                return ResourceManager.GetString("Log_DeleteGoodsSkuing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 删除SKU成功，numId：{0}; properties:{1} 的本地化字符串。
+        /// </summary>
+        public static string Log_DeleteGoodsSkuSuccess {
+            get {
+                return ResourceManager.GetString("Log_DeleteGoodsSkuSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 得到产品列表失败 的本地化字符串。
         /// </summary>
         public static string Log_GetGoodsListFailure {
@@ -214,7 +241,7 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 更新产品：更新失败。numId:{0} 的本地化字符串。
+        ///   查找类似 更新产品：更新失败。numId:{0};GoodsSn:{1} 的本地化字符串。
         /// </summary>
         public static string Log_UpdateGoodsFailure {
             get {
@@ -223,7 +250,7 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 NumIid:{0}-&gt;正在更新... 的本地化字符串。
+        ///   查找类似 NumIid:{0};GoodsSn:{1}-&gt;正在更新... 的本地化字符串。
         /// </summary>
         public static string Log_UpdateGoodsing {
             get {

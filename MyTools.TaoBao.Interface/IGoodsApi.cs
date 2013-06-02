@@ -51,6 +51,14 @@ namespace MyTools.TaoBao.Interface
         /// <param name="filePath"></param>
         void PublishGoodsFromExcel(string filePath);
 
+        //taobao.item.sku.delete 删除SKU 
+        /// <summary>
+        /// 删除单个SKU
+        /// </summary>
+        /// <param name="numId"></param>
+        /// <param name="properties"></param>
+        void DeleteGoodsSku(long numId, string properties);
+
         /// <summary>
         /// 检查该商品是否已经发布
         /// </summary>

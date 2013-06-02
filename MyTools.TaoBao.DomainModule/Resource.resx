@@ -297,7 +297,7 @@
     <comment>发布产品失败</comment>
   </data>
   <data name="Log_UpdateGoodsFailure" xml:space="preserve">
-    <value>更新产品：更新失败。numId:{0}</value>
+    <value>更新产品：更新失败。numId:{0};GoodsSn:{1}</value>
     <comment>更新商品失败</comment>
   </data>
   <data name="Log_PublishGoodsing" xml:space="preserve">
@@ -305,7 +305,7 @@
     <comment>正在发布商品</comment>
   </data>
   <data name="Log_UpdateGoodsing" xml:space="preserve">
-    <value>NumIid:{0}-&gt;正在更新...</value>
+    <value>NumIid:{0};GoodsSn:{1}-&gt;正在更新...</value>
     <comment>正在更新</comment>
   </data>
   <data name="Log_PublishSaleImging" xml:space="preserve">
@@ -335,5 +335,17 @@
   <data name="Log_GetGoodsListFailure" xml:space="preserve">
     <value>得到产品列表失败</value>
     <comment>得到产品列表失败</comment>
+  </data>
+  <data name="Log_DeleteGoodsSkuing" xml:space="preserve">
+    <value>正在执行删除SKU..，numId：{0}; properties:{1}</value>
+    <comment>正在执行删除SKU..</comment>
+  </data>
+  <data name="Log_DeleteGoodsSkuFailure" xml:space="preserve">
+    <value>删除SKU失败，numId：{0}; properties:{1}</value>
+    <comment>删除SKU失败</comment>
+  </data>
+  <data name="Log_DeleteGoodsSkuSuccess" xml:space="preserve">
+    <value>删除SKU成功，numId：{0}; properties:{1}</value>
+    <comment>删除SKU成功</comment>
   </data>
 </root>
