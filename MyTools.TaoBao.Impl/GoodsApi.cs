@@ -125,14 +125,27 @@ namespace MyTools.TaoBao.Impl
         { 
             //得到当前用户的在售商品列表 
             var req = new ItemsOnsaleGetRequest();
-            req.Fields = "num_iid,cid,title,price,outer_id";
+           req.Fields = "num_iid,cid,title,price,outer_id";
+           // req.Fields = "num_iid";
             if (!search.IsNullOrEmpty())
                 req.Q=search;
             req.PageSize = 180;
            // req.PageNo = 10;
             
             var lstItem = GetOnSaleGoods(req);
-
+            //因为读在售没办法得到SKU所以只有单独取
+            lstItem.ForEach((item) =>
+                {
+                    try
+                    {
+                        item.Skus = (List<Sku>) GetSkusByNumId(item.NumIid.ToString(CultureInfo.InvariantCulture));
+                        Thread.Sleep(200);
+                    }
+                    catch
+                    {
+                    } 
+                });
+              
             UpdateGoodsInternal(lstItem);
         }
 
@@ -153,6 +166,7 @@ namespace MyTools.TaoBao.Impl
             //遍历在售商品列表中的商品，通过outerid去查询banggo上的该产品信息
             foreach (var item in lstItem)
             {
+                Thread.Sleep(1000); 
                 try
                 {
                     //通过款号查询如果没有得到产品的URL或得不到库存，就将该产品进行下架。
@@ -165,7 +179,22 @@ namespace MyTools.TaoBao.Impl
                         continue;
                     }
 
-                    //todo: 要调用删除SKU的方法，将SKU都删除掉，然后在添加
+                    #region 删除SKU只保留1个可用SKU
+
+                    var skus = item.Skus;
+
+                    skus = skus.OrderByDescending(f => f.Quantity).ToList();
+                      
+                    for (int i = 1; i < skus.Count; i++)
+                    {
+                        var sku = skus[i];
+                        
+                        DeleteGoodsSku(item.NumIid, sku.Properties);
+
+                        Thread.Sleep(500);
+                    }
+                     
+                    #endregion 
 
                     //如果邦购上该产品还在售，就获取他的SKU信息。 
                     var banggoProduct = new BanggoProduct(false);
@@ -185,8 +214,7 @@ namespace MyTools.TaoBao.Impl
                 }
                 catch
                 {
-                }
-                Thread.Sleep(500);
+                } 
             }
         }
 
@@ -218,6 +246,8 @@ namespace MyTools.TaoBao.Impl
 
             foreach (var pgModel in lstPublishGoods)
             {
+                Thread.Sleep(500); 
+
                 var item = VerifyGoodsExist(pgModel.GoodsSn);
                 if (item.IsNotNull())
                 {
@@ -239,8 +269,7 @@ namespace MyTools.TaoBao.Impl
                     { 
                         continue;
                     } 
-
-                    Thread.Sleep(500); 
+                     
                     #endregion
                 }
                 else
@@ -265,11 +294,10 @@ namespace MyTools.TaoBao.Impl
                     { 
                         continue;
                     }  
-
-                    Thread.Sleep(500); 
-
+                     
                     #endregion
                 }
+                Thread.Sleep(500); 
             } 
         }
 
@@ -299,6 +327,35 @@ namespace MyTools.TaoBao.Impl
             _log.LogInfo(Resource.Log_DeleteGoodsSkuSuccess.StringFormat(numId, properties));
         }
 
+        //taobao.item.skus.get 根据商品ID列表获取SKU信息 
+        /// <summary>
+        /// 根据商品ID列表获取SKU信息 
+        /// </summary>
+        /// <param name="numIds">支持多个商品，用“，”号分割</param>
+        /// <returns></returns>
+        public IEnumerable<Sku> GetSkusByNumId(string numIds)
+        {
+            _log.LogInfo(Resource.Log_GetSkusing.StringFormat(numIds));
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+            var req = new ItemSkusGetRequest();
+            req.Fields = "properties_name,sku_id,iid,num_iid,properties,quantity,price,outer_id";
+            req.NumIids = numIds;
+
+            var response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+            {
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                              response.SubErrMsg, response.TopForbiddenFields);
+                _log.LogError(Resource.Log_GetSkusFailure.StringFormat(numIds), ex);
+                throw ex;
+            }
+            _log.LogInfo(Resource.Log_GetSkusSuccess.StringFormat(numIds));
+
+            return response.Skus;
+        }
+
         /// <summary>
         /// 更新商品信息包括SKU信息
         /// </summary>
@@ -315,7 +372,8 @@ namespace MyTools.TaoBao.Impl
             banggoProduct.BSizeToTSize = _banggoMgt.GetBSizeToTSize(_banggoMgt.GetGoodsDetialElementData(req));
             //3，SetSkuInfo 
             SetSkuInfo(banggoProduct);
-            
+            Thread.Sleep(200);
+
             UpdateGoods(banggoProduct); 
         }
 
@@ -324,7 +382,7 @@ namespace MyTools.TaoBao.Impl
             goodsSn.ThrowIfNullOrEmpty(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace())); 
 
             var req = new ItemsOnsaleGetRequest();
-            req.Fields = "num_iid,title,cid,outer_id";
+            req.Fields = "num_iid,cid,title,outer_id";
             req.Q = goodsSn;
             req.PageSize = 10;
             var onSaleGoods = GetOnSaleGoods(req);
@@ -456,7 +514,7 @@ namespace MyTools.TaoBao.Impl
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
 
             var req = new ItemsListGetRequest();
-            req.Fields = "num_iid,cid,title,price,outer_id";
+            req.Fields = "num_iid,cid,sku,title,price,outer_id";
             req.NumIids = numIds;
 
             ItemsListGetResponse response = _client.Execute(req, tContext.SessionKey);
@@ -530,6 +588,9 @@ namespace MyTools.TaoBao.Impl
             {
                 if (banggoProduct.NumIid != null)
                     UploadItemPropimg(banggoProduct.NumIid.Value, pColor.MapProps, new Uri(pColor.ImgUrl));
+
+                Thread.Sleep(500);
+
             }
         }
          
@@ -543,6 +604,7 @@ namespace MyTools.TaoBao.Impl
             foreach (ProductColor pColor in banggoProduct.ColorList)
             {
                 UploadItemPropimg(item.NumIid, pColor.MapProps, new Uri(pColor.ImgUrl));
+                Thread.Sleep(500);
             }
             return item;
         }

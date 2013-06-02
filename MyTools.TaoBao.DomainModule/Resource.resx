@@ -348,4 +348,16 @@
     <value>删除SKU成功，numId：{0}; properties:{1}</value>
     <comment>删除SKU成功</comment>
   </data>
+  <data name="Log_GetSkusing" xml:space="preserve">
+    <value>正在获取SKU...：numIds:{0}</value>
+    <comment>正在获取SKU</comment>
+  </data>
+  <data name="Log_GetSkusFailure" xml:space="preserve">
+    <value>获取SKU出错：numIds:{0}</value>
+    <comment>获取SKU出错</comment>
+  </data>
+  <data name="Log_GetSkusSuccess" xml:space="preserve">
+    <value>获取SKU成功：numIds:{0}</value>
+    <comment>获取SKU成功</comment>
+  </data>
 </root>

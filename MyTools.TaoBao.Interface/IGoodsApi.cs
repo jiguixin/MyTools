@@ -59,6 +59,14 @@ namespace MyTools.TaoBao.Interface
         /// <param name="properties"></param>
         void DeleteGoodsSku(long numId, string properties);
 
+         //taobao.item.skus.get 根据商品ID列表获取SKU信息 
+        /// <summary>
+        /// 根据商品ID列表获取SKU信息 
+        /// </summary>
+        /// <param name="numIds">支持多个商品，用“，”号分割</param>
+        /// <returns></returns>
+        IEnumerable<Sku> GetSkusByNumId(string numIds);
+
         /// <summary>
         /// 检查该商品是否已经发布
         /// </summary>

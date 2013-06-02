@@ -151,6 +151,33 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 获取SKU出错：numIds:{0} 的本地化字符串。
+        /// </summary>
+        public static string Log_GetSkusFailure {
+            get {
+                return ResourceManager.GetString("Log_GetSkusFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在获取SKU...：numIds:{0} 的本地化字符串。
+        /// </summary>
+        public static string Log_GetSkusing {
+            get {
+                return ResourceManager.GetString("Log_GetSkusing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 获取SKU成功：numIds:{0} 的本地化字符串。
+        /// </summary>
+        public static string Log_GetSkusSuccess {
+            get {
+                return ResourceManager.GetString("Log_GetSkusSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 GoodsSn:{0}-&gt;已经存在不能再上传  的本地化字符串。
         /// </summary>
         public static string Log_GoodsAlreadyExist {
