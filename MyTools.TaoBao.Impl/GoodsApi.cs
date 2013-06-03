@@ -535,8 +535,9 @@ namespace MyTools.TaoBao.Impl
                         }
                     }
 
-                    List<Sku> skus = item.Skus.OrderByDescending(f => f.Quantity).ToList();
-
+                    //不用排序，默认取最开始那个
+                    //List<Sku> skus = item.Skus.OrderByDescending(f => f.Quantity).ToList();
+                    List<Sku> skus = item.Skus;
                     for (int i = 1; i < skus.Count; i++)
                     {
                         Sku sku = skus[i];
