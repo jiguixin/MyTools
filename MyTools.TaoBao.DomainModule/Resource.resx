@@ -360,4 +360,8 @@
     <value>获取SKU成功：numIds:{0}</value>
     <comment>获取SKU成功</comment>
   </data>
+  <data name="Log_StockEqualNotUpdate" xml:space="preserve">
+    <value>库存相同，不进行更新;-&gt;NumId:{0};GoodsSn:{1};</value>
+    <comment>库存相同，不进行更新</comment>
+  </data>
 </root>

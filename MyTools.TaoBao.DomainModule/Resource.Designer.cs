@@ -268,6 +268,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 库存相同，不进行更新;-&gt;NumId:{0};GoodsSn:{1}; 的本地化字符串。
+        /// </summary>
+        public static string Log_StockEqualNotUpdate {
+            get {
+                return ResourceManager.GetString("Log_StockEqualNotUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 更新产品：更新失败。numId:{0};GoodsSn:{1} 的本地化字符串。
         /// </summary>
         public static string Log_UpdateGoodsFailure {
