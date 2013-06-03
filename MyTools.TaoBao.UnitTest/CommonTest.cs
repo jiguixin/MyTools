@@ -20,6 +20,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Infrastructure.Crosscutting.Utility;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
+using MyTools.Framework.Common;
 using MyTools.TaoBao.DomainModule;
 using NUnit.Framework;
 using Newtonsoft.Json;
@@ -125,53 +126,54 @@ namespace MyTools.TaoBao.UnitTest
 
         [Test]
         public void GetImgByte()
-        {  
-            var restClient = new RestClient("http://img6.ibanggo.com/sources/images/goods/MB/209697/209697_00--w_498_h_498.jpg");
+        {
+            var restClient =
+                new RestClient("http://img6.ibanggo.com/sources/images/goods/MB/209697/209697_00--w_498_h_498.jpg");
             var request = new RestRequest(Method.GET);
             IRestResponse response = restClient.Execute(request);
 
-             var bytes = response.RawBytes;
+            var bytes = response.RawBytes;
 
-             FileStream fs = new FileStream("209697_00.jpg", FileMode.Create, FileAccess.Write);
-             fs.Write(bytes, 0, bytes.Length);
-             fs.Close();
+            FileStream fs = new FileStream("209697_00.jpg", FileMode.Create, FileAccess.Write);
+            fs.Write(bytes, 0, bytes.Length);
+            fs.Close();
 
             //Guid photoID = System.Guid.NewGuid();
             // String photolocation = String.Format(@"c:\temp\{0}.jpg", Guid.NewGuid().ToString());
 
-/*
-            IRestResponse response = restClient.ExecuteAsync(
-        request,
-        Response =>
-        {
-            if (Response != null)
-            {
-                byte[] imageBytes = Response.RawBytes;
-                var bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = new MemoryStream(imageBytes);
-                bitmapImage.CreateOptions = BitmapCreateOptions.None;
-                bitmapImage.CacheOption = BitmapCacheOption.Default;
-                bitmapImage.EndInit();
+            /*
+                        IRestResponse response = restClient.ExecuteAsync(
+                    request,
+                    Response =>
+                    {
+                        if (Response != null)
+                        {
+                            byte[] imageBytes = Response.RawBytes;
+                            var bitmapImage = new BitmapImage();
+                            bitmapImage.BeginInit();
+                            bitmapImage.StreamSource = new MemoryStream(imageBytes);
+                            bitmapImage.CreateOptions = BitmapCreateOptions.None;
+                            bitmapImage.CacheOption = BitmapCacheOption.Default;
+                            bitmapImage.EndInit();
 
-                JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-                Guid photoID = System.Guid.NewGuid();
-                String photolocation = String.Format(@"c:\temp\{0}.jpg", Guid.NewGuid().ToString());
-                encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-                using (var filestream = new FileStream(photolocation, FileMode.Create))
-                encoder.Save(filestream);
+                            JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                            Guid photoID = System.Guid.NewGuid();
+                            String photolocation = String.Format(@"c:\temp\{0}.jpg", Guid.NewGuid().ToString());
+                            encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+                            using (var filestream = new FileStream(photolocation, FileMode.Create))
+                            encoder.Save(filestream);
 
-                this.Dispatcher.Invoke((Action)(() => { img.Source = bitmapImage; }));
-                ;
-            }
-        });*/
-              
+                            this.Dispatcher.Invoke((Action)(() => { img.Source = bitmapImage; }));
+                            ;
+                        }
+                    });*/
+
 
         }
 
         [Test]
         public void DownloadImg()
-        { 
+        {
             Image img = PicDealHelper.DownloadImage(
                 "http://img6.ibanggo.com/sources/images/goods/MB/209697/209697_00--w_498_h_498.jpg");
             img.Save("test.jpg");
@@ -182,8 +184,8 @@ namespace MyTools.TaoBao.UnitTest
         [Test]
         public void ResourceTest()
         {
-            ResourceManager rm = new ResourceManager(typeof(Resource).FullName,
-                             typeof(Resource).Assembly);
+            ResourceManager rm = new ResourceManager(typeof (Resource).FullName,
+                                                     typeof (Resource).Assembly);
             var s = rm.GetString("SysConfig_METERSBONWE_BrandProp");
 
             Console.WriteLine(s);
@@ -196,17 +198,17 @@ namespace MyTools.TaoBao.UnitTest
             Uri uri = new Uri("http://img3.mbanggo.com/sources/images/bgpicupload/206039/206039_29--w_438_h_710.jpg");
             int lastIndex = uri.Segments.Length - 1;
             Console.WriteLine(uri.Segments[lastIndex]);
- 
+
         }
 
         [Test]
         public void FormatTest()
         {
-            string s = "this is {0}  My Name is {1}".StringFormat("pen","jim ji"); 
+            string s = "this is {0}  My Name is {1}".StringFormat("pen", "jim ji");
 
             Console.WriteLine(s);
 
-            
+
         }
 
         [Test]
@@ -217,8 +219,8 @@ namespace MyTools.TaoBao.UnitTest
 
             string ds = XmlHelper.XmlDecode(s);
 
-             s = XmlHelper.XmlEncodeAttribute(
-               "http://s.taobao.com/search?spm=a230r.1.8.6.jyjgfa&promote=0&sort=price-asc&initiative_id=staobaoz_20130524&tab=all&q=233722&stats_click=search_radio_all%3A1#J_relative");
+            s = XmlHelper.XmlEncodeAttribute(
+                "http://s.taobao.com/search?spm=a230r.1.8.6.jyjgfa&promote=0&sort=price-asc&initiative_id=staobaoz_20130524&tab=all&q=233722&stats_click=search_radio_all%3A1#J_relative");
 
             string ds1 = XmlHelper.XmlDecode(s);
         }
@@ -226,20 +228,22 @@ namespace MyTools.TaoBao.UnitTest
         [Test]
         public void ConverPrice()
         {
-//            string s = "运费：15.50";
+            //            string s = "运费：15.50";
             string s = "运费：15 元：125 /r/n 15.20";
-            
-            Console.WriteLine(s.GetNumberInt()); 
+
+            Console.WriteLine(s.GetNumberInt());
             Console.WriteLine(s.GetNumberDouble());
             Console.WriteLine(s.GetNumber());
             Console.WriteLine(s.GetNumberStr());
 
         }
-         
+
         [Test]
         public void CreateExcel()
         {
-            ExcelHelper excel = new ExcelHelper(@"C:\Users\Administrator\Desktop\{0}分析.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd HH-MM")));
+            ExcelHelper excel =
+                new ExcelHelper(
+                    @"C:\Users\Administrator\Desktop\{0}分析.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd HH-MM")));
 
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("款号", "varchar(255)");
@@ -250,7 +254,7 @@ namespace MyTools.TaoBao.UnitTest
             dic.Add("价格", "varchar(255)");
             dic.Add("成交记录", "varchar(255)");
             dic.Add("评价数", "varchar(255)");
-            dic.Add("最近几天成交记录", "varchar(255)"); 
+            dic.Add("最近几天成交记录", "varchar(255)");
 
             excel.WriteTable("shell", dic);
 
@@ -259,7 +263,7 @@ namespace MyTools.TaoBao.UnitTest
         [Test]
         public void SwichRow()
         {
-//            string s = "adfasdf \r\nsafdasdf";
+            //            string s = "adfasdf \r\nsafdasdf";
             string s = "价格数据{0}".StringFormat(DateTime.Now.ToString("HHmm"));
             Console.WriteLine(s);
         }
@@ -268,7 +272,8 @@ namespace MyTools.TaoBao.UnitTest
         public bool ExcelHelperTest()
         {
             ExcelHelper excel =
-               new ExcelHelper(@"C:\Users\Administrator\Desktop\{0} 分析.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd")));
+                new ExcelHelper(
+                    @"C:\Users\Administrator\Desktop\{0} 分析.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd")));
 
             string tName = "";
 
@@ -298,7 +303,7 @@ namespace MyTools.TaoBao.UnitTest
                 PublishGoods pg = new PublishGoods(dr);
 
 
-            }  
+            }
         }
 
 
@@ -318,7 +323,7 @@ namespace MyTools.TaoBao.UnitTest
         {
             try
             {
-                return (T)Convert.ChangeType(text, typeof(T), CultureInfo.InvariantCulture);
+                return (T) Convert.ChangeType(text, typeof (T), CultureInfo.InvariantCulture);
             }
             catch
             {
@@ -361,16 +366,145 @@ namespace MyTools.TaoBao.UnitTest
             FileHelper.WriteText("ItemUpdateRequestTest.html", req.DumpProperties(), Encoding.UTF8);
 
             FileHelper.WriteText("ProductTest.html", product.DumpProperties(), Encoding.UTF8);
-             
+
         }
 
         [Test]
         public void StringFormtTest()
         {
             Console.WriteLine(Resource.Log_UpdateGoodsFailure);
-             
+
 
         }
+
+        #endregion
+
+        #region Excel
+
+        [Test]
+        public void GetExcelData()
+        {
+            var ds = ExcelHelper.GetExcelDataSet(@"C:\Users\Administrator\Desktop\SaleOrder.xlsx");
+
+            var dtOrderList = ds.Tables["ExportOrderList"];
+
+            var dtOrderDetailList = ds.Tables["ExportOrderDetailList"];
+
+
+            var query = from l in dtOrderList.AsEnumerable()
+                        join d in dtOrderDetailList.AsEnumerable() on l["订单编号"] equals d["订单编号"]
+                        where d["订单状态"].ToString() != "交易关闭" && d["订单状态"].ToString() != "等待买家付款"
+                        select new
+                            {
+                                OrderNo = l["订单编号"],
+                                CreateTime = l["订单创建时间"],
+                                GoodsSn = d["外部系统编号"],
+                                Props = d["商品属性"],
+                                SalePrice = l["买家应付货款"],
+                                Postage = l["买家应付邮费"],
+                                TotalPrice = l["总金额"],
+                                OrderState = l["订单状态"],
+                                UserName = l["买家会员名"],
+                                Remark = l["订单备注"],
+                                Price = d["价格"],
+                                Count = d["购买数量"],
+                                Title = d["标题"]
+                            };
+
+            string sheetName = "销售记录";
+            var excel = CreateExcelForSell(sheetName);
+            DataTable dt = excel.ReadTable(sheetName);
+
+            foreach (var q in query)
+            {
+
+                var jRemark = TextHelper.ChangeStrToDBC(q.Remark.ToString().Trim('\''));
+
+                DataRow dr = dt.NewRow();
+                dr["订单编号"] = q.OrderNo;
+                dr["卖出时间"] = q.CreateTime;
+                dr["款号"] = q.GoodsSn;
+                dr["商品属性"] = q.Props;
+                dr["销售金额"] = q.TotalPrice;
+                dr["买家应付邮费"] = q.Postage;
+                dr["单件售价"] = q.Price;
+                dr["购买数量"] = q.Count;
+                //                dr["结帐情况"]
+                //                dr["结帐时间"]
+
+                JObject jObj = JObject.Parse(jRemark);
+                if (jObj != null)
+                {
+                    var source = jObj.SelectToken("来源");
+
+                    if (source != null) dr["货源"] = source.Value<string>();
+
+                    var costPrice = jObj.SelectToken("成本价");
+                    dr["付款金额"] = costPrice != null ? (object) costPrice.Value<string>() : 0;
+
+                    dr["原价"] = q.Title.ToString().GetNumberInt();
+                    var pastage = jObj.SelectToken("邮费");
+
+                    dr["支出邮费"] = pastage != null ? (object) costPrice.Value<string>() : 0;
+                }
+                else
+                {
+                    dr["付款金额"] = 0;
+                    dr["原价"] = 0;
+                    dr["支出邮费"] = 0;
+                }
+
+                excel.AddNewRow(dr);
+            }
+        }
+
+        //创建ExcelHelper 该EXCEL是用于存放SKU数据
+        private ExcelHelper CreateExcelForSell(string sheetName)
+        {
+            FileHelper.CreateDirectory("Sell");
+
+            string filePath = @"Sell\{0} 销售.xls".StringFormat(DateTime.Now.ToString("yyyy-MM-dd"));
+
+            var excel = new ExcelHelper(filePath) {Imex = "0", Hdr = "YES"};
+
+            if (File.Exists(filePath))
+            {
+                if (SysUtils.CheckTableExsit(excel, sheetName))
+                {
+                    return excel;
+                }
+            }
+            var dic = new Dictionary<string, string>
+                {
+                    {"订单编号", "varchar(255)"},
+                    {"卖出时间", "varchar(255)"},
+                    {"货源", "varchar(255)"},
+                    {"款号", "Double"},
+                    {"商品属性", "varchar(255)"},
+                    {"原价", "Double"},
+                    {"销售金额", "Double"},
+                    {"买家应付邮费", "Double"},
+                    {"单件售价", "Double"},
+                    {"购买数量", "Double"},
+                    {"支出邮费", "Double"},
+                    {"付款金额", "Double"},
+                    {"结帐情况", "varchar(255)"},
+                    {"结帐时间", "varchar(255)"},
+                    {"购买帐号", "varchar(255)"},
+                    {"备注", "varchar(255)"},
+                };
+
+            excel.WriteTable(sheetName, dic);
+            return excel;
+        }
+
+
+        [Test]
+        public void Foo1()
+        {
+            //Console.WriteLine(CharConverter("{ \"来源\": \"CDMB付家秀\", \"成本价\": 109.5, “退款金额”:139}"));
+        }
+
         #endregion
 
         #region Json Net Demo
@@ -383,7 +517,8 @@ namespace MyTools.TaoBao.UnitTest
 
             var settings = new JsonSerializerSettings();
 
-            string result = JsonConvert.SerializeObject(pc, Formatting.Indented, settings);//需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。
+            string result = JsonConvert.SerializeObject(pc, Formatting.Indented, settings);
+                //需要注意的是，如果返回的是一个集合，那么还要在它的上面再封装一个类。否则客户端收到会出错的。
 
 
             var pcList = JsonConvert.DeserializeObject<List<ProductColor>>(result);
@@ -393,14 +528,14 @@ namespace MyTools.TaoBao.UnitTest
 
 
 
-            
+
 
 
             Console.WriteLine(result);
 
         }
 
-      
+
 
         #region helper
 
@@ -459,37 +594,37 @@ namespace MyTools.TaoBao.UnitTest
 
             pc.SizeList = new List<ProductSize>();
             pc.SizeList.Add(new ProductSize()
-            {
-                Alias = "S",
-                AvlNum = 11,
-                SizeCode = "144",
-                MySalePrice = 111,
-                MarketPrice = 11
-            });
+                {
+                    Alias = "S",
+                    AvlNum = 11,
+                    SizeCode = "144",
+                    MySalePrice = 111,
+                    MarketPrice = 11
+                });
             pc.SizeList.Add(new ProductSize()
-            {
-                Alias = "M",
-                AvlNum = 22,
-                SizeCode = "146",
-                MySalePrice = 222,
-                MarketPrice = 22
-            });
+                {
+                    Alias = "M",
+                    AvlNum = 22,
+                    SizeCode = "146",
+                    MySalePrice = 222,
+                    MarketPrice = 22
+                });
             pc.SizeList.Add(new ProductSize()
-            {
-                Alias = "L",
-                AvlNum = 33,
-                SizeCode = "148",
-                MySalePrice = 333,
-                MarketPrice = 33
-            });
+                {
+                    Alias = "L",
+                    AvlNum = 33,
+                    SizeCode = "148",
+                    MySalePrice = 333,
+                    MarketPrice = 33
+                });
 
             #endregion
-             
+
             pcList.Add(pc);
 
-            return pcList; 
+            return pcList;
         }
-         
+
         #endregion
 
 
@@ -512,7 +647,36 @@ namespace MyTools.TaoBao.UnitTest
         }
 
         #endregion
-    }
+         
+        public class SellDetial
+        {
+            //public SellDetial(DataRow dr)
+            //{
+            //    OrderNo = Util.Get<string>(dr, "订单编号");
+            //    CreateTime = Util.Get<string>(dr, "卖出时间");
+            //    Source = Util.Get<string>(dr, "货源");
+            //    GoodsSn = Util.Get<string>(dr, "款号");
+            //    Props = Util.Get<string>(dr, "商品属性");
 
-   
+            //}
+            public string OrderNo { get; set; }
+            public string CreateTime { get; set; }
+            public string Source { get; set; }
+            public string GoodsSn { get; set; }
+            public string Props { get; set; }
+            public double MarketPrice { get; set; }
+            public double SaleTotalPrice { get; set; }
+            public double HePayPostage { get; set; }
+            public double SinglePrice { get; set; }
+            public double Count { get; set; }
+            public double MyPayPostage { get; set; }
+            public double CostPrice { get; set; }
+            public string PayStatus { get; set; }
+            public string PayTime { get; set; }
+            public string Account { get; set; }
+            public string Remark { get; set; }
+
+
+        }
+    }
 }
