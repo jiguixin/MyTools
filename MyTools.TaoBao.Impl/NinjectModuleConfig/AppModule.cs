@@ -35,7 +35,9 @@ namespace MyTools.TaoBao.Impl.NinjectModuleConfig
 
             this.Bind<IDelivery>().To<DeliveryLocalData>().InSingletonScope().Named(Resource.SysConfig_GetDataByLocal);
             this.Bind<IDelivery>().To<DeliveryApi>().InSingletonScope().Named(Resource.SysConfig_GetDataByApi);
+              
 
+            this.Bind<ISell>().To<Sell>().InSingletonScope();
 
             this.Bind<IAnalysis>().To<TaoBaoAnalysis>().InSingletonScope();
 
@@ -50,8 +52,7 @@ namespace MyTools.TaoBao.Impl.NinjectModuleConfig
             this.Bind<ILoggerFactory>().ToMethod(x => new TraceSourceLogFactory()).InSingletonScope();
 
             this.Bind<IBanggoMgt>().To<BanggoMgt>().InSingletonScope();
-
-
+             
               
         }
     }

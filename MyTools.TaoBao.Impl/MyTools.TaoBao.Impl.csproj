@@ -80,6 +80,7 @@
     <Compile Include="ItemCatsApi.cs" />
     <Compile Include="NinjectModuleConfig\AppModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sell.cs" />
     <Compile Include="ShopApi.cs" />
     <Compile Include="ShopLocalData.cs" />
     <Compile Include="TaoBaoAnalysis.cs" />
