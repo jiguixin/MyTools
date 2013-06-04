@@ -124,6 +124,60 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 GoodsSn:{0}-&gt;导Banggo库存数据与淘宝对手销售数据出错! 的本地化字符串。
+        /// </summary>
+        public static string Log_ExportBanggoAndTaobaoGoodsInfoBySearchFailure {
+            get {
+                return ResourceManager.GetString("Log_ExportBanggoAndTaobaoGoodsInfoBySearchFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 GoodsSn:{0}-&gt;正在导出Banggo库存数据.... 的本地化字符串。
+        /// </summary>
+        public static string Log_ExportProductColorForExceling {
+            get {
+                return ResourceManager.GetString("Log_ExportProductColorForExceling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 GoodsSn:{0}-&gt;导出Banggo库存数据成功! 的本地化字符串。
+        /// </summary>
+        public static string Log_ExportProductColorForExcelSuccess {
+            get {
+                return ResourceManager.GetString("Log_ExportProductColorForExcelSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 query:{0}-&gt;正在导出该产品所有对手的销售数据.... 的本地化字符串。
+        /// </summary>
+        public static string Log_ExportRivalGoodsInfoing {
+            get {
+                return ResourceManager.GetString("Log_ExportRivalGoodsInfoing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 query:{0}-&gt;导出该产品所有对手的销售数据成功! 的本地化字符串。
+        /// </summary>
+        public static string Log_ExportRivalGoodsInfoSuccess {
+            get {
+                return ResourceManager.GetString("Log_ExportRivalGoodsInfoSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 成功导出：[{0}] 有销售数！ 的本地化字符串。
+        /// </summary>
+        public static string Log_ExportSingleRivalGoodsInfoSuccess {
+            get {
+                return ResourceManager.GetString("Log_ExportSingleRivalGoodsInfoSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 得到产品列表失败 的本地化字符串。
         /// </summary>
         public static string Log_GetGoodsListFailure {
@@ -147,6 +201,42 @@ namespace MyTools.TaoBao.DomainModule {
         public static string Log_GetOnSaleGoodsFailure {
             get {
                 return ResourceManager.GetString("Log_GetOnSaleGoodsFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Query:{0}-&gt;正在获取在售产品... 的本地化字符串。
+        /// </summary>
+        public static string Log_GetOnSaleGoodsing {
+            get {
+                return ResourceManager.GetString("Log_GetOnSaleGoodsing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Query:{0}-&gt;获取在售产品成功 的本地化字符串。
+        /// </summary>
+        public static string Log_GetOnSaleGoodsSuccess {
+            get {
+                return ResourceManager.GetString("Log_GetOnSaleGoodsSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在获取：[{0}] 的销售数据 的本地化字符串。
+        /// </summary>
+        public static string Log_GetRivalDetailsing {
+            get {
+                return ResourceManager.GetString("Log_GetRivalDetailsing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 获取：[{0}] 的销售数据完成 的本地化字符串。
+        /// </summary>
+        public static string Log_GetRivalDetailsSuccess {
+            get {
+                return ResourceManager.GetString("Log_GetRivalDetailsSuccess", resourceCulture);
             }
         }
         

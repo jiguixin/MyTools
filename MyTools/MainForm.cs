@@ -138,6 +138,8 @@ namespace MyTools
         private ICommonApi _comApi = InstanceLocator.Current.GetInstance<ICommonApi>();
 
         ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
+
+        private ISell _sell = InstanceLocator.Current.GetInstance<ISell>();
            
         #endregion
           
@@ -206,6 +208,23 @@ namespace MyTools
         {
             var frm = new FrmUpdateGoodsFromOnSale();
             frm.MdiParent = this; 
+            frm.Show();
+        }
+
+        private void btnExportSellDetail_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Excel Files(*.xls,*.xlsx)|*.xls;*.xlsx";
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                _sell.ExportSellDetail(ofd.FileName);
+            }
+        }
+
+        private void btnExportRivalSaleDetail_Click(object sender, EventArgs e)
+        {
+            FrmExportBanggoAndTaobaoGoodsInfo frm = new FrmExportBanggoAndTaobaoGoodsInfo();
+            frm.MdiParent = this;
             frm.Show();
         }
 

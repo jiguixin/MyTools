@@ -149,7 +149,14 @@ namespace MyTools.TaoBao.Interface
         /// </example>
         /// <param name="req">要查询传入的参数</param>
         List<Item> GetOnSaleGoods(ItemsOnsaleGetRequest req);
-         
+
+        /// <summary>
+        /// 得到当前在售商品，最多个数为199
+        /// </summary>
+        /// <param name="search">查询条件</param>
+        /// <returns></returns>
+        List<Item> GetOnSaleGoods(string search = null);
+
         /// <summary>
         /// 得到当前会话用户库存中的商品列表 
         /// taobao.items.inventory.get

@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -62,7 +63,7 @@ namespace MyTools.TaoBao.Impl
 
                 DataRow dr = dt.NewRow();
                 dr["订单编号"] = q.OrderNo;
-                dr["卖出时间"] = q.CreateTime;
+                dr["卖出时间"] = q.CreateTime.ToDateTime().ToString("yyyy/MM/dd");
                 dr["款号"] = q.GoodsSn; 
                 dr["商品属性"] = q.Props;
                 dr["销售金额"] = q.TotalPrice;
@@ -89,18 +90,25 @@ namespace MyTools.TaoBao.Impl
 
                     var remark = jObj.SelectToken("备注");
                     dr["备注"] = remark != null ? (object)remark.Value<string>() : "";
+
+                    var refund = jObj.SelectToken("退款金额");
+                    dr["退款金额"] = refund != null ? (object)refund.Value<string>() : 0;
                 }
                 else
                 {
                     dr["付款金额"] = 0;
                     dr["原价"] = 0;
                     dr["支出邮费"] = 0;
+                    dr["退款金额"] = 0;
                 }
 
                 GetColorAndSize(dr, q.Props.ToString());
 
                 excel.AddNewRow(dr);
-            } 
+            }
+
+            excel.Dispose();
+            Process.Start("Sell");
         }
 
         #region helper
@@ -130,13 +138,14 @@ namespace MyTools.TaoBao.Impl
                     {"颜色", "varchar(255)"},
                     {"尺码", "varchar(255)"},
                     {"商品属性", "varchar(255)"},
-                    {"原价", "Double"},
-                    {"销售金额", "Double"},
+                    {"原价", "Double"}, 
                     {"买家应付邮费", "Double"},
                     {"单件售价", "Double"},
                     {"购买数量", "Double"},
                     {"支出邮费", "Double"},
+                    {"销售金额", "Double"},
                     {"付款金额", "Double"},
+                    {"退款金额", "Double"},
                     {"结帐情况", "varchar(255)"},
                     {"结帐时间", "varchar(255)"},
                     {"购买帐号", "varchar(255)"},

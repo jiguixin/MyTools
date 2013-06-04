@@ -364,4 +364,46 @@
     <value>库存相同，不进行更新;-&gt;NumId:{0};GoodsSn:{1};</value>
     <comment>库存相同，不进行更新</comment>
   </data>
+  <data name="Log_ExportProductColorForExceling" xml:space="preserve">
+    <value>GoodsSn:{0}-&gt;正在导出Banggo库存数据....</value>
+    <comment>正在导出Banggo库存数据</comment>
+  </data>
+  <data name="Log_ExportProductColorForExcelSuccess" xml:space="preserve">
+    <value>GoodsSn:{0}-&gt;导出Banggo库存数据成功!</value>
+    <comment>导出Banggo库存数据成功</comment>
+  </data>
+  <data name="Log_GetRivalDetailsing" xml:space="preserve">
+    <value>正在获取：[{0}] 的销售数据</value>
+    <comment>正在获取：[{0}] 的销售数据</comment>
+  </data>
+  <data name="Log_GetRivalDetailsSuccess" xml:space="preserve">
+    <value>获取：[{0}] 的销售数据完成</value>
+    <comment>获取：[{0}] 的销售数据完成</comment>
+  </data>
+  <data name="Log_ExportRivalGoodsInfoing" xml:space="preserve">
+    <value>query:{0}-&gt;正在导出该产品所有对手的销售数据....</value>
+    <comment>正在导出该产品所有对手的销售数据</comment>
+  </data>
+  <data name="Log_ExportRivalGoodsInfoSuccess" xml:space="preserve">
+    <value>query:{0}-&gt;导出该产品所有对手的销售数据成功!</value>
+    <comment>导出该产品所有对手的销售数据成功!
+</comment>
+  </data>
+  <data name="Log_ExportSingleRivalGoodsInfoSuccess" xml:space="preserve">
+    <value>成功导出：[{0}] 有销售数！</value>
+    <comment>成功导出：[{0}] 有销售数！</comment>
+  </data>
+  <data name="Log_ExportBanggoAndTaobaoGoodsInfoBySearchFailure" xml:space="preserve">
+    <value>GoodsSn:{0}-&gt;导Banggo库存数据与淘宝对手销售数据出错!</value>
+    <comment>导Banggo库存数据与淘宝对手销售数据出错!</comment>
+  </data>
+  <data name="Log_GetOnSaleGoodsing" xml:space="preserve">
+    <value>Query:{0}-&gt;正在获取在售产品...</value>
+    <comment>正在获取在售产品...</comment>
+  </data>
+  <data name="Log_GetOnSaleGoodsSuccess" xml:space="preserve">
+    <value>Query:{0}-&gt;获取在售产品成功</value>
+    <comment>获取在售产品成功
+</comment>
+  </data>
 </root>

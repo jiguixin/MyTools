@@ -14,8 +14,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using HtmlAgilityPack;
 using Infrastructure.Crosscutting.IoC;
+using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.Framework.Common;
 using MyTools.TaoBao.DomainModule;
@@ -33,7 +35,11 @@ namespace MyTools.TaoBao.Impl
 
         private static StringBuilder sbRivalSkuData = new StringBuilder();
         IBanggoMgt _mgtBanggo = InstanceLocator.Current.GetInstance<IBanggoMgt>();
-         
+
+        private IGoodsApi _goods = InstanceLocator.Current.GetInstance<IGoodsApi>();
+
+        private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
+
         #endregion
  
         #region Constructor
@@ -55,6 +61,38 @@ namespace MyTools.TaoBao.Impl
         }
 
         /// <summary>
+        /// 根据搜索条件查询自己的在售商品
+        /// </summary> 
+        /// <param name="myTaobaoGoodsSearch"></param>
+        public void ExportBanggoAndTaobaoGoodsInfoBySearch(string myTaobaoGoodsSearch = null)
+        {
+            var lstItem = _goods.GetOnSaleGoods(myTaobaoGoodsSearch);
+
+            foreach (var item in lstItem)
+            { 
+                try
+                {
+                    var goodsUrl = _mgtBanggo.GetGoodsUrl(item.OuterId);
+
+                    if (goodsUrl.IsNullOrEmpty())
+                        continue;
+
+                    ExportBanggoAndTaobaoGoodsInfo(goodsUrl);
+                }
+                catch (Exception ex)
+                {
+                    _log.LogError(Resource.Log_ExportBanggoAndTaobaoGoodsInfoBySearchFailure.StringFormat(item.OuterId), ex);
+                    continue;
+                }
+                finally
+                {
+                    Thread.Sleep(1000);
+                }
+            }
+
+        }
+
+        /// <summary>
         /// 导出该产品banggo的数据及淘宝竞争对手的数据，并生成EXCEL
         /// </summary>
         /// <param name="goodsUrl">产品URL</param>
@@ -70,10 +108,7 @@ namespace MyTools.TaoBao.Impl
             {
                 var productSize = lstProductColor[0].SizeList[0];
                 ExportRivalGoodsInfo("{0} {1}".StringFormat(brand, goodsSn), productSize.MarketPrice, productSize.MySalePrice);
-            }
-
-
-//            ExportRivalGoodsInfo();
+            } 
         }
 
         // 导出竞争对手的产品信息
@@ -85,8 +120,9 @@ namespace MyTools.TaoBao.Impl
         /// <param name="salePrice">我的售价</param>
         public void ExportRivalGoodsInfo(string query, double marketPrice = 0, double salePrice = 0)
         {
-            var searchUrl = SysConst.TaoBaoSearchUrl.StringFormat(query);
+            _log.LogInfo(Resource.Log_ExportRivalGoodsInfoing.StringFormat(query));
 
+            var searchUrl = SysConst.TaoBaoSearchUrl.StringFormat(query);
 
             var docSearchGoodsList = SysUtils.GetHtmlDocumentByHttpGet(searchUrl);
                
@@ -117,10 +153,13 @@ namespace MyTools.TaoBao.Impl
                 drNew["售价"] = salePrice;
                 drNew["利润"] = drNew["售价"].ToDouble() - drNew["成本价"].ToDouble();
                 excel.AddNewRow(drNew);
+                _log.LogInfo(Resource.Log_ExportSingleRivalGoodsInfoSuccess.StringFormat(drNew["用户名"]));
+                Thread.Sleep(500); 
             }
-        }
-         
 
+            _log.LogInfo(Resource.Log_ExportRivalGoodsInfoSuccess.StringFormat(query));
+        }
+          
         #endregion
 
         #region Private Methods
@@ -133,8 +172,8 @@ namespace MyTools.TaoBao.Impl
         /// <param name="excel">excel</param>
         /// <param name="shellName">工作表名</param>
         /// <returns></returns>
-        private static void GetRivalDetails(HtmlNode item, ExcelHelper excel, string shellName, DataRow dr)
-        {
+        private  void GetRivalDetails(HtmlNode item, ExcelHelper excel, string shellName, DataRow dr)
+        { 
             #region 得到taobao该对手的价格数据 并添加到excel中
 
             var salePrice = item.SelectSingleNode("div[@class='row row-focus']/div[1]").InnerText.GetNumber();
@@ -158,6 +197,9 @@ namespace MyTools.TaoBao.Impl
             dr["网址"] = url;
 
             #endregion
+
+            _log.LogInfo(Resource.Log_GetRivalDetailsing.StringFormat(rivalName));
+
 
             ////如果有销售情况，就提取他的销售详情
             //if (salesVolume > 0)
@@ -266,13 +308,7 @@ namespace MyTools.TaoBao.Impl
 
             #endregion
 
-            //}
-            //else
-            //{
-            //    dr["SKU"] = "";
-
-            //    dr["成交记录"] = "";
-            //}
+            _log.LogInfo(Resource.Log_GetRivalDetailsSuccess.StringFormat(rivalName));
         }
 
         //创建ExcelHelper

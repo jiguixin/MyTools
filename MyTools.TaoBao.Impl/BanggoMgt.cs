@@ -347,7 +347,7 @@ namespace MyTools.TaoBao.Impl
 
             return sizes.ToDictionary<HtmlNode, string, string>(sizeNode => sizeNode.InnerText.Trim(), sizeNode => null);
         }
-         
+
         /// <summary>
         /// 将该产品的SKU数据导出为EXCEL
         /// </summary>
@@ -356,14 +356,16 @@ namespace MyTools.TaoBao.Impl
         {
             if (productUrl.IsNullOrEmpty())
                 throw new Exception(Resource.Exception_NotFoundAuthorizedCode.StringFormat(new StackTrace()));
+            string goodsSn = ResolveProductUrlRetGoodsSn(productUrl);
+
+            _log.LogInfo(Resource.Log_ExportProductColorForExceling.StringFormat(goodsSn));
+
             //const 
             string sheetName = Resource.SysConfig_Sku;
 
             var excel = CreateExcelForBanggoSku(sheetName);
 
             DataTable dt = excel.ReadTable(sheetName);
-
-            string goodsSn = ResolveProductUrlRetGoodsSn(productUrl);
 
             var request = new BanggoRequestModel {GoodsSn = goodsSn, Referer = productUrl};
 
@@ -376,8 +378,10 @@ namespace MyTools.TaoBao.Impl
             drNew["售价"] = 0;
 
             CheckStock(lstProductColor, drNew);
-             
+
             excel.AddNewRow(drNew);
+
+            _log.LogInfo(Resource.Log_ExportProductColorForExcelSuccess.StringFormat(goodsSn));
 
             return lstProductColor;
         }

@@ -95,15 +95,8 @@ namespace MyTools.TaoBao.Impl
         ///     从在售商品中更新库存
         /// </summary>
         public void UpdateGoodsFromOnSale(string search = null)
-        {
-            //得到当前用户的在售商品列表 
-            var req = new ItemsOnsaleGetRequest {Fields = "num_iid,num,cid,title,price,outer_id", PageSize = 199};
-            // req.Fields = "num_iid";
-            if (!search.IsNullOrEmpty())
-                req.Q = search;
-            // req.PageNo = 10;
-
-            List<Item> lstItem = GetOnSaleGoods(req);
+        { 
+            List<Item> lstItem = GetOnSaleGoods(search);
 
             UpdateGoodsInternal(lstItem);
         }
@@ -417,6 +410,7 @@ namespace MyTools.TaoBao.Impl
         /// <param name="req">要查询传入的参数</param>
         public List<Item> GetOnSaleGoods(ItemsOnsaleGetRequest req)
         {
+            _log.LogInfo(Resource.Log_GetOnSaleGoodsing.StringFormat(req.Q));
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
 
             ItemsOnsaleGetResponse response = _client.Execute(req, tContext.SessionKey);
@@ -431,7 +425,23 @@ namespace MyTools.TaoBao.Impl
                 throw ex;
             }
 
+            _log.LogInfo(Resource.Log_GetOnSaleGoodsSuccess.StringFormat(req.Q));
             return response.Items;
+        }
+
+        /// <summary>
+        /// 得到当前在售商品，最多个数为199
+        /// </summary>
+        /// <param name="search">查询条件</param>
+        /// <returns></returns>
+        public List<Item> GetOnSaleGoods(string search = null)
+        {
+            //得到当前用户的在售商品列表 
+            var req = new ItemsOnsaleGetRequest { Fields = "num_iid,num,cid,title,price,outer_id", PageSize = 199 };
+            if (!search.IsNullOrEmpty())
+                req.Q = search;
+
+            return GetOnSaleGoods(req); 
         }
 
         //得到卖家仓库中的商品

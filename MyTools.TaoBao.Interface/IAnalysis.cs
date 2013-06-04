@@ -40,6 +40,12 @@ namespace MyTools.TaoBao.Interface
         void ExportRivalGoodsInfo(string query, double marketPrice = 0, double salePrice = 0);
 
         /// <summary>
+        /// 根据搜索条件查询自己的在售商品
+        /// </summary> 
+        /// <param name="myTaobaoGoodsSearch"></param>
+        void ExportBanggoAndTaobaoGoodsInfoBySearch(string myTaobaoGoodsSearch = null);
+
+        /// <summary>
         /// 导出该产品banggo的数据及淘宝竞争对手的数据，并生成EXCEL
         /// </summary>
         /// <param name="goodsUrl">产品URL</param>

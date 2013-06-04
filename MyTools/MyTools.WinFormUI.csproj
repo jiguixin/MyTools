@@ -51,6 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FrmExportBanggoAndTaobaoGoodsInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmExportBanggoAndTaobaoGoodsInfo.Designer.cs">
+      <DependentUpon>FrmExportBanggoAndTaobaoGoodsInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmPublishGoods.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,6 +90,9 @@
     </Compile>
     <Compile Include="Utility\TextBoxTraceListener.cs" />
     <Compile Include="Utility\TextBoxWriter.cs" />
+    <EmbeddedResource Include="FrmExportBanggoAndTaobaoGoodsInfo.resx">
+      <DependentUpon>FrmExportBanggoAndTaobaoGoodsInfo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmPublishGoods.resx">
       <DependentUpon>FrmPublishGoods.cs</DependentUpon>
       <SubType>Designer</SubType>
