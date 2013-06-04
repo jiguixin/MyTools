@@ -406,4 +406,8 @@
     <comment>获取在售产品成功
 </comment>
   </data>
+  <data name="Log_UnableGetMallSaleData" xml:space="preserve">
+    <value>对手名：{0} -&gt; 该用户为商城卖家不能获取其销量数据!</value>
+    <comment>该用户为商城卖家不能获取其销量数据!</comment>
+  </data>
 </root>

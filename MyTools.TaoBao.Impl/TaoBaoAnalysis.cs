@@ -265,7 +265,14 @@ namespace MyTools.TaoBao.Impl
 
             #region 提取详细销售记录数据
 
-        /*可以提取数量和邮费等信息
+            var buyer = saleDetail.GetElementbyId("J_listBuyerOnView");
+            if (buyer == null)
+            {
+                _log.LogWarning(Resource.Log_UnableGetMallSaleData.StringFormat(rivalName));
+
+                return;
+            }
+            /*可以提取数量和邮费等信息
          * http://ajax.tbcdn.cn/json/ifq.htm?id=20651779110&sid=820330575&sbn=fe93d967b0bacbda0f41f3eb67d4c0f4&p=1&al=false&ap=1&ss=0&free=0&q=1&ex=0&exs=0&shid=&at=b&ct=1*/
 
             var saleRecordUrl =

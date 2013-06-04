@@ -367,6 +367,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 对手名：{0} -&gt; 该用户为商城卖家不能获取其销量数据! 的本地化字符串。
+        /// </summary>
+        public static string Log_UnableGetMallSaleData {
+            get {
+                return ResourceManager.GetString("Log_UnableGetMallSaleData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 更新产品：更新失败。numId:{0};GoodsSn:{1} 的本地化字符串。
         /// </summary>
         public static string Log_UpdateGoodsFailure {
