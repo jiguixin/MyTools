@@ -410,4 +410,9 @@
     <value>对手名：{0} -&gt; 该用户为商城卖家不能获取其销量数据!</value>
     <comment>该用户为商城卖家不能获取其销量数据!</comment>
   </data>
+  <data name="Log_InsertRivalGoodsInfoFailure" xml:space="preserve">
+    <value>插入对手销售数据出错!-&gt;对手名：{0}</value>
+    <comment>插入对手销售数据出错!-&gt;对手名：{0}
+</comment>
+  </data>
 </root>

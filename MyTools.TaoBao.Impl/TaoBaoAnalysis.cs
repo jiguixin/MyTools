@@ -93,6 +93,20 @@ namespace MyTools.TaoBao.Impl
         }
 
         /// <summary>
+        /// 根据搜索条件查询自己的在售商品
+        /// </summary> 
+        /// <param name="searchs">多个条查询条件</param>
+        public void ExportBanggoAndTaobaoGoodsInfoBySearch(IEnumerable<string> searchs)
+        {
+            foreach (var search in searchs)
+            {
+                if (string.IsNullOrWhiteSpace(search))
+                    continue;
+                ExportBanggoAndTaobaoGoodsInfoBySearch(search); 
+            } 
+        }
+
+        /// <summary>
         /// 导出该产品banggo的数据及淘宝竞争对手的数据，并生成EXCEL
         /// </summary>
         /// <param name="goodsUrl">产品URL</param>
@@ -144,16 +158,23 @@ namespace MyTools.TaoBao.Impl
             //遍历搜索出来的产品列表
             foreach (var item in itemBoxs)
             {
-                GetRivalDetails(item, excel, sheetName, drNew);
-                drNew["款号"] = query.GetNumberStr();
-                if (marketPrice > 0)
-                {
-                    drNew["成本价"] = (marketPrice * SysConst.CostRatio).ToInt32() + SysConst.CostExtraPrice;
+                try
+                { 
+                    GetRivalDetails(item, excel, sheetName, drNew);
+                    drNew["款号"] = query.GetNumberStr();
+                    if (marketPrice > 0)
+                    {
+                        drNew["成本价"] = (marketPrice*SysConst.CostRatio).ToInt32() + SysConst.CostExtraPrice;
+                    }
+                    drNew["售价"] = salePrice;
+                    drNew["利润"] = drNew["售价"].ToDouble() - drNew["成本价"].ToDouble();
+                    excel.AddNewRow(drNew);
+                    _log.LogInfo(Resource.Log_ExportSingleRivalGoodsInfoSuccess.StringFormat(drNew["用户名"]));
                 }
-                drNew["售价"] = salePrice;
-                drNew["利润"] = drNew["售价"].ToDouble() - drNew["成本价"].ToDouble();
-                excel.AddNewRow(drNew);
-                _log.LogInfo(Resource.Log_ExportSingleRivalGoodsInfoSuccess.StringFormat(drNew["用户名"]));
+                catch (Exception ex)
+                {
+                    _log.LogError(Resource.Log_InsertRivalGoodsInfoFailure.StringFormat(drNew["用户名"]), ex);
+                }
                 Thread.Sleep(500); 
             }
 

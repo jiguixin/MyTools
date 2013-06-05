@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 
 namespace MyTools.TaoBao.Interface
 {
@@ -44,6 +45,12 @@ namespace MyTools.TaoBao.Interface
         /// </summary> 
         /// <param name="myTaobaoGoodsSearch"></param>
         void ExportBanggoAndTaobaoGoodsInfoBySearch(string myTaobaoGoodsSearch = null);
+
+        /// <summary>
+        /// 根据搜索条件查询自己的在售商品
+        /// </summary> 
+        /// <param name="searchs">多个条查询条件</param>
+        void ExportBanggoAndTaobaoGoodsInfoBySearch(IEnumerable<string> searchs);
 
         /// <summary>
         /// 导出该产品banggo的数据及淘宝竞争对手的数据，并生成EXCEL

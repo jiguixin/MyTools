@@ -8,9 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Infrastructure.Crosscutting.IoC;
+using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.Logging.TraceSource;
+using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.TaoBao.Interface;
-using MyTools.Utility;
+using MyTools.Utility; 
+
 
 namespace MyTools
 {
@@ -51,9 +54,14 @@ namespace MyTools
 
         private void bgwRun_DoWork(object sender, DoWorkEventArgs e)
         {
-            var result = e.Argument.ToString();
+            if (e.Argument.IsNull())
+                return;
 
-            _analysis.ExportBanggoAndTaobaoGoodsInfoBySearch(result); 
+            var result = e.Argument.ToString(); 
+
+            var lstCondition = TextHelper.StringToArray<string>(result);
+
+            _analysis.ExportBanggoAndTaobaoGoodsInfoBySearch(lstCondition); 
         }
 
         private void bgwRun_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

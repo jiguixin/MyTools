@@ -304,6 +304,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 插入对手销售数据出错!-&gt;对手名：{0} 的本地化字符串。
+        /// </summary>
+        public static string Log_InsertRivalGoodsInfoFailure {
+            get {
+                return ResourceManager.GetString("Log_InsertRivalGoodsInfoFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 发布产品：{0} 发布失败 的本地化字符串。
         /// </summary>
         public static string Log_PublishGoodsFailure {
