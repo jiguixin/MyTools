@@ -172,7 +172,9 @@ namespace MyTools.TaoBao.Impl
                                 GoodsSn = item.OuterId,
                                 GoodsUrl = pgModel.Url,
                                 Cid = item.Cid,
-                                NumIid = item.NumIid
+                                NumIid = item.NumIid,
+                                //替换原来的产品标题
+                                Title = item.Title.Replace(SysConst.OriginalTitle, SysConst.NewTitle)
                             };
                         //  Util.CopyModel(item, banggoProduct); node: 不能在这赋值，这样就会造成有些为NULL的给赋成了默认值 
 
@@ -588,6 +590,9 @@ namespace MyTools.TaoBao.Impl
                     }
 
                     #endregion
+                     
+                    //替换原来的产品标题
+                    banggoProduct.Title = item.Title.Replace(SysConst.OriginalTitle, SysConst.NewTitle);
 
                     banggoProduct.GoodsSn = item.OuterId;
                     banggoProduct.GoodsUrl = goodsUrl;

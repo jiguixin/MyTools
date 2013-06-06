@@ -90,6 +90,12 @@
     </Compile>
     <Compile Include="Utility\TextBoxTraceListener.cs" />
     <Compile Include="Utility\TextBoxWriter.cs" />
+    <Compile Include="FrmPublishGoodsFromExcel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmPublishGoodsFromExcel.Designer.cs">
+      <DependentUpon>FrmPublishGoodsFromExcel.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="FrmExportBanggoAndTaobaoGoodsInfo.resx">
       <DependentUpon>FrmExportBanggoAndTaobaoGoodsInfo.cs</DependentUpon>
     </EmbeddedResource>
@@ -119,6 +125,9 @@
     </Compile>
     <EmbeddedResource Include="TaoBao\FrmLogin.resx">
       <DependentUpon>FrmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmPublishGoodsFromExcel.resx">
+      <DependentUpon>FrmPublishGoodsFromExcel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config">
       <SubType>Designer</SubType>

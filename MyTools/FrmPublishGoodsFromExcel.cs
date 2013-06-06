@@ -17,9 +17,9 @@ using MyTools.Utility;
 
 namespace MyTools
 {
-    public partial class FrmExportBanggoAndTaobaoGoodsInfo : Form
+    public partial class FrmPublishGoodsFromExcel : Form
     {
-        IAnalysis _analysis = InstanceLocator.Current.GetInstance<IAnalysis>();
+        IGoodsApi _goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
 
         delegate void ChangeTextBoxValue(string str); // 新增委托代理
 
@@ -37,10 +37,10 @@ namespace MyTools
             catch (Exception)
             { 
             }
-            
+           
         }
 
-        public FrmExportBanggoAndTaobaoGoodsInfo()
+        public FrmPublishGoodsFromExcel()
         {
             InitializeComponent();
 
@@ -51,12 +51,17 @@ namespace MyTools
             TraceSourceProvider.Source.Listeners.Add(tl);
         }
 
-        private void btnExport_Click(object sender, EventArgs e)
+        private void btnInput_Click(object sender, EventArgs e)
         {
-            if (!bgwRun.IsBusy)
-            {
-                bgwRun.RunWorkerAsync(txtInput.Text);
-            }
+            var ofd = new OpenFileDialog();
+            ofd.Filter = "Excel Files(*.xls,*.xlsx)|*.xls;*.xlsx";
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            { 
+                if (!bgwRun.IsBusy)
+                {
+                    bgwRun.RunWorkerAsync(ofd.FileName);
+                }
+            } 
         }
 
         private void bgwRun_DoWork(object sender, DoWorkEventArgs e)
@@ -64,11 +69,9 @@ namespace MyTools
             if (e.Argument.IsNull())
                 return;
 
-            var result = e.Argument.ToString(); 
+            var fileName = e.Argument.ToString();
 
-            var lstCondition = TextHelper.StringToArray<string>(result);
-
-            _analysis.ExportBanggoAndTaobaoGoodsInfoBySearch(lstCondition); 
+            _goodsApi.PublishGoodsFromExcel(fileName);
         }
 
         private void bgwRun_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

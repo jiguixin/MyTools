@@ -20,8 +20,16 @@ namespace MyTools.Framework.Common
         public static readonly string AppKey = ConfigurationManager.AppSettings["appKey"];
         public static readonly string AppSecret = ConfigurationManager.AppSettings["appSecret"];
         public static readonly string PostageId = ConfigurationManager.AppSettings["PostageId"]; 
-        public static readonly double DiscountRatio = ConfigurationManager.AppSettings["DiscountRatio"].ToDouble(); 
+        public static readonly double DiscountRatio = ConfigurationManager.AppSettings["DiscountRatio"].ToDouble();
         public static readonly string PrefixTitle = ConfigurationManager.AppSettings["PrefixTitle"];
+        /// <summary>
+        /// 要替换的产品的原标题部份名字->在更新产品时使用
+        /// </summary>
+        public static readonly string OriginalTitle = ConfigurationManager.AppSettings["OriginalTitle"];
+        /// <summary>
+        /// 替换后的新标题->在更新产品时使用
+        /// </summary>
+        public static readonly string NewTitle = ConfigurationManager.AppSettings["NewTitle"];
 
         public static readonly string LocationState = ConfigurationManager.AppSettings["LocationState"];
         public static readonly string LocationCity = ConfigurationManager.AppSettings["LocationCity"];

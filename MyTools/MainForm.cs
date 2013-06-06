@@ -190,13 +190,10 @@ namespace MyTools
         }
 
         private void btnPublishGoodsFromExcel_Click(object sender, EventArgs e)
-        {
-            var ofd = new OpenFileDialog();
-            ofd.Filter = "Excel Files(*.xls,*.xlsx)|*.xls;*.xlsx";
-            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                _goodsApi.PublishGoodsFromExcel(ofd.FileName);
-            }
+        {  
+            var frm = new FrmPublishGoodsFromExcel();
+            frm.MdiParent = this;
+            frm.Show();
         }
 
         private void btnUpdateGoodsFormOnSale_Click(object sender, EventArgs e)

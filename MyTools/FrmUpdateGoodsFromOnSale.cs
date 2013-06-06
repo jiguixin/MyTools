@@ -41,8 +41,15 @@ namespace MyTools
         private bool IsSearch = true;
 
         void SetText(string str)
-        { 
-            this.BeginInvoke(new ChangeTextBoxValue(SetRichTextBoxValue), str); // 也可用 this.Invoke调用
+        {
+            try
+            {
+                this.BeginInvoke(new ChangeTextBoxValue(SetRichTextBoxValue), str); // 也可用 this.Invoke调用
+            }
+            catch (Exception)
+            { 
+            }
+           
         }
          
         private void btnOk_Click(object sender, EventArgs e)

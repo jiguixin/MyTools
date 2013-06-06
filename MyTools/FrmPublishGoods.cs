@@ -29,7 +29,14 @@ namespace MyTools
 
         void SetText(string str)
         {
-            this.BeginInvoke(new ChangeTextBoxValue(SetRichTextBoxValue), str); // 也可用 this.Invoke调用
+            try
+            {
+                this.BeginInvoke(new ChangeTextBoxValue(SetRichTextBoxValue), str); // 也可用 this.Invoke调用
+            }
+            catch (Exception)
+            { 
+            }
+            
         }
 
         public FrmPublishGoods()
