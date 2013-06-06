@@ -376,6 +376,24 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 GoodsSn:{0}-&gt;正在将banggo的产品信息填充到taobao实体类中... 的本地化字符串。
+        /// </summary>
+        public static string Log_StuffProductInfoing {
+            get {
+                return ResourceManager.GetString("Log_StuffProductInfoing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 GoodsSn:{0}-&gt;将banggo的产品信息填充到taobao实体类中完成! 的本地化字符串。
+        /// </summary>
+        public static string Log_StuffProductInfoSuccess {
+            get {
+                return ResourceManager.GetString("Log_StuffProductInfoSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 对手名：{0} -&gt; 该用户为商城卖家不能获取其销量数据! 的本地化字符串。
         /// </summary>
         public static string Log_UnableGetMallSaleData {

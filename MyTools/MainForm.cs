@@ -158,12 +158,7 @@ namespace MyTools
                   
             }
         }
-
-        private void btnGetCats_Click(object sender, EventArgs e)
-        { 
-            var sellCatsList = shopApi.GetSellercatsList(context.UserNick);
-            _log.LogInfo("数据获取完成，卖家自定列表个数：{0}", sellCatsList.Count); 
-        }
+         
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -197,7 +192,7 @@ namespace MyTools
         private void btnPublishGoodsFromExcel_Click(object sender, EventArgs e)
         {
             var ofd = new OpenFileDialog();
-
+            ofd.Filter = "Excel Files(*.xls,*.xlsx)|*.xls;*.xlsx";
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 _goodsApi.PublishGoodsFromExcel(ofd.FileName);

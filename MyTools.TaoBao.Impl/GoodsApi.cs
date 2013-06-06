@@ -94,22 +94,37 @@ namespace MyTools.TaoBao.Impl
         /// <summary>
         ///     从在售商品中更新库存
         /// </summary>
-        public void UpdateGoodsFromOnSale(string search = null)
+        public void UpdateGoodsFromOnSale(string search = null,bool isModifyPrice = true)
         { 
             List<Item> lstItem = GetOnSaleGoods(search);
 
-            UpdateGoodsInternal(lstItem);
+            UpdateGoodsInternal(lstItem, isModifyPrice);
+        }
+
+        /// <summary>
+        /// 从在售商品中更新库存
+        /// </summary>
+        /// <param name="lstSearch">多个搜索在线商品条件</param>
+        /// <param name="isModifyPrice">是否要修改商品价格,true是要修改，false是只更新库存不修改以前的价格</param>
+        public void UpdateGoodsFromOnSale(IEnumerable<string> lstSearch, bool isModifyPrice = true)
+        {
+            foreach (var search in lstSearch)
+            {
+                if (string.IsNullOrWhiteSpace(search))
+                    continue;
+                UpdateGoodsFromOnSale(search, isModifyPrice);
+            }
         }
 
         /// <summary>
         ///     通过指定部分没有更新成功的商品重新更新
         /// </summary>
         /// <param name="numIds">多个产品以“，”号分割</param>
-        public void UpdateGoodsByAssign(string numIds)
+        public void UpdateGoodsByAssign(string numIds,bool isModifyPrice = true)
         {
             List<Item> lstItem = GetGoodsList(numIds);
 
-            UpdateGoodsInternal(lstItem);
+            UpdateGoodsInternal(lstItem, isModifyPrice);
         }
 
         //更新商品的内部方法
@@ -160,6 +175,8 @@ namespace MyTools.TaoBao.Impl
                                 NumIid = item.NumIid
                             };
                         //  Util.CopyModel(item, banggoProduct); node: 不能在这赋值，这样就会造成有些为NULL的给赋成了默认值 
+
+                        DeleteSkuOnlyOne(item);
 
                         UpdateGoodsAndUploadPic(banggoProduct);
                     }
@@ -490,91 +507,6 @@ namespace MyTools.TaoBao.Impl
             return item;
         }
 
-        private void UpdateGoodsInternal(IEnumerable<Item> lstItem)
-        {
-            //遍历在售商品列表中的商品，通过outerid去查询banggo上的该产品信息
-            foreach (Item item in lstItem)
-            {
-                Thread.Sleep(1000);
-                try
-                {
-                    //通过款号查询如果没有得到产品的URL或得不到库存，就将该产品进行下架。
-                    string goodsUrl = _banggoMgt.GetGoodsUrl(item.OuterId);
-
-                    if (goodsUrl.IsNullOrEmpty())
-                    {
-                        GoodsDelisting(item.NumIid);
-
-                        continue;
-                    }
-
-                    //如果邦购上该产品还在售，就获取他的SKU信息。 
-                    var banggoProduct = new BanggoProduct(false)
-                        {
-                            ColorList = _banggoMgt.GetProductColorByOnline(new BanggoRequestModel
-                                {
-                                    GoodsSn = item.OuterId,
-                                    Referer = goodsUrl
-                                })
-                        };
-
-                    #region 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
-
-                    if (item.Num == banggoProduct.ColorList.Sum(p => p.AvlNumForColor))
-                    {
-                        _log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
-                        continue;
-                    }
-
-                    #endregion
-
-                    #region 删除SKU只保留1个可用SKU
-
-                    if (item.Skus.Count == 0 || item.Skus[0].Properties.IsNullOrEmpty())
-                    {
-                        //因为读在售没办法得到SKU所以只有单独取 
-                        try
-                        {
-                            item.Skus = (List<Sku>) GetSkusByNumId(item.NumIid.ToString(CultureInfo.InvariantCulture));
-                            Thread.Sleep(200);
-                        }
-// ReSharper disable EmptyGeneralCatchClause
-                        catch
-// ReSharper restore EmptyGeneralCatchClause
-                        {
-                        }
-                    }
-
-                    //不用排序，默认取最开始那个
-                    //List<Sku> skus = item.Skus.OrderByDescending(f => f.Quantity).ToList();
-                    List<Sku> skus = item.Skus;
-                    for (int i = 1; i < skus.Count; i++)
-                    {
-                        Sku sku = skus[i];
-
-                        DeleteGoodsSku(item.NumIid, sku.Properties);
-
-                        Thread.Sleep(500);
-                    }
-
-                    #endregion
-
-                    banggoProduct.GoodsSn = item.OuterId;
-                    banggoProduct.GoodsUrl = goodsUrl;
-                    banggoProduct.Cid = item.Cid;
-                    banggoProduct.NumIid = item.NumIid;
-                    banggoProduct.OuterId = item.OuterId;
-
-                    UpdateGoodsAndUploadPic(banggoProduct);
-                }
-// ReSharper disable EmptyGeneralCatchClause
-                catch
-// ReSharper restore EmptyGeneralCatchClause
-                {
-                }
-            }
-        }
-
         /// <summary>
         ///     更新商品信息包括SKU信息
         /// </summary>
@@ -600,6 +532,110 @@ namespace MyTools.TaoBao.Impl
 
         #region Private Methods
 
+
+        private void UpdateGoodsInternal(IEnumerable<Item> lstItem, bool isModifyPrice = true)
+        {
+            //遍历在售商品列表中的商品，通过outerid去查询banggo上的该产品信息
+            foreach (Item item in lstItem)
+            {
+                Thread.Sleep(1000);
+                try
+                {
+                    //通过款号查询如果没有得到产品的URL或得不到库存，就将该产品进行下架。
+                    string goodsUrl = _banggoMgt.GetGoodsUrl(item.OuterId);
+
+                    if (goodsUrl.IsNullOrEmpty())
+                    {
+                        GoodsDelisting(item.NumIid);
+
+                        continue;
+                    }
+
+                    //如果邦购上该产品还在售，就获取他的SKU信息。 
+                    var banggoProduct = new BanggoProduct(false)
+                    {
+                        ColorList = _banggoMgt.GetProductColorByOnline(new BanggoRequestModel
+                        {
+                            GoodsSn = item.OuterId,
+                            Referer = goodsUrl
+                        })
+                    };
+
+                    #region 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
+
+                    if (item.Num == banggoProduct.ColorList.Sum(p => p.AvlNumForColor))
+                    {
+                        _log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
+                        continue;
+                    }
+
+                    #endregion
+
+                    #region 删除SKU只保留1个可用SKU
+
+                    DeleteSkuOnlyOne(item);
+
+                    #endregion
+
+                    #region 如果是不修改价格（IsModifyPrice = false），则读取Item的price 填充到MySalePrice 中
+
+                    if (!isModifyPrice)
+                    {
+                        foreach (var size in banggoProduct.ColorList.SelectMany(color => color.SizeList))
+                        {
+                            size.MySalePrice = item.Price.ToDouble();
+                        }
+                    }
+
+                    #endregion
+
+                    banggoProduct.GoodsSn = item.OuterId;
+                    banggoProduct.GoodsUrl = goodsUrl;
+                    banggoProduct.Cid = item.Cid;
+                    banggoProduct.NumIid = item.NumIid;
+                    banggoProduct.OuterId = item.OuterId;
+
+                    UpdateGoodsAndUploadPic(banggoProduct);
+                }
+                // ReSharper disable EmptyGeneralCatchClause
+                catch
+                // ReSharper restore EmptyGeneralCatchClause
+                {
+                }
+            }
+        }
+
+        //删除SKU只保留1个可用SKU
+        private void DeleteSkuOnlyOne(Item item)
+        {
+            if (item.Skus.Count == 0 || item.Skus[0].Properties.IsNullOrEmpty())
+            {
+                //因为读在售没办法得到SKU所以只有单独取 
+                try
+                {
+                    item.Skus = (List<Sku>)GetSkusByNumId(item.NumIid.ToString(CultureInfo.InvariantCulture));
+                    Thread.Sleep(200);
+                }
+                // ReSharper disable EmptyGeneralCatchClause
+                catch
+                // ReSharper restore EmptyGeneralCatchClause
+                {
+                }
+            }
+
+            //不用排序，默认取最开始那个
+            //List<Sku> skus = item.Skus.OrderByDescending(f => f.Quantity).ToList();
+            List<Sku> skus = item.Skus;
+            for (int i = 1; i < skus.Count; i++)
+            {
+                Sku sku = skus[i];
+
+                DeleteGoodsSku(item.NumIid, sku.Properties);
+
+                Thread.Sleep(500);
+            }
+        }
+         
         //更新商品并上传相应的销售图片
         private void UpdateGoodsAndUploadPic(BanggoProduct banggoProduct)
         {
@@ -644,6 +680,7 @@ namespace MyTools.TaoBao.Impl
         //填充产品信息，将banggo的数据填充进相应的请求模型中
         private void StuffProductInfo(BanggoProduct bProduct)
         {
+            _log.LogInfo(Resource.Log_StuffProductInfoing.StringFormat(bProduct.GoodsSn));
             bProduct.OuterId = bProduct.GoodsSn;
 
             bProduct.Cid = _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToLong();
@@ -675,6 +712,8 @@ namespace MyTools.TaoBao.Impl
             SetOptionalProps(bProduct);
 
             SetSkuInfo(bProduct);
+
+            _log.LogInfo(Resource.Log_StuffProductInfoSuccess.StringFormat(bProduct.GoodsSn));
         }
 
         //包括设置品牌、货号

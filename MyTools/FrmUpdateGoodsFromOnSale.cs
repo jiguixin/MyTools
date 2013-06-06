@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Logging.TraceSource;
+using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.TaoBao.Interface;
 using MyTools.Utility;
 
@@ -57,10 +58,12 @@ namespace MyTools
         {
             var result = e.Argument.ToString();
 
+            IEnumerable<string> lstSearchs = TextHelper.StringToArray<string>(result);
+
             if (IsSearch)
-                _goodsApi.UpdateGoodsFromOnSale(result);
+                _goodsApi.UpdateGoodsFromOnSale(lstSearchs, !chkNotModifyPrice.Checked);
             else
-                _goodsApi.UpdateGoodsByAssign(result);
+                _goodsApi.UpdateGoodsByAssign(result,!chkNotModifyPrice.Checked);
         }
 
         private void bgwRun_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

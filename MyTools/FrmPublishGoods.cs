@@ -1,11 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
+using Infrastructure.Crosscutting.Logging.TraceSource;
 using MyTools.TaoBao.Interface;
+using MyTools.Utility;
 using Top.Api.Domain;
 
 namespace MyTools
@@ -17,9 +20,27 @@ namespace MyTools
 
         private readonly IGoodsApi _goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
 
+        delegate void ChangeTextBoxValue(string str); // 新增委托代理
+
+        private void SetRichTextBoxValue(string str)
+        {
+            txtLog.AppendText(str);
+        }
+
+        void SetText(string str)
+        {
+            this.BeginInvoke(new ChangeTextBoxValue(SetRichTextBoxValue), str); // 也可用 this.Invoke调用
+        }
+
         public FrmPublishGoods()
         {
             InitializeComponent();
+             
+            TextBoxTraceListener tl = new TextBoxTraceListener();
+            tl.Filter = new System.Diagnostics.EventTypeFilter(SourceLevels.Information);
+            tl.ChangeTextBoxValue = SetText;
+
+            TraceSourceProvider.Source.Listeners.Add(tl);
         }
 
         private void btnPublish_Click(object sender, EventArgs e)

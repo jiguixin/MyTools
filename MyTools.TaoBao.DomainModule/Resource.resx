@@ -415,4 +415,12 @@
     <comment>插入对手销售数据出错!-&gt;对手名：{0}
 </comment>
   </data>
+  <data name="Log_StuffProductInfoing" xml:space="preserve">
+    <value>GoodsSn:{0}-&gt;正在将banggo的产品信息填充到taobao实体类中...</value>
+    <comment>正在将banggo的产品信息填充到taobao实体类中...</comment>
+  </data>
+  <data name="Log_StuffProductInfoSuccess" xml:space="preserve">
+    <value>GoodsSn:{0}-&gt;将banggo的产品信息填充到taobao实体类中完成!</value>
+    <comment>将banggo的产品信息填充到taobao实体类中完成</comment>
+  </data>
 </root>

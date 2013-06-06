@@ -33,9 +33,13 @@ namespace MyTools.TaoBao.DomainModule
             if ((suk = Util.Get<string>(dr, "SKU")) != null)
             {
                 ProductColors = JsonConvert.DeserializeObject<List<ProductColor>>(suk);
-                foreach (var size in ProductColors.SelectMany(color => color.SizeList))
+                //如果用户填了售价才更新价格，没有填就用导出的默认值。
+                if (SalePrice > 0)
                 {
-                    size.MySalePrice = SalePrice;
+                    foreach (var size in ProductColors.SelectMany(color => color.SizeList))
+                    {
+                        size.MySalePrice = SalePrice;
+                    }    
                 }
             }
 

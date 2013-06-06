@@ -30,13 +30,23 @@ namespace MyTools.TaoBao.Interface
         /// <summary>
         /// 从在售商品中更新库存
         /// </summary>
-        void UpdateGoodsFromOnSale(string search = null);
+        /// <param name="search">搜索在线商品条件</param>
+        /// <param name="isModifyPrice">是否要修改商品价格,true是要修改，false是只更新库存不修改以前的价格</param>
+        void UpdateGoodsFromOnSale(string search = null, bool isModifyPrice = true);
+
+        /// <summary>
+        /// 从在售商品中更新库存
+        /// </summary>
+        /// <param name="lstSearch">多个搜索在线商品条件</param>
+        /// <param name="isModifyPrice">是否要修改商品价格,true是要修改，false是只更新库存不修改以前的价格</param>
+        void UpdateGoodsFromOnSale(IEnumerable<string> lstSearch, bool isModifyPrice = true);
 
         /// <summary>
         /// 通过指定部分没有更新成功的商品重新更新
         /// </summary> 
         /// <param name="nulIds">多个产品以“，”号分割</param>
-        void UpdateGoodsByAssign(string nulIds);
+        /// <param name="isModifyPrice">是否要修改商品价格,true是要修改，false是只更新库存不修改以前的价格</param>
+        void UpdateGoodsByAssign(string nulIds, bool isModifyPrice = true);
 
         /// <summary>
         /// 从banggo上获取数据发布到淘宝
