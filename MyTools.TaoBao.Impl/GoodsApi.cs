@@ -137,9 +137,32 @@ namespace MyTools.TaoBao.Impl
         public Item PublishGoodsForBanggoToTaobao(string banggoProductUrl)
         {
             string goodsSn = _banggoMgt.ResolveProductUrlRetGoodsSn(banggoProductUrl);
-            if (VerifyGoodsExist(goodsSn).IsNotNull())
+
+            Item item = VerifyGoodsExist(goodsSn);
+            if (item.IsNotNull())
             {
-                return null;
+                try
+                {
+                    var banggoProductEdit = new BanggoProduct(false)
+                    {
+                        ColorList = _banggoMgt.GetProductColorByOnline(new BanggoRequestModel(){ GoodsSn=item.OuterId, Referer = banggoProductUrl}),
+                        GoodsSn = item.OuterId,
+                        GoodsUrl = banggoProductUrl,
+                        Cid = item.Cid,
+                        NumIid = item.NumIid,
+                        //替换原来的产品标题
+                        Title = item.Title.Replace(SysConst.OriginalTitle, SysConst.NewTitle)
+                    };
+                      
+                    DeleteSkuOnlyOne(item);
+
+                    UpdateGoodsAndUploadPic(banggoProductEdit);
+                }
+                catch(Exception ex)
+                {
+                    _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(item.NumIid, item.OuterId), ex);
+                }
+                return item;
             }
 
             BanggoProduct banggoProduct =
@@ -182,8 +205,9 @@ namespace MyTools.TaoBao.Impl
 
                         UpdateGoodsAndUploadPic(banggoProduct);
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(item.NumIid, item.OuterId), ex);
                         continue;
                     }
 
@@ -207,8 +231,9 @@ namespace MyTools.TaoBao.Impl
 
                         PublishGoodsAndUploadPic(product);
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        _log.LogError(Resource.Log_PublishGoodsFailure.StringFormat(pgModel.GoodsSn), ex);
                         continue;
                     }
 

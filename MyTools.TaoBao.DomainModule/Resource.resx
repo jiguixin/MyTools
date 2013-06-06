@@ -273,8 +273,8 @@
     <comment>产品描述ID</comment>
   </data>
   <data name="Log_GoodsAlreadyExist" xml:space="preserve">
-    <value>GoodsSn:{0}-&gt;已经存在不能再上传 </value>
-    <comment>该商品已经存在不能再上传 </comment>
+    <value>GoodsSn:{0}-&gt;已经存在!</value>
+    <comment>该商品已经存在!</comment>
   </data>
   <data name="Exception_UrlInvalid" xml:space="preserve">
     <value>产入的Url无效</value>

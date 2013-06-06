@@ -268,7 +268,7 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 GoodsSn:{0}-&gt;已经存在不能再上传  的本地化字符串。
+        ///   查找类似 GoodsSn:{0}-&gt;已经存在! 的本地化字符串。
         /// </summary>
         public static string Log_GoodsAlreadyExist {
             get {

@@ -83,6 +83,8 @@ namespace MyTools
                     {
                         _log.LogError(ex.Message, ex);
                     }
+
+                    Thread.Sleep(1000);
                 }
             }
         }
