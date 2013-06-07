@@ -383,6 +383,14 @@ namespace MyTools.TaoBao.UnitTest
 
         }
 
+        [Test]
+        public void StringLength()
+        {
+            var s = "[6.8折]端午大促销 METERSBONWE 男装 衬衫 221339 原价:199";
+            Console.WriteLine(s.Length);
+
+        }
+
         #endregion
 
         #region Excel

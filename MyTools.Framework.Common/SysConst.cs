@@ -45,6 +45,10 @@ namespace MyTools.Framework.Common
         /// 额外的成果价，如，购买打折卷的钱，以及 电话、车费、请人吃饭等。
         /// </summary>
         public static readonly double CostExtraPrice = ConfigurationManager.AppSettings["CostExtraPrice"].ToDouble();
+         /// <summary>
+        /// 强制更新商品，目前主要针对价格和库存
+        /// </summary>
+        public static readonly bool IsEnforceUpdate = ConfigurationManager.AppSettings["IsEnforceUpdate"].ToBoolean();
          
         #endregion
 

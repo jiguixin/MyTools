@@ -588,12 +588,15 @@ namespace MyTools.TaoBao.Impl
                         })
                     };
 
-                    #region 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
+                    #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
 
-                    if (item.Num == banggoProduct.ColorList.Sum(p => p.AvlNumForColor))
+                    if (!SysConst.IsEnforceUpdate)
                     {
-                        _log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
-                        continue;
+                        if (item.Num == banggoProduct.ColorList.Sum(p => p.AvlNumForColor))
+                        {
+                            _log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
+                            continue;
+                        }
                     }
 
                     #endregion

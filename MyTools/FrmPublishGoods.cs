@@ -16,8 +16,7 @@ namespace MyTools
     public partial class FrmPublishGoods : Form
     {
         private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
-
-
+         
         private readonly IGoodsApi _goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
 
         delegate void ChangeTextBoxValue(string str); // 新增委托代理
