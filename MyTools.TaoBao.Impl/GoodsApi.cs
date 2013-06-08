@@ -126,8 +126,7 @@ namespace MyTools.TaoBao.Impl
 
             UpdateGoodsInternal(lstItem, isModifyPrice);
         }
-
-        //更新商品的内部方法
+         
 
         /// <summary>
         ///     从banggo上获取数据发布到淘宝
@@ -265,6 +264,33 @@ namespace MyTools.TaoBao.Impl
                 throw ex;
             }
             _log.LogInfo(Resource.Log_DeleteGoodsSkuSuccess.StringFormat(numId, properties));
+        }
+
+        /// <summary>
+        /// taobao.item.sku.update 更新SKU信息
+        /// </summary>
+        /// <returns></returns>
+        public Sku UpdateSku(ItemSkuUpdateRequest req)
+        {
+            _log.LogInfo("正在更新SKU信息...->NumId:{0};Properties:{1}".StringFormat(req.NumIid, req.Properties));
+            
+            req.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
+
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+            var response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+            {
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                               response.SubErrMsg, response.TopForbiddenFields);
+                _log.LogError("更新SKU信息出错->NumId:{0};Properties:{1}".StringFormat(req.NumIid, req.Properties), ex);
+                throw ex;
+            }
+
+            _log.LogInfo("成功更新SKU信息->NumId:{0};Properties:{1}".StringFormat(req.NumIid, req.Properties));
+            
+            return response.Sku; 
         }
 
         //taobao.item.skus.get 根据商品ID列表获取SKU信息 
@@ -559,7 +585,7 @@ namespace MyTools.TaoBao.Impl
 
         #region Private Methods
 
-
+        //更新商品的内部方法
         private void UpdateGoodsInternal(IEnumerable<Item> lstItem, bool isModifyPrice = true)
         {
             //遍历在售商品列表中的商品，通过outerid去查询banggo上的该产品信息
@@ -654,11 +680,31 @@ namespace MyTools.TaoBao.Impl
                 // ReSharper restore EmptyGeneralCatchClause
                 {
                 }
-            }
+            } 
 
             //不用排序，默认取最开始那个
             //List<Sku> skus = item.Skus.OrderByDescending(f => f.Quantity).ToList();
             List<Sku> skus = item.Skus;
+
+            if (skus == null)
+                return;
+
+             //判断sku的第一个库存是不是为0如果为0者修改该SKU将其设置为1，因为淘宝不允许SKU总数为0
+            if (skus.Count > 0)
+            {
+                var modifySku = skus[0];
+
+                if (modifySku.Quantity == 0)
+                {
+                     UpdateSku(new ItemSkuUpdateRequest()
+                        {
+                            NumIid = item.NumIid,
+                            Properties = modifySku.Properties,
+                            Quantity = 1
+                        }); 
+                }
+            }
+
             for (int i = 1; i < skus.Count; i++)
             {
                 Sku sku = skus[i];

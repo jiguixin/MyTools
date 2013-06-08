@@ -69,6 +69,12 @@ namespace MyTools.TaoBao.Interface
         /// <param name="properties"></param>
         void DeleteGoodsSku(long numId, string properties);
 
+        /// <summary>
+        /// taobao.item.sku.update 更新SKU信息
+        /// </summary>
+        /// <returns></returns>
+        Sku UpdateSku(ItemSkuUpdateRequest req);
+
          //taobao.item.skus.get 根据商品ID列表获取SKU信息 
         /// <summary>
         /// 根据商品ID列表获取SKU信息 
