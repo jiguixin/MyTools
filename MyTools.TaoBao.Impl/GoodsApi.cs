@@ -321,7 +321,7 @@ namespace MyTools.TaoBao.Impl
             }
             _log.LogInfo(Resource.Log_GetSkusSuccess.StringFormat(numIds));
 
-            return response.Skus;
+            return response.Skus.OrderBy(f=>f.SkuId).ToList();
         }
 
         public Item VerifyGoodsExist(string goodsSn)
