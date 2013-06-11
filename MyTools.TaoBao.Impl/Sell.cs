@@ -64,7 +64,8 @@ namespace MyTools.TaoBao.Impl
                 DataRow dr = dt.NewRow();
                 dr["订单编号"] = q.OrderNo;
                 dr["卖出时间"] = q.CreateTime.ToDateTime().ToString("yyyy/MM/dd");
-                dr["款号"] = q.GoodsSn; 
+                dr["款号"] = q.GoodsSn;
+                dr["购买人"] = q.UserName;
                 dr["商品属性"] = q.Props;
                 dr["销售金额"] = q.TotalPrice;
                 dr["买家应付邮费"] = q.Postage;
@@ -134,6 +135,7 @@ namespace MyTools.TaoBao.Impl
                     {"订单编号", "varchar(255)"},
                     {"卖出时间", "varchar(255)"},
                     {"货源", "varchar(255)"},
+                    {"购买人", "varchar(255)"}, 
                     {"款号", "Double"},
                     {"颜色", "varchar(255)"},
                     {"尺码", "varchar(255)"},
@@ -146,6 +148,7 @@ namespace MyTools.TaoBao.Impl
                     {"销售金额", "Double"},
                     {"付款金额", "Double"},
                     {"退款金额", "Double"},
+                    {"利润", "varchar(255)"},
                     {"结帐情况", "varchar(255)"},
                     {"结帐时间", "varchar(255)"},
                     {"购买帐号", "varchar(255)"},
