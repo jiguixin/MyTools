@@ -1,0 +1,14 @@
+#goods_model { padding:15px; zoom:1;}
+#goods_model ul { overflow:hidden; zoom:1; padding-left:25px;}
+#goods_model ul li { float:left; width:227px; margin-right:10px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; line-height:22px;}
+#goods_model ul li strong { display:inline-block;  text-align:left;}
+#goods_model .big_show { padding:10px 0 0; overflow:hidden; text-align:center;}
+#goods_model .big_show img { margin-bottom:10px;}
+#goods_model .little_show{ padding:10px 0 10px 10px; overflow:hidden;}
+#goods_model .little_show img{ padding:5px 0;}
+#goods_model .little_show .dl_padding{ padding-right:20px;}
+#goods_model .little_show dl{ width:350px; float:left;}
+#goods_model .little_show dl dt{ height:350px;}
+#goods_model .little_show dl dd{ height:20px; overflow:hidden; padding:5px 5px 15px; text-align:center;} 
+#goods_model .rule{width:100%;border-collapse:collapse; margin:15px 0;}
+#goods_model .rule tbody  tr td{ border:1px solid #ccc; text-align:center; line-height:25px; }

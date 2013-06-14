@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "MyTools.TaoBao.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reference", "Reference", "{3BC5D866-3102-427B-A141-DABC5BFB7933}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTools.TaoBao.Impl", "MyTools.TaoBao.Impl\MyTools.TaoBao.Impl.csproj", "{0A7006AF-066C-43E0-BB32-E17313EB6BB2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,15 +15,8 @@ Global
 		{8291F169-B677-4A41-8E2F-654690B38082}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8291F169-B677-4A41-8E2F-654690B38082}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8291F169-B677-4A41-8E2F-654690B38082}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A7006AF-066C-43E0-BB32-E17313EB6BB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A7006AF-066C-43E0-BB32-E17313EB6BB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A7006AF-066C-43E0-BB32-E17313EB6BB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A7006AF-066C-43E0-BB32-E17313EB6BB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{0A7006AF-066C-43E0-BB32-E17313EB6BB2} = {3BC5D866-3102-427B-A141-DABC5BFB7933}
 	EndGlobalSection
 EndGlobal

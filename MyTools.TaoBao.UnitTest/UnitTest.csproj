@@ -63,9 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
-    <Compile Include="CommonTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PgTestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -87,10 +85,6 @@
     <ProjectReference Include="..\MyTools.TaoBao.DomainModule\MyTools.TaoBao.DomainModule.csproj">
       <Project>{cfda5730-0420-430f-bf57-312b716afa17}</Project>
       <Name>MyTools.TaoBao.DomainModule</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MyTools.TaoBao.Impl\MyTools.TaoBao.Impl.csproj">
-      <Project>{0a7006af-066c-43e0-bb32-e17313eb6bb2}</Project>
-      <Name>MyTools.TaoBao.Impl</Name>
     </ProjectReference>
     <ProjectReference Include="..\MyTools.TaoBao.Interface\MyTools.TaoBao.Interface.csproj">
       <Project>{67f099c3-f743-4e52-b0cc-2c06a88d1a78}</Project>
