@@ -95,8 +95,9 @@ namespace UnitTest
             #endregion
 
             HtmlDocument doc = new HtmlDocument();
-
+            
             doc.LoadHtml(htmlContent);
+            doc.OptionDefaultStreamEncoding = Encoding.UTF8;
 
             var lstCss = GetCssContent(cssContent);
 
@@ -113,11 +114,19 @@ namespace UnitTest
                  
                 sb.Clear();
 
-                var singleElement = token.Split(' ');
-
-                foreach (var s in singleElement)
+                var m5 = "mt5 mb10";
+                if (token.Contains(m5))
                 {
-                    ConstructXpath(s, sb);
+                    sb.Append("//*[@id=\"goods_model\"]/div[@class=\"{0}\"]".StringFormat(m5));
+                }
+                else
+                { 
+                    var singleElement = token.Split(' ');
+
+                    foreach (var s in singleElement)
+                    {
+                        ConstructXpath(s, sb);
+                    } 
                 }
 
                 #endregion

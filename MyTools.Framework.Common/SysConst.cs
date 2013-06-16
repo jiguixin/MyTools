@@ -10,6 +10,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Infrastructure.Crosscutting.Declaration;
+using Infrastructure.Crosscutting.Utility.CommomHelper;
 
 namespace MyTools.Framework.Common
 {
@@ -49,6 +50,11 @@ namespace MyTools.Framework.Common
         /// 强制更新商品，目前主要针对价格和库存
         /// </summary>
         public static readonly bool IsEnforceUpdate = ConfigurationManager.AppSettings["IsEnforceUpdate"].ToBoolean();
+
+        /// <summary>
+        /// 读取用于修改淘宝上产品详情的样式
+        /// </summary>
+        public static readonly string GoodsDetailTemplate = FileHelper.ReadFileContent("GoodsDetailTemplate.css");
          
         #endregion
 
@@ -85,6 +91,7 @@ namespace MyTools.Framework.Common
             ManCatalogBanggoToTaobaoCid.Add("西装", "50011130");//西服套装
             ManCatalogBanggoToTaobaoCid.Add("茄克", "50010158");//夹克
             ManCatalogBanggoToTaobaoCid.Add("配件", "50005867");//工装制服
+
 
 
         }

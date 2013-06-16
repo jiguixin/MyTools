@@ -271,8 +271,8 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <returns></returns>
         public Sku UpdateSku(ItemSkuUpdateRequest req)
-        {
-            _log.LogInfo("正在更新SKU信息...->NumId:{0};Properties:{1}".StringFormat(req.NumIid, req.Properties));
+        { 
+            _log.LogInfo(Resource.Log_UpdateSkuing.StringFormat(req.NumIid, req.Properties));
             
             req.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
 
@@ -284,11 +284,11 @@ namespace MyTools.TaoBao.Impl
             {
                 var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
                                                response.SubErrMsg, response.TopForbiddenFields);
-                _log.LogError("更新SKU信息出错->NumId:{0};Properties:{1}".StringFormat(req.NumIid, req.Properties), ex);
+                _log.LogError(Resource.Log_UpdateSkuFailure.StringFormat(req.NumIid, req.Properties), ex);
                 throw ex;
             }
 
-            _log.LogInfo("成功更新SKU信息->NumId:{0};Properties:{1}".StringFormat(req.NumIid, req.Properties));
+            _log.LogInfo(Resource.Log_UpdateSkuSuccess.StringFormat(req.NumIid, req.Properties));
             
             return response.Sku; 
         }

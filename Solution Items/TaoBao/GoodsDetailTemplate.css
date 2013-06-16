@@ -1,14 +1,20 @@
-#goods_model { padding:15px; zoom:1;}
-#goods_model ul { overflow:hidden; zoom:1; padding-left:25px;}
-#goods_model ul li { float:left; width:227px; margin-right:10px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; line-height:22px;}
+#goods_model { padding:15px; zoom:1; width:750px;}
+#goods_model ul { overflow:hidden; zoom:1; padding-left:12px;font: 12px/1.5em Tahoma, Helvetica, Arial, sans-serif;}
+#goods_model ul li { float:left; width:210px; margin-right:10px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; line-height:22px;font: 12px/1.5em Tahoma, Helvetica, Arial, sans-serif;}
 #goods_model ul li strong { display:inline-block;  text-align:left;}
 #goods_model .big_show { padding:10px 0 0; overflow:hidden; text-align:center;}
+#goods_model .mt5 mb10{margin-bottom: 10px;margin-top: 5px;font: 12px/1.5em Tahoma, Helvetica, Arial, sans-serif; color: #404040;}
 #goods_model .big_show img { margin-bottom:10px;}
 #goods_model .little_show{ padding:10px 0 10px 10px; overflow:hidden;}
 #goods_model .little_show img{ padding:5px 0;}
-#goods_model .little_show .dl_padding{ padding-right:20px;}
-#goods_model .little_show dl{ width:350px; float:left;}
+#goods_model .little_show .dl_padding{ padding-right:20px;float:left;}
+#goods_model .little_show dl{ width:300px; float:left;}
 #goods_model .little_show dl dt{ height:350px;}
-#goods_model .little_show dl dd{ height:20px; overflow:hidden; padding:5px 5px 15px; text-align:center;} 
-#goods_model .rule{width:100%;border-collapse:collapse; margin:15px 0;}
-#goods_model .rule tbody  tr td{ border:1px solid #ccc; text-align:center; line-height:25px; }
+#goods_model .little_show dl dd{ height:20px; overflow:hidden; padding:5px 5px 15px; text-align:center;font: 12px/1.5em Tahoma, Helvetica, Arial, sans-serif;color: #404040;} 
+#goods_model .color_show { padding:10px 0;}
+#goods_model .color_show ul{ padding:0 0 10px 10px; overflow:hidden;}
+#goods_model .color_show ul li{ width:170px; padding-right:11px; float:left;list-style: none;}
+#goods_model .color_show ul li img { vertical-align:top;}
+#goods_model .color_show ul li h5{ font-size:12px; font-weight:normal; height:20px; overflow:hidden; text-align:center; padding-bottom:10px;color: #404040;}
+#goods_model .rule{width:98%;border-collapse:collapse; margin:15px 0;}
+#goods_model .rule tbody  tr td{ border:1px solid #ccc; text-align:center; line-height:25px;font: 12px/1.5em Tahoma, Helvetica, Arial, sans-serif;color: #404040; }

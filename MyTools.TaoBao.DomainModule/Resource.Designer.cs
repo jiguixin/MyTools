@@ -313,6 +313,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 修改产品CSS出错 的本地化字符串。
+        /// </summary>
+        public static string Log_ModifyGoodsDetailTempFailure {
+            get {
+                return ResourceManager.GetString("Log_ModifyGoodsDetailTempFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 发布产品：{0} 发布失败 的本地化字符串。
         /// </summary>
         public static string Log_PublishGoodsFailure {
@@ -426,6 +435,33 @@ namespace MyTools.TaoBao.DomainModule {
         public static string Log_UpdateGoodsSuccess {
             get {
                 return ResourceManager.GetString("Log_UpdateGoodsSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 更新SKU信息出错-&gt;NumId:{0};Properties:{1} 的本地化字符串。
+        /// </summary>
+        public static string Log_UpdateSkuFailure {
+            get {
+                return ResourceManager.GetString("Log_UpdateSkuFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在更新SKU信息...-&gt;NumId:{0};Properties:{1} 的本地化字符串。
+        /// </summary>
+        public static string Log_UpdateSkuing {
+            get {
+                return ResourceManager.GetString("Log_UpdateSkuing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 成功更新SKU信息-&gt;NumId:{0};Properties:{1} 的本地化字符串。
+        /// </summary>
+        public static string Log_UpdateSkuSuccess {
+            get {
+                return ResourceManager.GetString("Log_UpdateSkuSuccess", resourceCulture);
             }
         }
         

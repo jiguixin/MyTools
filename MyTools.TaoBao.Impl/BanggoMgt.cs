@@ -184,12 +184,13 @@ namespace MyTools.TaoBao.Impl
 
                 #endregion
             }
-
-            product.Desc = sbDesc.ToString();
+              
+            product.Desc = ModifyGoodsDetailsCss(sbDesc.ToString()); ;
 
             #endregion
         }
-         
+
+
         /// <summary>
         ///     得到可售商品Sku
         /// </summary>
@@ -816,6 +817,110 @@ namespace MyTools.TaoBao.Impl
                                                         new StackTrace()));
             double salePrice = htmlNodeSalePrice.InnerText.GetNumberDouble();
             return salePrice;
+        }
+
+        #endregion
+
+        #region 修改产品描述的CSS相关
+
+        private string ModifyGoodsDetailsCss(string sourceDesc)
+        {
+            try
+            {
+                #region var
+
+                string reg = @"[\.\#]?\w+[^{]+\{[^}]*\}";
+
+                #endregion
+
+                #region GetContent
+
+                string htmlContent = sourceDesc;
+                string cssContent = SysConst.GoodsDetailTemplate;
+
+                #endregion
+
+                HtmlDocument doc = new HtmlDocument();
+
+                doc.LoadHtml(htmlContent);
+                doc.OptionDefaultStreamEncoding = Encoding.UTF8;
+
+                var lstCss = TextHelper.GetCssContent(cssContent);
+
+                var sb = new StringBuilder();
+
+                foreach (var css in lstCss)
+                {
+                    #region Get Xpath
+
+                    var l = css.IndexOf("{", System.StringComparison.Ordinal);
+
+                    var token = css.Substring(0, l);
+                    var sytle = css.Substring(l + 1, css.Length - l - 2);
+
+                    sb.Clear();
+
+                    var m5 = "mt5 mb10";
+                    if (token.Contains(m5))
+                    {
+                        sb.Append("//*[@id=\"goods_model\"]/div[@class=\"{0}\"]".StringFormat(m5));
+                    }
+                    else
+                    {
+                        var singleElement = token.Split(' ');
+
+                        foreach (var s in singleElement)
+                        {
+                            ConstructXpath(s, sb);
+                        }
+                    }
+
+                    #endregion
+
+                    var nodes = doc.DocumentNode.SelectNodes(sb.ToString());
+
+                    if (nodes.IsNull())
+                        continue;
+
+                    foreach (var node in nodes)
+                    {
+                        node.Attributes.Add("style", sytle);
+                    }
+                }
+
+                return doc.DocumentNode.OuterHtml;
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(Resource.Log_ModifyGoodsDetailTempFailure, ex);
+                return sourceDesc;
+            }
+        }
+
+        private static void ConstructXpath(string s, StringBuilder sb)
+        {
+            if (s.IsNullOrEmpty())
+                return;
+
+            if (s.Contains("#"))
+            {
+                var ele = s.Replace("#", "");
+
+                sb.Append("//*[@id=\"{0}\"]".StringFormat(ele));
+
+                return;
+            }
+
+            if (s.Contains("."))
+            {
+                var ele = s.Replace(".", "");
+                sb.Append("//*[@class=\"{0}\"]".StringFormat(ele));
+                return;
+            }
+
+            if (sb.Length > 0)
+                sb.Append("/");
+            sb.Append(s);
         }
 
         #endregion
