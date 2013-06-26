@@ -15,6 +15,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Infrastructure.Crosscutting.Declaration;
+using Infrastructure.Crosscutting.Utility;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.Framework.Common;
 using MyTools.TaoBao.Interface;
@@ -56,60 +57,101 @@ namespace MyTools.TaoBao.Impl
             var excel = CreateExcelForSell(sheetName);
             DataTable dt = excel.ReadTable(sheetName);
 
-            foreach (var q in query)
+            #region 排除重复数据，找出拍了2件及以上的客户
+             
+            var repeat = query.GroupBy(i => i.OrderNo).Where(g => g.Count() > 1);
+             
+            var notRepeat = query.ToList();
+            foreach (var rep in repeat)
             {
+                var lstRep = rep.ToList();
+                var repCount = lstRep.Count;
 
-                var jRemark = TextHelper.ToEngInterpunction(TextHelper.ToDBC(q.Remark.ToString().Trim('\'')));
-
-                DataRow dr = dt.NewRow();
-                dr["订单编号"] = q.OrderNo;
-                dr["卖出时间"] = q.CreateTime.ToDateTime().ToString("yyyy/MM/dd");
-                dr["款号"] = q.GoodsSn;
-                dr["购买人"] = q.UserName;
-                dr["商品属性"] = q.Props;
-                dr["销售金额"] = q.TotalPrice;
-                dr["买家应付邮费"] = q.Postage;
-                dr["单件售价"] = q.Price;
-                dr["购买数量"] = q.Count;
-                //                dr["结帐情况"]
-                //                dr["结帐时间"]
-
-                JObject jObj = JObject.Parse(jRemark);
-                if (jObj != null)
+                var avgPostage = lstRep[0].Postage.ToDouble() / repCount;
+                foreach (var c in lstRep)
                 {
-                    var source = jObj.SelectToken("来源");
+                    notRepeat.Remove(c);
 
-                    if (source != null) dr["货源"] = source.Value<string>();
+                    var exportModel = new ExportModel(c);
+                     
+                    var newPrice = c.Price.ToDouble() + avgPostage;
+                    exportModel.TotalPrice = newPrice;
 
-                    var costPrice = jObj.SelectToken("成本价");
-                    dr["付款金额"] = costPrice != null ? (object)costPrice.Value<string>() : 0;
-
-                    dr["原价"] = q.Title.ToString().GetNumberInt();
-
-                    var pastage = jObj.SelectToken("邮费");
-                    dr["支出邮费"] = pastage != null ? (object)costPrice.Value<string>() : 0;
-
-                    var remark = jObj.SelectToken("备注");
-                    dr["备注"] = remark != null ? (object)remark.Value<string>() : "";
-
-                    var refund = jObj.SelectToken("退款金额");
-                    dr["退款金额"] = refund != null ? (object)refund.Value<string>() : 0;
+                    AddDataRow(exportModel, dt, excel, repCount); 
                 }
-                else
-                {
-                    dr["付款金额"] = 0;
-                    dr["原价"] = 0;
-                    dr["支出邮费"] = 0;
-                    dr["退款金额"] = 0;
-                }
+            }
 
-                GetColorAndSize(dr, q.Props.ToString());
-
-                excel.AddNewRow(dr);
+            #endregion
+             
+            foreach (var q in notRepeat)
+            { 
+                AddDataRow(q, dt, excel);
             }
 
             excel.Dispose();
             Process.Start("Sell");
+        }
+
+
+
+        private void AddDataRow(dynamic q, DataTable dt, ExcelHelper excel,int repOrder =0)
+        {
+            var jRemark = TextHelper.ToEngInterpunction(TextHelper.ToDBC(q.Remark.ToString().Trim('\'')));
+
+            DataRow dr = dt.NewRow();
+            dr["订单编号"] = q.OrderNo;
+            dr["卖出时间"] = ObjectExtendMethod.ToDateTime(q.CreateTime).ToString("yyyy/MM/dd");
+            dr["款号"] = q.GoodsSn;
+            dr["购买人"] = q.UserName;
+            dr["商品属性"] = q.Props;
+            dr["销售金额"] = q.TotalPrice;
+            dr["买家应付邮费"] = q.Postage;
+            dr["单件售价"] = q.Price;
+            dr["购买数量"] = q.Count;
+            //                dr["结帐情况"]
+            //                dr["结帐时间"]
+
+            JObject jObj = JObject.Parse(jRemark);
+            if (jObj != null)
+            {
+                var source = jObj.SelectToken("来源");
+
+                if (source != null) dr["货源"] = source.Value<string>();
+
+                var costPrice = jObj.SelectToken("成本价");
+
+                if (repOrder > 0)
+                {
+                    dr["付款金额"] = costPrice != null ? (object)(decimal.Round(costPrice.Value<decimal>()/repOrder,2)) : 0;
+                }
+                else
+                {
+                    dr["付款金额"] = costPrice != null ? (object)costPrice.Value<string>() : 0;    
+                }
+                
+
+                dr["原价"] = ObjectExtendMethod.GetNumberInt(q.Title.ToString());
+
+                var pastage = jObj.SelectToken("邮费");
+                dr["支出邮费"] = pastage != null ? (object) costPrice.Value<string>() : 0;
+
+                var remark = jObj.SelectToken("备注");
+                dr["备注"] = remark != null ? (object) remark.Value<string>() : "";
+
+                var refund = jObj.SelectToken("退款金额");
+                dr["退款金额"] = refund != null ? (object) refund.Value<string>() : 0;
+            }
+            else
+            {
+                dr["付款金额"] = 0;
+                dr["原价"] = 0;
+                dr["支出邮费"] = 0;
+                dr["退款金额"] = 0;
+            }
+
+            GetColorAndSize(dr, q.Props.ToString());
+
+            excel.AddNewRow(dr);
         }
 
         #region helper
@@ -185,5 +227,39 @@ namespace MyTools.TaoBao.Impl
         }
 
         #endregion
+    }
+
+    public class ExportModel
+    {
+        public ExportModel(dynamic dyn)
+        {
+            OrderNo = dyn.OrderNo;
+            CreateTime = dyn.CreateTime;
+            GoodsSn = dyn.GoodsSn;
+            Props = dyn.Props;
+            SalePrice = dyn.SalePrice;
+            Postage = dyn.Postage;
+            TotalPrice = dyn.TotalPrice;
+            OrderState = dyn.OrderState;
+            UserName = dyn.UserName;
+            Remark = dyn.Remark;
+            Price = dyn.Price;
+            Count = dyn.Count;
+            Title = dyn.Title; 
+        }
+
+        public double OrderNo { get; set; }
+        public DateTime CreateTime { get; set; }
+        public double GoodsSn { get; set; }
+        public string Props { get; set; }
+        public double SalePrice { get; set; }
+        public double Postage { get; set; }
+        public double TotalPrice { get; set; }
+        public string OrderState { get; set; }
+        public string UserName { get; set; }
+        public string Remark { get; set; }
+        public double Price { get; set; }
+        public double Count { get; set; }
+        public string Title { get; set; }
     }
 }
