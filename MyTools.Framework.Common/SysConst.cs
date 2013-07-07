@@ -52,6 +52,11 @@ namespace MyTools.Framework.Common
         public static readonly bool IsEnforceUpdate = ConfigurationManager.AppSettings["IsEnforceUpdate"].ToBoolean();
 
         /// <summary>
+        /// 邦购积分兑换相应产品，如多少红包，多少邦购币
+        /// </summary>
+        public static readonly string BanggoJfGoods = ConfigurationManager.AppSettings["BanggoJfGoods"];
+
+        /// <summary>
         /// 读取用于修改淘宝上产品详情的样式
         /// </summary>
         public static readonly string GoodsDetailTemplate = FileHelper.ReadFileContent("GoodsDetailTemplate.css");

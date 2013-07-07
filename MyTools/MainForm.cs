@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -11,15 +12,17 @@ using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Utility;
+using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.Framework.Common;
 using MyTools.TaoBao;
 using MyTools.TaoBao.Impl;
 using MyTools.TaoBao.Impl.NinjectModuleConfig;
 using MyTools.TaoBao.Interface;
+using Newtonsoft.Json;
 using Ninject;
 using Top.Api;
 using Top.Api.Util;
-using MyTools.TaoBao.DomainModule;
+using MyTools.TaoBao.DomainModule; 
 
 
 namespace MyTools
@@ -140,7 +143,8 @@ namespace MyTools
         ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
 
         private ISell _sell = InstanceLocator.Current.GetInstance<ISell>();
-           
+
+        private IBanggoMgt _banggoMgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
         #endregion
           
         private void btnAuthorization_Click(object sender, EventArgs e)
@@ -218,6 +222,76 @@ namespace MyTools
             FrmExportBanggoAndTaobaoGoodsInfo frm = new FrmExportBanggoAndTaobaoGoodsInfo();
             frm.MdiParent = this;
             frm.Show();
+        }
+
+        private void bntSingIn_Click(object sender, EventArgs e)
+        { 
+            string fileName = "SingInUser.txt";
+
+            if (!File.Exists(fileName))
+            {
+                var settings = new JsonSerializerSettings();
+
+                var lst = new List<BanggoUser>();
+                lst.Add(new BanggoUser { UserName = "a00620u3783", Password = "c15881169733" });
+                lst.Add(new BanggoUser() { UserName = "娟娟猪", Password = "040192" });
+                lst.Add(new BanggoUser() { UserName = "佳由小翻", Password = "fan1921" });
+                lst.Add(new BanggoUser() { UserName = "尹秋菊", Password = "131375asd" });
+                lst.Add(new BanggoUser() { UserName = "张梅zm", Password = "zhangmei" });
+                lst.Add(new BanggoUser() { UserName = "魏华", Password = "weihua" });
+                lst.Add(new BanggoUser() { UserName = "张均翠", Password = "jiguixin" });
+                lst.Add(new BanggoUser() { UserName = "CDMB付家秀", Password = "198911" });
+                lst.Add(new BanggoUser() { UserName = "段东梅", Password = "157160" });
+                 
+                string result = JsonConvert.SerializeObject(lst, Formatting.Indented, settings);
+
+                File.WriteAllText(fileName, result);
+            }
+
+            var lstDes = JsonConvert.DeserializeObject<List<BanggoUser>>(File.ReadAllText(fileName));
+             
+            foreach (var banggoUser in lstDes)
+            {
+                _banggoMgt.SingIn(banggoUser.UserName, banggoUser.Password);
+
+                System.Threading.Thread.Sleep(500); 
+            }
+
+            statusStrip.Text = "签到完成";
+        }
+
+        private void btnJfExchange_Click(object sender, EventArgs e)
+        {
+            string fileName = "JfExchangeUser.txt";
+
+            if (!File.Exists(fileName))
+            {
+                var settings = new JsonSerializerSettings();
+
+                var lst = new List<BanggoUser>();
+                lst.Add(new BanggoUser { UserName = "a00620u3783", Password = "c15881169733" });
+                lst.Add(new BanggoUser() { UserName = "娟娟猪", Password = "040192" });
+                lst.Add(new BanggoUser() { UserName = "佳由小翻", Password = "fan1921" });
+                lst.Add(new BanggoUser() { UserName = "尹秋菊", Password = "131375asd" });
+                lst.Add(new BanggoUser() { UserName = "张梅zm", Password = "zhangmei" });
+                lst.Add(new BanggoUser() { UserName = "魏华", Password = "weihua" });
+                lst.Add(new BanggoUser() { UserName = "张均翠", Password = "jiguixin" });
+                lst.Add(new BanggoUser() { UserName = "CDMB付家秀", Password = "198911" });
+                lst.Add(new BanggoUser() { UserName = "段东梅", Password = "157160" });
+                 
+                string result = JsonConvert.SerializeObject(lst, Formatting.Indented, settings);
+
+                File.WriteAllText(fileName, result);
+            }
+
+            var lstDes = JsonConvert.DeserializeObject<List<BanggoUser>>(File.ReadAllText(fileName));
+
+            foreach (var user in lstDes)
+            {
+                _banggoMgt.JfExchange(user.UserName, user.Password);
+                System.Threading.Thread.Sleep(500); 
+            }
+
         }
 
     }

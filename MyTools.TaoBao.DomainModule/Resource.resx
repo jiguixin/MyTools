@@ -439,4 +439,45 @@
     <value>修改产品CSS出错</value>
     <comment>修改产品CSS出错</comment>
   </data>
+  <data name="Log_Logining" xml:space="preserve">
+    <value>用户：{0} 正在进行登录....</value>
+    <comment>用户：{0} 正在进行登录....</comment>
+  </data>
+  <data name="Log_LoginSuccess" xml:space="preserve">
+    <value>用户：{0} 登录成功</value>
+    <comment>登录成功</comment>
+  </data>
+  <data name="Log_LoginFailure" xml:space="preserve">
+    <value>用户：{0} 登录失败</value>
+    <comment>登录失败
+</comment>
+  </data>
+  <data name="Log_SingIning" xml:space="preserve">
+    <value>正在进行签到...</value>
+    <comment>正在进行签到...
+</comment>
+  </data>
+  <data name="Log_SingInSuccess" xml:space="preserve">
+    <value>签到成功:{0} !</value>
+    <comment>签到成功</comment>
+  </data>
+  <data name="Log_SingInFailure" xml:space="preserve">
+    <value>签到失败....</value>
+    <comment>签到失败</comment>
+  </data>
+  <data name="Log_JfExchangeing" xml:space="preserve">
+    <value>正在兑换积分....</value>
+    <comment>正在兑换积分....
+</comment>
+  </data>
+  <data name="Log_JfExchangeSuccess" xml:space="preserve">
+    <value>{0}:积分兑换成功,{1} !</value>
+    <comment>积分兑换成功
+</comment>
+  </data>
+  <data name="Log_JfExchangeFailure" xml:space="preserve">
+    <value>{0}:积分兑换失败!</value>
+    <comment>积分兑换失败!
+</comment>
+  </data>
 </root>

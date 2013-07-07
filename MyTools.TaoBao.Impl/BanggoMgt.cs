@@ -449,6 +449,201 @@ namespace MyTools.TaoBao.Impl
 
         }
 
+        /// <summary>
+        /// 邦购上的用户登录
+        /// </summary>
+        /// <param name="userName">用户名</param>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
+        public RestClient Login(string userName, string password)
+        {
+            _log.LogInfo(Resource.Log_Logining.StringFormat(userName));
+
+            string url =
+                "https://passport.banggo.com/CASServer/login?service=http%3A%2F%2Fact.banggo.com%2FUser%2Flogin.shtml%3Freturn_url%3Dhttp%3A%2F%2Fmember.banggo.com%2FMember%2Findex.shtml";
+
+            var request = new RestRequest(Method.GET);
+            var client = new RestClient(url);
+            request.AddHeader("Host", "passport.banggo.com");
+            request.AddHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Referer", "http://www.banggo.com/");
+            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
+            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+            client.CookieContainer = new CookieContainer();
+
+            var response = client.Execute(request);
+
+            client.BaseUrl =
+                "https://passport.banggo.com/CASServer/login?service=http%3A%2F%2Fact.banggo.com%2FUser%2Flogin%3Freturn_url%3Dhttp%3A%2F%2Fmember.banggo.com%2FMember%2Findex.shtml";
+
+            request = new RestRequest(Method.POST);
+            request.AddHeader("Host", "passport.banggo.com");
+            request.AddHeader("Cache-Control", "max-age=0");
+            request.AddHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            request.AddHeader("Origin", "https://passport.banggo.com");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddHeader("Referer", "https://passport.banggo.com/CASServer/login?service=http%3A%2F%2Fact.banggo.com%2FUser%2Flogin%3Freturn_url%3Dhttp%3A%2F%2Fmember.banggo.com%2FMember%2Findex.shtml");
+            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
+            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+              
+            request.AddParameter("returnurl", "");
+            request.AddParameter("username", userName.Trim());
+            request.AddParameter("password", password.Trim());
+            request.AddParameter("rememberUsername", "on");
+            request.AddParameter("lt", "e1s1");
+            request.AddParameter("_eventId", "submit");
+            request.AddParameter("loginType", "0");
+            request.AddParameter("lastIp", "171.221.114.139");
+
+            response = client.Execute(request);
+
+            if (response.ResponseStatus == ResponseStatus.Completed)
+            {
+                _log.LogInfo(Resource.Log_LoginSuccess.StringFormat(userName));
+            }
+            else
+            {
+                string errorInfo = Resource.Log_LoginFailure.StringFormat(userName);
+                _log.LogError(errorInfo);
+
+                throw new Exception(errorInfo);
+            }
+
+            return client;
+             
+        }
+
+        /// <summary>
+        /// 签到
+        /// </summary> 
+        /// <param name="userName">用户名</param>
+        /// <param name="password">密码</param>
+        public void SingIn(string userName, string password)
+        {
+            var client = Login(userName, password);
+
+            _log.LogInfo(Resource.Log_SingIning);
+
+            client.BaseUrl = string.Format("http://act.banggo.com/Ajax/sing_in/?callback=jsonp{0}", DateTime.Now.Ticks);
+
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Host", "act.banggo.com");
+            request.AddHeader("Accept", "*/*");
+            request.AddHeader("User-Agent",
+                              "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Referer", "http://member.banggo.com/Member/index.shtml");
+            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
+            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+            
+            
+
+            var response = client.Execute(request);
+
+            if (response.ResponseStatus == ResponseStatus.Completed)
+            {
+                //todo:将Uncoding转换为汉字
+                _log.LogInfo(Resource.Log_SingInSuccess, Encoding.UTF8.GetString(response.RawBytes));
+            }
+            else
+            {
+                _log.LogError(Resource.Log_SingInFailure);
+            }
+        }
+
+        /// <summary>
+        /// 积分兑换
+        /// </summary>
+        /// <param name="userName">用户名</param>
+        /// <param name="password">密码</param>
+        public void JfExchange(string userName, string password)
+        {
+            var client = Login(userName, password);
+
+            _log.LogInfo(Resource.Log_JfExchangeing);
+
+            #region 兑换积分
+
+            client.BaseUrl = "http://jifen.banggo.com/";
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Host", "jifen.banggo.com");
+            request.AddHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Referer", "http://www.banggo.com/");
+            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
+            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+           var response = client.Execute(request);
+
+            client.BaseUrl = "http://jifen.banggo.com/Index/Index/checkLogin?callback=jsonp1373128617202";
+            request = new RestRequest(Method.GET);
+            request.AddHeader("Host", "jifen.banggo.com");
+            request.AddHeader("Accept", "application/json, text/javascript, */*");
+            request.AddHeader("X-Requested-With", "XMLHttpRequest");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Referer", "http://jifen.banggo.com/");
+            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
+            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+            response = client.Execute(request);
+
+            client.BaseUrl = "http://act.banggo.com/Cart/getCartInfo?callback=jsonp1373128617203";
+            request = new RestRequest(Method.GET);
+            request.AddHeader("Host", "act.banggo.com");
+            request.AddHeader("Accept", "*/*");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Referer", "http://jifen.banggo.com/");
+            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
+            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+            response = client.Execute(request);
+
+            client.BaseUrl = "http://jifen.banggo.com/Index/Index/User";
+            request = new RestRequest(Method.GET);
+            request.AddHeader("Host", "jifen.banggo.com");
+            request.AddHeader("Accept", "application/json, text/javascript, */*");
+            request.AddHeader("X-Requested-With", "XMLHttpRequest");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Referer", "http://jifen.banggo.com/");
+            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
+            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+            response = client.Execute(request);
+
+            client.BaseUrl = "http://jifen.banggo.com/Index/Store/Check?good_id=142";
+            request = new RestRequest(Method.GET);
+            request.AddHeader("Host", "jifen.banggo.com");
+            request.AddHeader("Accept", "application/json, text/javascript, */*");
+            request.AddHeader("X-Requested-With", "XMLHttpRequest");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddHeader("Referer", "http://jifen.banggo.com/");
+            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
+            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+
+            response = client.Execute(request);
+             
+            client.BaseUrl = "http://jifen.banggo.com/Index/Store/Exchange?good_id=142";
+             
+            response = client.Execute(request);
+
+            if (response.ResponseStatus == ResponseStatus.Completed)
+            {
+                _log.LogInfo(Resource.Log_JfExchangeSuccess, userName, Encoding.Default.GetString(response.RawBytes)); 
+            }
+            else
+            {
+                _log.LogError(Resource.Log_JfExchangeFailure,userName);
+            }
+             
+            #endregion
+        }
+
         #endregion
 
         #region helper

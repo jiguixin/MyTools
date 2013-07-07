@@ -10,6 +10,7 @@
 using System.Collections.Generic;
 using HtmlAgilityPack;
 using MyTools.TaoBao.DomainModule;
+using RestSharp;
 
 namespace MyTools.TaoBao.Interface
 {
@@ -107,5 +108,27 @@ namespace MyTools.TaoBao.Interface
         /// <param name="goodsSn">款号</param>
         /// <returns></returns>
         string GetGoodsUrl(string goodsSn);
+
+        /// <summary>
+        /// 邦购上的用户登录
+        /// </summary>
+        /// <param name="userName">用户名</param>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
+        RestClient Login(string userName, string password);
+
+        /// <summary>
+        /// 签到
+        /// </summary> 
+        /// <param name="userName">用户名</param>
+        /// <param name="password">密码</param>
+        void SingIn(string userName, string password);
+
+        /// <summary>
+        /// 积分兑换
+        /// </summary>
+        /// <param name="userName">用户名</param>
+        /// <param name="password">密码</param>
+        void JfExchange(string userName, string password);
     }
 }

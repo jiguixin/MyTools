@@ -313,6 +313,60 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 {0}:积分兑换失败! 的本地化字符串。
+        /// </summary>
+        public static string Log_JfExchangeFailure {
+            get {
+                return ResourceManager.GetString("Log_JfExchangeFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在兑换积分.... 的本地化字符串。
+        /// </summary>
+        public static string Log_JfExchangeing {
+            get {
+                return ResourceManager.GetString("Log_JfExchangeing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 {0}:积分兑换成功,{1} ! 的本地化字符串。
+        /// </summary>
+        public static string Log_JfExchangeSuccess {
+            get {
+                return ResourceManager.GetString("Log_JfExchangeSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 用户：{0} 登录失败 的本地化字符串。
+        /// </summary>
+        public static string Log_LoginFailure {
+            get {
+                return ResourceManager.GetString("Log_LoginFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 用户：{0} 正在进行登录.... 的本地化字符串。
+        /// </summary>
+        public static string Log_Logining {
+            get {
+                return ResourceManager.GetString("Log_Logining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 用户：{0} 登录成功 的本地化字符串。
+        /// </summary>
+        public static string Log_LoginSuccess {
+            get {
+                return ResourceManager.GetString("Log_LoginSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 修改产品CSS出错 的本地化字符串。
         /// </summary>
         public static string Log_ModifyGoodsDetailTempFailure {
@@ -372,6 +426,33 @@ namespace MyTools.TaoBao.DomainModule {
         public static string Log_PublishSaleImgSuccess {
             get {
                 return ResourceManager.GetString("Log_PublishSaleImgSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 签到失败.... 的本地化字符串。
+        /// </summary>
+        public static string Log_SingInFailure {
+            get {
+                return ResourceManager.GetString("Log_SingInFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在进行签到... 的本地化字符串。
+        /// </summary>
+        public static string Log_SingIning {
+            get {
+                return ResourceManager.GetString("Log_SingIning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 签到成功:{0} ! 的本地化字符串。
+        /// </summary>
+        public static string Log_SingInSuccess {
+            get {
+                return ResourceManager.GetString("Log_SingInSuccess", resourceCulture);
             }
         }
         
