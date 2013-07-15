@@ -92,21 +92,32 @@ namespace MyTools.TaoBao.Interface
 
         /// <summary>
         /// 更新和添加销售商品图片
+        /// taobao.item.propimg.upload 添加或修改属性图片 
         /// </summary>
         /// <param name="numId">商品编号</param>
         /// <param name="properties">销售属性</param>
         /// <param name="imgPath">本地图片路径</param>
         /// <returns></returns>
         PropImg UploadItemPropimg(long numId, string properties, string imgPath);
-
+          
         /// <summary>
         /// 更新和添加销售商品图片
+        /// taobao.item.propimg.upload 添加或修改属性图片 
         /// </summary>
         /// <param name="numId">商品编号</param>
         /// <param name="properties">销售属性</param>
         /// <param name="urlImg">网上的图片地址</param>
         /// <returns></returns>
         PropImg UploadItemPropimg(long numId, string properties, Uri urlImg);
+
+        /// <summary>
+        /// 删除该商品的销售图片
+        /// taobao.item.propimg.delete 删除属性图片
+        /// </summary>
+        /// <param name="imgId">图片ID</param>
+        /// <param name="numId">商品编号</param>
+        /// <returns></returns>
+        PropImg DeleteItemPropimg(long imgId, long numId);
 
         /// <summary>
         /// taobao.item.update.delisting 商品下架

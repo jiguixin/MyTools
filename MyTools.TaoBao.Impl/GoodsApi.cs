@@ -343,6 +343,7 @@ namespace MyTools.TaoBao.Impl
 
         /// <summary>
         ///     更新和添加销售商品图片
+        /// taobao.item.propimg.upload 添加或修改属性图片 
         /// </summary>
         /// <param name="numId">商品编号</param>
         /// <param name="properties">销售属性</param>
@@ -365,6 +366,7 @@ namespace MyTools.TaoBao.Impl
 
         /// <summary>
         ///     更新和添加销售商品图片
+        /// taobao.item.propimg.upload 添加或修改属性图片 
         /// </summary>
         /// <param name="numId">商品编号</param>
         /// <param name="properties">销售属性</param>
@@ -379,6 +381,34 @@ namespace MyTools.TaoBao.Impl
 
             var fItem = new FileItem(fileName, SysUtils.GetImgByte(urlImg.ToString()));
             return UploadItemPropimgInternal(numId, properties, fItem);
+        }
+
+        /// <summary>
+        /// 删除该商品的销售图片
+        /// taobao.item.propimg.delete 删除属性图片
+        /// </summary>
+        /// <param name="imgId">图片ID</param>
+        /// <param name="numId">商品编号</param>
+        /// <returns></returns>
+        public PropImg DeleteItemPropimg(long imgId, long numId)
+        {
+            _log.LogInfo(Resource.Log_DeleteItemPropingimg,imgId, numId);
+
+            var req = new ItemPropimgDeleteRequest { NumIid = numId, Id=imgId };
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+            {
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                                  response.SubErrMsg, response.TopForbiddenFields);
+
+                _log.LogError(Resource.Log_DeleteItemPropimgFailure.StringFormat(imgId, numId), ex);
+            }
+
+            _log.LogInfo(Resource.Log_DeleteItemPropimgSuccess, imgId, numId);
+
+             return response.PropImg; 
         }
 
         /// <summary>
@@ -664,7 +694,7 @@ namespace MyTools.TaoBao.Impl
             }
         }
 
-        //删除SKU只保留1个可用SKU
+        //删除SKU只保留1个可用SKU,并将该产品对应的销售图片给删除掉
         private void DeleteSkuOnlyOne(Item item)
         {
             if (item.Skus.Count == 0 || item.Skus[0].Properties.IsNullOrEmpty())
@@ -713,6 +743,19 @@ namespace MyTools.TaoBao.Impl
 
                 Thread.Sleep(500);
             }
+
+            #region 删除商品的销售图片
+
+            var goods= GetGoods(item.NumIid.ToString(CultureInfo.InvariantCulture));
+
+            foreach (var propImg in goods.PropImgs)
+            {
+                DeleteItemPropimg(propImg.Id, item.NumIid);
+                Thread.Sleep(100);
+            }
+             
+
+            #endregion
         }
          
         //更新商品并上传相应的销售图片
@@ -812,6 +855,7 @@ namespace MyTools.TaoBao.Impl
             bProduct.InputStr = "{0},{1}".StringFormat(bProduct.GoodsSn, bProduct.Brand);
         }
 
+        //taobao.item.propimg.upload 添加或修改属性图片 
         private PropImg UploadItemPropimgInternal(long numId, string properties, FileItem fItem)
         {
             _log.LogInfo(Resource.Log_PublishSaleImging, numId);

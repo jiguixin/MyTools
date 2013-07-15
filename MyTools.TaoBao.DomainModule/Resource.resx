@@ -480,4 +480,16 @@
     <comment>积分兑换失败!
 </comment>
   </data>
+  <data name="Log_DeleteItemPropingimg" xml:space="preserve">
+    <value>numId:{0},imgId:{1},正在删除销售图片...</value>
+    <comment>正在删除销售图片...</comment>
+  </data>
+  <data name="Log_DeleteItemPropimgFailure" xml:space="preserve">
+    <value>numId:{0},imgId:{1},删除销售图片出错!</value>
+    <comment>删除销售图片出错!</comment>
+  </data>
+  <data name="Log_DeleteItemPropimgSuccess" xml:space="preserve">
+    <value>numId:{0},imgId:{1},删除销售图片成功</value>
+    <comment>删除销售图片成功</comment>
+  </data>
 </root>
