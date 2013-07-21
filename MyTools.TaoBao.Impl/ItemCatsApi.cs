@@ -125,6 +125,7 @@ namespace MyTools.TaoBao.Impl
         //得到淘宝的所有商品类目
         /// <summary>
         /// 得到淘宝的所有商品类目
+        /// taobao.itemcats.get 获取后台供卖家发布商品的标准商品类目
         /// </summary>
         /// <returns></returns>
         public List<ItemCat> GetAllItemCatByApi(long parentCid)
