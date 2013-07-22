@@ -90,12 +90,17 @@ namespace MyTools.Framework.Common
             WomenCatalogBanggoToTaobaoCid.Add("裙类", "50010850"); //连衣裙
             WomenCatalogBanggoToTaobaoCid.Add("裤类", "162205"); //牛仔裤
             WomenCatalogBanggoToTaobaoCid.Add("配件", "162404");//挎包\/拎包\/休闲包
+            WomenCatalogBanggoToTaobaoCid.Add("鞋", "162404");//挎包\/拎包\/休闲包
+            WomenCatalogBanggoToTaobaoCid.Add("鞋类", "162404");//挎包\/拎包\/休闲包
 
 
             ManCatalogBanggoToTaobaoCid.Add("裤类", "50010167");//牛仔裤
             ManCatalogBanggoToTaobaoCid.Add("西装", "50011130");//西服套装
             ManCatalogBanggoToTaobaoCid.Add("茄克", "50010158");//夹克
             ManCatalogBanggoToTaobaoCid.Add("配件", "50005867");//工装制服
+            ManCatalogBanggoToTaobaoCid.Add("鞋", "50005867");//工装制服
+            ManCatalogBanggoToTaobaoCid.Add("鞋类", "50005867");//工装制服
+
 
 
 
