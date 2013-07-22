@@ -92,6 +92,7 @@ namespace MyTools.Framework.Common
             WomenCatalogBanggoToTaobaoCid.Add("配件", "162404");//挎包\/拎包\/休闲包
             WomenCatalogBanggoToTaobaoCid.Add("鞋", "162404");//挎包\/拎包\/休闲包
             WomenCatalogBanggoToTaobaoCid.Add("鞋类", "162404");//挎包\/拎包\/休闲包
+            WomenCatalogBanggoToTaobaoCid.Add("外套", "162404");//挎包\/拎包\/休闲包
 
 
             ManCatalogBanggoToTaobaoCid.Add("裤类", "50010167");//牛仔裤
@@ -100,6 +101,8 @@ namespace MyTools.Framework.Common
             ManCatalogBanggoToTaobaoCid.Add("配件", "50005867");//工装制服
             ManCatalogBanggoToTaobaoCid.Add("鞋", "50005867");//工装制服
             ManCatalogBanggoToTaobaoCid.Add("鞋类", "50005867");//工装制服
+            ManCatalogBanggoToTaobaoCid.Add("外套", "50005867");//工装制服
+
 
 
 
