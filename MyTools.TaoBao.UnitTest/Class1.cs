@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using HtmlAgilityPack;
@@ -171,6 +172,23 @@ namespace UnitTest
                 sb.Append("/");
             sb.Append(s);
         }
+
+        [Test]
+        public void UncodeTest()
+        {
+            string s = null;
+
+            using (FileStream fs = new FileStream("json.txt", FileMode.Open))
+            {
+                using (StreamReader sr = new StreamReader(fs, System.Text.Encoding.Default))
+                {
+                    s = sr.ReadToEnd();
+                }
+            }
+            Console.WriteLine(TextHelper.ToGB2312(s));
+            Console.WriteLine(TextHelper.ToGb2312NotRemove(s));
+        }
+
 
         #region Helper
 

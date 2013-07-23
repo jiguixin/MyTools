@@ -151,7 +151,8 @@ namespace MyTools
         {
             _log.LogInfo("正在执行验证方法-{0}", "btnAuthorization_Click");
 
-            FrmLogin login = new FrmLogin(authorizeUrl);
+            FrmLogin login = new FrmLogin(authorizeUrl); 
+
             if (login.ShowDialog() == DialogResult.OK)
             {
                 _log.LogInfo("获取淘宝的认证数据完成！"); 

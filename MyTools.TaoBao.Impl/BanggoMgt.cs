@@ -545,9 +545,8 @@ namespace MyTools.TaoBao.Impl
             var response = client.Execute(request);
 
             if (response.ResponseStatus == ResponseStatus.Completed)
-            {
-                //todo:将Uncoding转换为汉字
-                _log.LogInfo(Resource.Log_SingInSuccess, Encoding.UTF8.GetString(response.RawBytes));
+            { 
+                _log.LogInfo(Resource.Log_SingInSuccess, TextHelper.ToGb2312NotRemove(Encoding.UTF8.GetString(response.RawBytes)));
             }
             else
             {
