@@ -168,7 +168,8 @@ namespace MyTools
         private void MainForm_Load(object sender, EventArgs e)
         {
             authorizeUrl = Resource.SysConfig_AuthorizeUrl.StringFormat(SysConst.AppKey);
-              
+
+            this.Text  += " [{0}] ".StringFormat(SysConst.AppLoginUser);
         }
 
         private void btnPublishProduct_Click(object sender, EventArgs e)
@@ -233,17 +234,8 @@ namespace MyTools
             {
                 var settings = new JsonSerializerSettings();
 
-                var lst = new List<BanggoUser>();
-                lst.Add(new BanggoUser { UserName = "a00620u3783", Password = "c15881169733" });
-                lst.Add(new BanggoUser() { UserName = "娟娟猪", Password = "040192" });
-                lst.Add(new BanggoUser() { UserName = "佳由小翻", Password = "fan1921" });
-                lst.Add(new BanggoUser() { UserName = "尹秋菊", Password = "131375asd" });
-                lst.Add(new BanggoUser() { UserName = "张梅zm", Password = "zhangmei" });
-                lst.Add(new BanggoUser() { UserName = "魏华", Password = "weihua" });
-                lst.Add(new BanggoUser() { UserName = "张均翠", Password = "jiguixin" });
-                lst.Add(new BanggoUser() { UserName = "CDMB付家秀", Password = "198911" });
-                lst.Add(new BanggoUser() { UserName = "段东梅", Password = "157160" });
-                 
+                var lst = InitBanggoUsers();
+
                 string result = JsonConvert.SerializeObject(lst, Formatting.Indented, settings);
 
                 File.WriteAllText(fileName, result);
@@ -261,6 +253,23 @@ namespace MyTools
             statusStrip.Text = "签到完成";
         }
 
+        private static List<BanggoUser> InitBanggoUsers()
+        {
+            var lst = new List<BanggoUser>();
+            lst.Add(new BanggoUser {UserName = "a00620u3783", Password = "c15881169733"});
+            lst.Add(new BanggoUser() {UserName = "娟娟猪", Password = "040192"});
+            lst.Add(new BanggoUser() {UserName = "佳由小翻", Password = "fan1921"});
+            lst.Add(new BanggoUser() {UserName = "尹秋菊", Password = "131375asd"});
+            lst.Add(new BanggoUser() {UserName = "张梅zm", Password = "zhangmei"});
+            lst.Add(new BanggoUser() {UserName = "魏华", Password = "weihua"});
+            lst.Add(new BanggoUser() {UserName = "张均翠", Password = "jiguixin"});
+            lst.Add(new BanggoUser() {UserName = "CDMB付家秀", Password = "198911"});
+            lst.Add(new BanggoUser() { UserName = "段东梅", Password = "157160" });
+            lst.Add(new BanggoUser() { UserName = "廖小梅1", Password = "118205" });
+            lst.Add(new BanggoUser() { UserName = "朱微", Password = "ZHUWEI1" });
+            return lst;
+        }
+
         private void btnJfExchange_Click(object sender, EventArgs e)
         {
             string fileName = "JfExchangeUser.txt";
@@ -269,16 +278,7 @@ namespace MyTools
             {
                 var settings = new JsonSerializerSettings();
 
-                var lst = new List<BanggoUser>();
-                lst.Add(new BanggoUser { UserName = "a00620u3783", Password = "c15881169733" });
-                lst.Add(new BanggoUser() { UserName = "娟娟猪", Password = "040192" });
-                lst.Add(new BanggoUser() { UserName = "佳由小翻", Password = "fan1921" });
-                lst.Add(new BanggoUser() { UserName = "尹秋菊", Password = "131375asd" });
-                lst.Add(new BanggoUser() { UserName = "张梅zm", Password = "zhangmei" });
-                lst.Add(new BanggoUser() { UserName = "魏华", Password = "weihua" });
-                lst.Add(new BanggoUser() { UserName = "张均翠", Password = "jiguixin" });
-                lst.Add(new BanggoUser() { UserName = "CDMB付家秀", Password = "198911" });
-                lst.Add(new BanggoUser() { UserName = "段东梅", Password = "157160" });
+                var lst = InitBanggoUsers();
                  
                 string result = JsonConvert.SerializeObject(lst, Formatting.Indented, settings);
 

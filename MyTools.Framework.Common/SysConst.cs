@@ -18,6 +18,7 @@ namespace MyTools.Framework.Common
     {
         #region Config
 
+        public static readonly string AppLoginUser = ConfigurationManager.AppSettings["AppLoginUser"];
         public static readonly string AppKey = ConfigurationManager.AppSettings["appKey"];
         public static readonly string AppSecret = ConfigurationManager.AppSettings["appSecret"];
         public static readonly string PostageId = ConfigurationManager.AppSettings["PostageId"]; 
