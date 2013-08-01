@@ -497,7 +497,7 @@ namespace MyTools.TaoBao.Impl
             request.AddParameter("lt", "e1s1");
             request.AddParameter("_eventId", "submit");
             request.AddParameter("loginType", "0");
-            request.AddParameter("lastIp", "171.221.114.139");
+           // request.AddParameter("lastIp", "171.221.114.139");
 
             response = client.Execute(request);
 
@@ -742,7 +742,7 @@ namespace MyTools.TaoBao.Impl
             if (response.ErrorException != null)
                 throw response.ErrorException;
 
-            string result = response.Content.TrimStart('(').TrimEnd(')');
+            string result = ReplaceBracket(response.Content);
             return result;
         }
 
@@ -764,7 +764,7 @@ namespace MyTools.TaoBao.Impl
             responseContent.ThrowIfNullOrEmpty(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                 new StackTrace()));
 
-            string result = responseContent.TrimStart('(').TrimEnd(')');
+            string result = ReplaceBracket(responseContent);
 
             JObject jObj = JObject.Parse(result);
 
@@ -880,11 +880,17 @@ namespace MyTools.TaoBao.Impl
 
             string responseContent = GetBanggoReponseContent(url, requestModel.Referer);
 
-            string result = responseContent.TrimStart('(').TrimEnd(')');
+            string result = ReplaceBracket(responseContent);
 
             JObject jObj = JObject.Parse(result);
 
             return jObj["avl_num"].ToInt32();
+        }
+
+        //替换通过AJAX得到的数据替换空格、换行符和括号
+        private static string ReplaceBracket(string source)
+        {
+            return TextHelper.TrimLf(source).TrimStart('(').TrimEnd(')');
         }
 
         #region GetProductSku 相关方法

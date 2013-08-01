@@ -130,7 +130,6 @@ namespace MyTools
         //App Key与App Secret在"应用证书"得到 
         private ITopClient client = InstanceLocator.Current.GetInstance<ITopClient>();
 
-        private TopContext context;
 
         private readonly IGoodsApi _goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
 
@@ -138,7 +137,7 @@ namespace MyTools
          
         private string authorizeUrl;
          
-        private ICommonApi _comApi = InstanceLocator.Current.GetInstance<ICommonApi>();
+        
 
         ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
 
@@ -151,17 +150,9 @@ namespace MyTools
         {
             _log.LogInfo("正在执行验证方法-{0}", "btnAuthorization_Click");
 
-            FrmLogin login = new FrmLogin(authorizeUrl); 
-
-            if (login.ShowDialog() == DialogResult.OK)
-            {
-                _log.LogInfo("获取淘宝的认证数据完成！"); 
-
-                context = _comApi.Authorized(login.resultHtml);
-                   
-                InstanceLocator.Current.RegisterInstance<TopContext>(context);
-                  
-            }
+            FrmLogin login = new FrmLogin(authorizeUrl);
+            login.MdiParent = this;
+            login.Show(); 
         }
          
 
@@ -242,16 +233,46 @@ namespace MyTools
             }
 
             var lstDes = JsonConvert.DeserializeObject<List<BanggoUser>>(File.ReadAllText(fileName));
-             
+
+
+            if (!bgwRunSingIn.IsBusy)
+            {
+                bgwRunSingIn.RunWorkerAsync(lstDes);
+            } 
+        }
+
+
+        #region 签到多线程
+
+        private void bgwRunSingIn_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var lstDes = (List<BanggoUser>)e.Argument;
+
+            if (lstDes == null)
+                return;
+
             foreach (var banggoUser in lstDes)
             {
                 _banggoMgt.SingIn(banggoUser.UserName, banggoUser.Password);
-
-                System.Threading.Thread.Sleep(500); 
+                bgwRunSingIn.ReportProgress(100, "{0}->正在签到!".StringFormat(banggoUser.UserName));
+                System.Threading.Thread.Sleep(1000);
             }
-
-            statusStrip.Text = "签到完成";
         }
+
+        private void bgwRunSingIn_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (e.UserState is string)
+            {
+                toolStripStatusLabel.Text = e.UserState.ToString();
+            }
+        }
+
+        private void bgwRunSingIn_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            toolStripStatusLabel.Text = "签到结束";
+        }
+
+        #endregion
 
         private static List<BanggoUser> InitBanggoUsers()
         {
@@ -290,7 +311,7 @@ namespace MyTools
             foreach (var user in lstDes)
             {
                 _banggoMgt.JfExchange(user.UserName, user.Password);
-                System.Threading.Thread.Sleep(500); 
+                System.Threading.Thread.Sleep(1000); 
             }
 
         }

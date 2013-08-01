@@ -65,6 +65,7 @@
             this.btnSetAlpha = new System.Windows.Forms.ToolStripMenuItem();
             this.btnRestoreAlpha = new System.Windows.Forms.ToolStripMenuItem();
             this.bntSingIn = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnJfExchange = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.newToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -77,7 +78,7 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnJfExchange = new System.Windows.Forms.ToolStripMenuItem();
+            this.bgwRunSingIn = new System.ComponentModel.BackgroundWorker();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -354,23 +355,30 @@
             // btnSetAlpha
             // 
             this.btnSetAlpha.Name = "btnSetAlpha";
-            this.btnSetAlpha.Size = new System.Drawing.Size(152, 22);
+            this.btnSetAlpha.Size = new System.Drawing.Size(136, 22);
             this.btnSetAlpha.Text = "设置透明度";
             this.btnSetAlpha.Click += new System.EventHandler(this.btnSetAlpha_Click);
             // 
             // btnRestoreAlpha
             // 
             this.btnRestoreAlpha.Name = "btnRestoreAlpha";
-            this.btnRestoreAlpha.Size = new System.Drawing.Size(152, 22);
+            this.btnRestoreAlpha.Size = new System.Drawing.Size(136, 22);
             this.btnRestoreAlpha.Text = "恢复透明度";
             this.btnRestoreAlpha.Click += new System.EventHandler(this.btnRestoreAlpha_Click);
             // 
             // bntSingIn
             // 
             this.bntSingIn.Name = "bntSingIn";
-            this.bntSingIn.Size = new System.Drawing.Size(152, 22);
+            this.bntSingIn.Size = new System.Drawing.Size(136, 22);
             this.bntSingIn.Text = "签到";
             this.bntSingIn.Click += new System.EventHandler(this.bntSingIn_Click);
+            // 
+            // btnJfExchange
+            // 
+            this.btnJfExchange.Name = "btnJfExchange";
+            this.btnJfExchange.Size = new System.Drawing.Size(136, 22);
+            this.btnJfExchange.Text = "积分兑换";
+            this.btnJfExchange.Click += new System.EventHandler(this.btnJfExchange_Click);
             // 
             // toolStrip
             // 
@@ -471,12 +479,12 @@
             this.toolStripStatusLabel.Size = new System.Drawing.Size(32, 17);
             this.toolStripStatusLabel.Text = "状态";
             // 
-            // btnJfExchange
+            // bgwRunSingIn
             // 
-            this.btnJfExchange.Name = "btnJfExchange";
-            this.btnJfExchange.Size = new System.Drawing.Size(152, 22);
-            this.btnJfExchange.Text = "积分兑换";
-            this.btnJfExchange.Click += new System.EventHandler(this.btnJfExchange_Click);
+            this.bgwRunSingIn.WorkerReportsProgress = true;
+            this.bgwRunSingIn.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwRunSingIn_DoWork);
+            this.bgwRunSingIn.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwRunSingIn_ProgressChanged);
+            this.bgwRunSingIn.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwRunSingIn_RunWorkerCompleted);
             // 
             // MainForm
             // 
@@ -552,6 +560,7 @@
         private System.Windows.Forms.ToolStripMenuItem btnExportRivalSaleDetail;
         private System.Windows.Forms.ToolStripMenuItem bntSingIn;
         private System.Windows.Forms.ToolStripMenuItem btnJfExchange;
+        private System.ComponentModel.BackgroundWorker bgwRunSingIn;
     }
 }
 
