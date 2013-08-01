@@ -81,6 +81,17 @@ namespace MyTools.TaoBao.Impl
 
             foreach (var prop in lstMustProps)
             {
+                /*modify 13-8-2 00:36
+                如果有品牌是必填项，那么就不添加，因为在GoodsApi->SetOptionalProps,添加品牌的
+                不然就会报，isv.item-add-service-error:ITEM_PROPERTIES_ERROR
+                “品牌”属性出错:输入属性与类目子属性模板不匹配:品牌
+                 * 20000是对应的品牌属性
+                 * todo:问题还是没有解决 http://kids.banggo.com/Goods/595329.shtml
+                 
+                if (prop.Pid == 20000)
+                    continue;
+                */
+
                 var pid = prop.Pid.ToString(CultureInfo.InvariantCulture);
 
                 sb.AppendFormat("{0}:{1};", prop.Pid, prop.PropValues[0].Vid);
