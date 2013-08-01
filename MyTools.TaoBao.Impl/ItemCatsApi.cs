@@ -51,10 +51,18 @@ namespace MyTools.TaoBao.Impl
 
             var childItemCat = GetAllItemCatByApi(parentItemCat.Cid).Find(c => c.Name.Contains(childCatalog));
 
-            if (childItemCat == null) 
-            { 
+
+            //如果淘宝子类别下还有子类别,如：女童->外套->普通外套等。
+            //那么直到遍历完相应子目录才结束。
+            while (childItemCat != null && childItemCat.IsParent)
+            {
+                childItemCat = GetAllItemCatByApi(childItemCat.Cid).Find(c => c.Name.Contains(childCatalog)); 
+            }
+             
+            if (childItemCat == null)
+            {
                 //没有找到然后在到GetCustomCidMap中查找 
-                return SysUtils.GetCustomCidMap(parentCatalog, childCatalog); 
+                return SysUtils.GetCustomCidMap(parentCatalog, childCatalog);
             }
 
             return childItemCat.Cid.ToString(CultureInfo.InvariantCulture);
