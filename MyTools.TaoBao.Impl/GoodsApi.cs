@@ -832,7 +832,7 @@ namespace MyTools.TaoBao.Impl
             bProduct.Props = itemProps; //只先提取必填项
 
             SetOptionalProps(bProduct);
-
+            
             SetSkuInfo(bProduct);
 
             _log.LogInfo(Resource.Log_StuffProductInfoSuccess.StringFormat(bProduct.GoodsSn));

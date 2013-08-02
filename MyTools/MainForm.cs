@@ -255,7 +255,7 @@ namespace MyTools
             {
                 _banggoMgt.SingIn(banggoUser.UserName, banggoUser.Password);
                 bgwRunSingIn.ReportProgress(100, "{0}->正在签到!".StringFormat(banggoUser.UserName));
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(2000);
             }
         }
 
@@ -311,7 +311,7 @@ namespace MyTools
             foreach (var user in lstDes)
             {
                 _banggoMgt.JfExchange(user.UserName, user.Password);
-                System.Threading.Thread.Sleep(1000); 
+                System.Threading.Thread.Sleep(2000); 
             }
 
         }

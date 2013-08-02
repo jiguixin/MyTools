@@ -76,11 +76,11 @@ namespace MyTools.Framework.Common
             CategoryBanggoToTaobaoMap.Add("男童", "童装");
             CategoryBanggoToTaobaoMap.Add("女童", "童装");
             CategoryBanggoToTaobaoMap.Add("ME-CITY", "ME&CITY");
-             
-            ChildCatalogBanggoToTaobaoCid.Add("休闲裤", "50013618"); //对应的是裤子
-            ChildCatalogBanggoToTaobaoCid.Add("牛仔裤", "50013618"); //对应的是裤子
-            ChildCatalogBanggoToTaobaoCid.Add("针织裤", "50013618"); //对应的是裤子
-            ChildCatalogBanggoToTaobaoCid.Add("裤类", "50013618"); //对应的是裤子 
+
+            ChildCatalogBanggoToTaobaoCid.Add("休闲裤", "50006217"); //对应的是其它
+            ChildCatalogBanggoToTaobaoCid.Add("牛仔裤", "50006217"); //对应的是其它
+            ChildCatalogBanggoToTaobaoCid.Add("针织裤", "50006217"); //对应的是其它
+            ChildCatalogBanggoToTaobaoCid.Add("裤类", "50006217"); //对应的是其它 
             ChildCatalogBanggoToTaobaoCid.Add("茄克", "50010519"); //夹克\/皮衣 
             ChildCatalogBanggoToTaobaoCid.Add("大衣", "50010520"); //呢大衣
             ChildCatalogBanggoToTaobaoCid.Add("开衫", "50010539"); //毛衣\/针织衫 
