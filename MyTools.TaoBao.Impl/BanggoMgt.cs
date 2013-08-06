@@ -567,73 +567,75 @@ namespace MyTools.TaoBao.Impl
 
             #region 兑换积分
 
+            //todo 这就报错了。
             client.BaseUrl = "http://jifen.banggo.com/";
             var request = new RestRequest(Method.GET);
             request.AddHeader("Host", "jifen.banggo.com");
-            request.AddHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Accept", "text/html, application/xhtml+xml, */*");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)");
             request.AddHeader("Referer", "http://www.banggo.com/");
-            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
-            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Encoding", "gzip, deflate");
+            request.AddHeader("Accept-Language", "zh-CN");
             request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
            var response = client.Execute(request);
 
             client.BaseUrl = "http://jifen.banggo.com/Index/Index/checkLogin?callback=jsonp1373128617202";
             request = new RestRequest(Method.GET);
             request.AddHeader("Host", "jifen.banggo.com");
-            request.AddHeader("Accept", "application/json, text/javascript, */*");
-            request.AddHeader("X-Requested-With", "XMLHttpRequest");
-            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Accept", "text/javascript, application/javascript, */*");
+            request.AddHeader("x-requested-with", "XMLHttpRequest");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)");
             request.AddHeader("Referer", "http://jifen.banggo.com/");
-            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
-            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
-            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+            request.AddHeader("Accept-Encoding", "gzip, deflate");
+            request.AddHeader("Accept-Language", "zh-cn"); 
             response = client.Execute(request);
 
             client.BaseUrl = "http://act.banggo.com/Cart/getCartInfo?callback=jsonp1373128617203";
             request = new RestRequest(Method.GET);
-            request.AddHeader("Host", "act.banggo.com");
-            request.AddHeader("Accept", "*/*");
-            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Accept", "application/javascript, */*;q=0.8");
             request.AddHeader("Referer", "http://jifen.banggo.com/");
-            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
-            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
-            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+            request.AddHeader("Accept-Language", "zh-CN");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)");
+            request.AddHeader("Accept-Encoding", "gzip, deflate"); 
+            request.AddHeader("Host", "act.banggo.com");
+            
             response = client.Execute(request);
 
             client.BaseUrl = "http://jifen.banggo.com/Index/Index/User";
             request = new RestRequest(Method.GET);
-            request.AddHeader("Host", "jifen.banggo.com");
-            request.AddHeader("Accept", "application/json, text/javascript, */*");
-            request.AddHeader("X-Requested-With", "XMLHttpRequest");
-            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("x-requested-with", "XMLHttpRequest");
+            request.AddHeader("Accept-Language", "zh-cn");
             request.AddHeader("Referer", "http://jifen.banggo.com/");
-            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
-            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
-            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+            request.AddHeader("Accept", "application/json, text/javascript, */*");
+            request.AddHeader("Accept-Encoding", "gzip, deflate");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)");
+            request.AddHeader("Host", "jifen.banggo.com"); 
+
             response = client.Execute(request);
 
-            client.BaseUrl = "http://jifen.banggo.com/Index/Store/Check?good_id=142";
+            //todo: 如果不成功还要加：http://stat.banggo.com/logs.stat?callback=jsonp1375756465623&json={ 请求
+
+            client.BaseUrl = "http://jifen.banggo.com/Index/Store/Check?good_id={0}".StringFormat(SysConst.BanggoJfGoods);
             request = new RestRequest(Method.GET);
-            request.AddHeader("Host", "jifen.banggo.com");
-            request.AddHeader("Accept", "application/json, text/javascript, */*");
-            request.AddHeader("X-Requested-With", "XMLHttpRequest");
-            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddHeader("x-requested-with", "XMLHttpRequest");
+            request.AddHeader("Accept-Language", "zh-cn");
             request.AddHeader("Referer", "http://jifen.banggo.com/");
-            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
-            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
-            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
+            request.AddHeader("Accept", "application/json, text/javascript, */*");
+            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.AddHeader("Accept-Encoding", "gzip, deflate");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)");
+            request.AddHeader("Host", "jifen.banggo.com"); 
 
             response = client.Execute(request);
-             
-            client.BaseUrl = "http://jifen.banggo.com/Index/Store/Exchange?good_id=142";
+
+            client.BaseUrl = "http://jifen.banggo.com/Index/Store/Exchange?good_id={0}".StringFormat(SysConst.BanggoJfGoods);
+            //request = new RestRequest(Method.GET);
              
             response = client.Execute(request);
 
             if (response.ResponseStatus == ResponseStatus.Completed)
             {
-                _log.LogInfo(Resource.Log_JfExchangeSuccess, userName, Encoding.Default.GetString(response.RawBytes)); 
+                _log.LogInfo(Resource.Log_JfExchangeSuccess, userName, TextHelper.ToGb2312NotRemove(Encoding.Default.GetString(response.RawBytes))); 
             }
             else
             {
