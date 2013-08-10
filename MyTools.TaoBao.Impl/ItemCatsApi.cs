@@ -34,8 +34,8 @@ namespace MyTools.TaoBao.Impl
         /// <summary>
         /// 根据淘宝的父类目和子类目->获取后台供卖家发布商品的标准商品类目id
         /// </summary>
-        /// <param name="parentCatalog">父类目</param>
-        /// <param name="childCatalog">子类目</param>        
+        /// <param name="parentCatalog">父类目， 如：男装</param>
+        /// <param name="childCatalog">子类目，如：T恤</param>        
         public string GetCid(string parentCatalog,string childCatalog)
         {
             var parentItemCat = GetAllItemCatByApi(0).Find(c => c.Name.Contains(parentCatalog));
@@ -49,7 +49,11 @@ namespace MyTools.TaoBao.Impl
                     throw new Exception(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new System.Diagnostics.StackTrace().ToString()));
             }
 
-            var childItemCat = GetAllItemCatByApi(parentItemCat.Cid).Find(c => c.Name.Contains(childCatalog));
+
+            ItemCat childItemCat = null;
+
+
+            childItemCat = GetAllItemCatByApi(parentItemCat.Cid).Find(c => c.Name.Contains(childCatalog));
 
 
             //如果淘宝子类别下还有子类别,如：女童->外套->普通外套等。
@@ -57,8 +61,8 @@ namespace MyTools.TaoBao.Impl
             while (childItemCat != null && childItemCat.IsParent)
             {
                 childItemCat = GetAllItemCatByApi(childItemCat.Cid).Find(c => c.Name.Contains(childCatalog)); 
-            }
-             
+            } 
+
             if (childItemCat == null)
             {
                 //没有找到然后在到GetCustomCidMap中查找 

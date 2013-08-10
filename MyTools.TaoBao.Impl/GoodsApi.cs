@@ -805,8 +805,16 @@ namespace MyTools.TaoBao.Impl
             _log.LogInfo(Resource.Log_StuffProductInfoing.StringFormat(bProduct.GoodsSn));
             bProduct.OuterId = bProduct.GoodsSn;
 
-            bProduct.Cid = _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToLong();
 
+            if (bProduct.ParentCatalog == "外套")
+            {
+                bProduct.Cid = _catalog.GetCid(bProduct.Category, bProduct.Catalog).ToLong();
+            }
+            else
+            {
+                bProduct.Cid = _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToLong();
+            }
+             
             bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", SysUtils.GetImgByte(bProduct.ThumbUrl));
 
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();

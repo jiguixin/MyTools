@@ -43,8 +43,19 @@ namespace MyTools.TaoBao.DomainModule
                 //从banggo正向填充标题
                 if (!Catalog.IsNullOrEmpty() && !Brand.IsNullOrEmpty() && !ParentCatalog.IsNullOrEmpty() && !GoodsSn.IsNullOrEmpty() && MarketPrice > 0)
                 {
-                    string startTitle = "{0} {1} {2} {3} {4} 原价:{5}".StringFormat(SysConst.PrefixTitle, Brand, Category,
-                                                                              ParentCatalog, GoodsSn, MarketPrice);
+                    string startTitle = null;
+                    if (ParentCatalog == "外套")
+                    {
+                        startTitle = "{0} {1} {2} {3} {4} 原价:{5}".StringFormat(SysConst.PrefixTitle, Brand, Category,
+                                                                    Catalog, GoodsSn, MarketPrice);
+                    }
+                    else
+                    {
+                        startTitle = "{0} {1} {2} {3} {4} 原价:{5}".StringFormat(SysConst.PrefixTitle, Brand, Category,
+                                                                    ParentCatalog, GoodsSn, MarketPrice);
+                    }
+
+          
                     //标题字符不能大于60满足款号所以长度只能是54个字符
                     if (startTitle.Length > 60)
                     {
