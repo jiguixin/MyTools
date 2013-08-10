@@ -91,6 +91,7 @@
             this.txtNumIds.Location = new System.Drawing.Point(129, 42);
             this.txtNumIds.Multiline = true;
             this.txtNumIds.Name = "txtNumIds";
+            this.txtNumIds.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtNumIds.Size = new System.Drawing.Size(255, 81);
             this.txtNumIds.TabIndex = 4;
             // 

@@ -255,7 +255,7 @@ namespace MyTools
             {
                 _banggoMgt.SingIn(banggoUser.UserName, banggoUser.Password);
                 bgwRunSingIn.ReportProgress(100, "{0}->正在签到!".StringFormat(banggoUser.UserName));
-                System.Threading.Thread.Sleep(2000);
+                System.Threading.Thread.Sleep(10000);
             }
         }
 

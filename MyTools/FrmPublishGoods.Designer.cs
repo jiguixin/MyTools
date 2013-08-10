@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.btnPublish = new System.Windows.Forms.Button();
-            this.txtUrls = new System.Windows.Forms.TextBox();
-            this.bgwRun = new System.ComponentModel.BackgroundWorker();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.txtLog = new System.Windows.Forms.RichTextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnPublish = new System.Windows.Forms.Button();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.txtUrls = new System.Windows.Forms.TextBox();
+            this.txtLog = new System.Windows.Forms.RichTextBox();
+            this.bgwRun = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -64,6 +64,15 @@
             this.splitContainer1.SplitterDistance = 28;
             this.splitContainer1.TabIndex = 0;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(183, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(113, 12);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "多个URL以\";\"号分割";
+            // 
             // btnPublish
             // 
             this.btnPublish.Location = new System.Drawing.Point(34, 3);
@@ -73,22 +82,6 @@
             this.btnPublish.Text = "发布";
             this.btnPublish.UseVisualStyleBackColor = true;
             this.btnPublish.Click += new System.EventHandler(this.btnPublish_Click);
-            // 
-            // txtUrls
-            // 
-            this.txtUrls.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtUrls.Location = new System.Drawing.Point(0, 0);
-            this.txtUrls.Multiline = true;
-            this.txtUrls.Name = "txtUrls";
-            this.txtUrls.Size = new System.Drawing.Size(874, 135);
-            this.txtUrls.TabIndex = 0;
-            // 
-            // bgwRun
-            // 
-            this.bgwRun.WorkerReportsProgress = true;
-            this.bgwRun.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwRun_DoWork);
-            this.bgwRun.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwRun_ProgressChanged);
-            this.bgwRun.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwRun_RunWorkerCompleted);
             // 
             // splitContainer2
             // 
@@ -108,6 +101,16 @@
             this.splitContainer2.SplitterDistance = 135;
             this.splitContainer2.TabIndex = 2;
             // 
+            // txtUrls
+            // 
+            this.txtUrls.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtUrls.Location = new System.Drawing.Point(0, 0);
+            this.txtUrls.Multiline = true;
+            this.txtUrls.Name = "txtUrls";
+            this.txtUrls.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtUrls.Size = new System.Drawing.Size(874, 135);
+            this.txtUrls.TabIndex = 0;
+            // 
             // txtLog
             // 
             this.txtLog.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -117,14 +120,12 @@
             this.txtLog.TabIndex = 2;
             this.txtLog.Text = "";
             // 
-            // label1
+            // bgwRun
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(183, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(113, 12);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "多个URL以\";\"号分割";
+            this.bgwRun.WorkerReportsProgress = true;
+            this.bgwRun.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwRun_DoWork);
+            this.bgwRun.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgwRun_ProgressChanged);
+            this.bgwRun.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwRun_RunWorkerCompleted);
             // 
             // FrmPublishGoods
             // 
