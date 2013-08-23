@@ -7,6 +7,7 @@
  *备注：
  */
 
+using System;
 using System.Collections.Generic;
 using HtmlAgilityPack;
 using MyTools.TaoBao.DomainModule;
@@ -114,21 +115,20 @@ namespace MyTools.TaoBao.Interface
         /// </summary>
         /// <param name="userName">用户名</param>
         /// <param name="password">密码</param>
+        /// <param name="call">回调函数，用于界面输入验证码</param>
         /// <returns></returns>
-        RestClient Login(string userName, string password);
+        RestClient Login(string userName, string password,Func<RestClient,string> call);
 
         /// <summary>
+        /// 注：必须先调用Login方法，进行登录
         /// 签到
-        /// </summary> 
-        /// <param name="userName">用户名</param>
-        /// <param name="password">密码</param>
-        void SingIn(string userName, string password);
+        /// </summary>  
+        void SingIn(RestClient client);
 
         /// <summary>
+        /// 注：必须先调用Login方法，进行登录
         /// 积分兑换
-        /// </summary>
-        /// <param name="userName">用户名</param>
-        /// <param name="password">密码</param>
-        void JfExchange(string userName, string password);
+        /// </summary> 
+        void JfExchange(RestClient client);
     }
 }

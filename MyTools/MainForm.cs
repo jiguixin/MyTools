@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
@@ -20,6 +21,7 @@ using MyTools.TaoBao.Impl.NinjectModuleConfig;
 using MyTools.TaoBao.Interface;
 using Newtonsoft.Json;
 using Ninject;
+using RestSharp;
 using Top.Api;
 using Top.Api.Util;
 using MyTools.TaoBao.DomainModule; 
@@ -235,10 +237,26 @@ namespace MyTools
             var lstDes = JsonConvert.DeserializeObject<List<BanggoUser>>(File.ReadAllText(fileName));
 
 
-            if (!bgwRunSingIn.IsBusy)
+         /*   if (!bgwRunSingIn.IsBusy)
             {
                 bgwRunSingIn.RunWorkerAsync(lstDes);
+            }
+          * */
+            foreach (var banggoUser in lstDes)
+            {
+                _banggoMgt.SingIn(_banggoMgt.Login(banggoUser.UserName, banggoUser.Password, InputVerifyCode));
+                 
+            }
+        }
+
+        public string InputVerifyCode(RestClient client)
+        {
+            FrmInputVerifyCode frmInput = new FrmInputVerifyCode(client);
+            if (frmInput.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                return frmInput.VerifyCode;
             } 
+            return "";
         }
 
 
@@ -253,7 +271,8 @@ namespace MyTools
 
             foreach (var banggoUser in lstDes)
             {
-                _banggoMgt.SingIn(banggoUser.UserName, banggoUser.Password);
+
+                //_banggoMgt.SingIn(banggoUser.UserName, banggoUser.Password);
                 bgwRunSingIn.ReportProgress(100, "{0}->正在签到!".StringFormat(banggoUser.UserName));
                 System.Threading.Thread.Sleep(10000);
             }
@@ -310,7 +329,7 @@ namespace MyTools
 
             foreach (var user in lstDes)
             {
-                _banggoMgt.JfExchange(user.UserName, user.Password);
+                //_banggoMgt.JfExchange(user.UserName, user.Password);
                 System.Threading.Thread.Sleep(2000); 
             }
 

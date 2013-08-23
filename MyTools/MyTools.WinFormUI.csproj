@@ -41,6 +41,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\MyLibrary\Infrastructure.CrossCutting.IoC.Ninject\bin\Debug\Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp, Version=104.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -60,6 +64,12 @@
     </Compile>
     <Compile Include="FrmExportBanggoAndTaobaoGoodsInfo.Designer.cs">
       <DependentUpon>FrmExportBanggoAndTaobaoGoodsInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmInputVerifyCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmInputVerifyCode.Designer.cs">
+      <DependentUpon>FrmInputVerifyCode.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmPublishGoods.cs">
       <SubType>Form</SubType>
@@ -102,6 +112,9 @@
     </Compile>
     <EmbeddedResource Include="FrmExportBanggoAndTaobaoGoodsInfo.resx">
       <DependentUpon>FrmExportBanggoAndTaobaoGoodsInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmInputVerifyCode.resx">
+      <DependentUpon>FrmInputVerifyCode.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmPublishGoods.resx">
       <DependentUpon>FrmPublishGoods.cs</DependentUpon>

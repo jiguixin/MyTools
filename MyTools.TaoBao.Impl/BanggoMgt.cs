@@ -454,47 +454,59 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="userName">用户名</param>
         /// <param name="password">密码</param>
+        /// <param name="call">回调函数，用于界面输入验证码</param>
         /// <returns></returns>
-        public RestClient Login(string userName, string password)
+        public RestClient Login(string userName, string password, Func<RestClient, string> call)
         {
             _log.LogInfo(Resource.Log_Logining.StringFormat(userName));
-
+              
             string url =
-                "https://passport.banggo.com/CASServer/login?service=http%3A%2F%2Fact.banggo.com%2FUser%2Flogin.shtml%3Freturn_url%3Dhttp%3A%2F%2Fmember.banggo.com%2FMember%2Findex.shtml";
+                "https://passport.banggo.com/CASServer/login?service=http%3A%2F%2Fact.banggo.com%2FUser%2Flogin.shtml%3Freturn_url%3Dhttp%253A%252F%252Fwww.banggo.com%252F";
 
             var request = new RestRequest(Method.GET);
             var client = new RestClient(url);
-            request.AddHeader("Host", "passport.banggo.com");
-            request.AddHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Accept", "text/html, application/xhtml+xml, */*");
             request.AddHeader("Referer", "http://www.banggo.com/");
-            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
-            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
+            request.AddHeader("Accept-Language", "zh-CN");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)");
+            request.AddHeader("Accept-Encoding", "gzip, deflate"); 
+            request.AddHeader("Host", "passport.banggo.com"); 
             request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
             client.CookieContainer = new CookieContainer();
-
             var response = client.Execute(request);
+            string vCode = null;
+            Func<RestClient, string> fun = call;
+
+           // fun.Method.Invoke(null,null);
+
+             vCode = call(client);
+
+            if (String.IsNullOrEmpty(vCode))
+            {
+                throw new Exception("请输入验证码");
+            }
+            //todo :将验证码POST到服务器
 
             client.BaseUrl =
-                "https://passport.banggo.com/CASServer/login?service=http%3A%2F%2Fact.banggo.com%2FUser%2Flogin%3Freturn_url%3Dhttp%3A%2F%2Fmember.banggo.com%2FMember%2Findex.shtml";
+                "https://passport.banggo.com/CASServer/login?service=http%3A%2F%2Fact.banggo.com%2FUser%2Flogin.shtml%3Freturn_url%3Dhttp%253A%252F%252Fwww.banggo.com%252F";
 
             request = new RestRequest(Method.POST);
-            request.AddHeader("Host", "passport.banggo.com");
-            request.AddHeader("Cache-Control", "max-age=0");
-            request.AddHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-            request.AddHeader("Origin", "https://passport.banggo.com");
-            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31");
+            request.AddHeader("Accept", "text/html, application/xhtml+xml, */*");
+            request.AddHeader("Referer", "https://passport.banggo.com/CASServer/login?service=http%3A%2F%2Fact.banggo.com%2FUser%2Flogin.shtml%3Freturn_url%3Dhttp%253A%252F%252Fwww.banggo.com%252F");
+            request.AddHeader("Accept-Language", "zh-CN");
+            request.AddHeader("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)");
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddHeader("Referer", "https://passport.banggo.com/CASServer/login?service=http%3A%2F%2Fact.banggo.com%2FUser%2Flogin%3Freturn_url%3Dhttp%3A%2F%2Fmember.banggo.com%2FMember%2Findex.shtml");
-            request.AddHeader("Accept-Encoding", "gzip,deflate,sdch");
-            request.AddHeader("Accept-Language", "zh-CN,zh;q=0.8");
-            request.AddHeader("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3");
-              
+            request.AddHeader("Accept-Encoding", "gzip, deflate");
+            request.AddHeader("Host", "passport.banggo.com");
+            //没有加Content-Length
+            request.AddHeader("Cache-Control", "no-cache");
+
             request.AddParameter("returnurl", "");
             request.AddParameter("username", userName.Trim());
             request.AddParameter("password", password.Trim());
+            request.AddParameter("vcode", vCode.Trim());
             request.AddParameter("rememberUsername", "on");
-            request.AddParameter("lt", "e1s1");
+            request.AddParameter("lt", "e2s1");
             request.AddParameter("_eventId", "submit");
             request.AddParameter("loginType", "0");
            // request.AddParameter("lastIp", "171.221.114.139");
@@ -518,14 +530,11 @@ namespace MyTools.TaoBao.Impl
         }
 
         /// <summary>
+        /// 注：必须先调用Login方法，进行登录
         /// 签到
-        /// </summary> 
-        /// <param name="userName">用户名</param>
-        /// <param name="password">密码</param>
-        public void SingIn(string userName, string password)
-        {
-            var client = Login(userName, password);
-
+        /// </summary>  
+        public void SingIn(RestClient client)
+        {   
             _log.LogInfo(Resource.Log_SingIning);
 
             client.BaseUrl = string.Format("http://act.banggo.com/Ajax/sing_in/?callback=jsonp{0}", DateTime.Now.Ticks);
@@ -555,14 +564,11 @@ namespace MyTools.TaoBao.Impl
         }
 
         /// <summary>
+        /// 注：必须先调用Login方法，进行登录
         /// 积分兑换
-        /// </summary>
-        /// <param name="userName">用户名</param>
-        /// <param name="password">密码</param>
-        public void JfExchange(string userName, string password)
-        {
-            var client = Login(userName, password);
-
+        /// </summary> 
+        public void JfExchange(RestClient client)
+        {  
             _log.LogInfo(Resource.Log_JfExchangeing);
 
             #region 兑换积分
@@ -635,11 +641,11 @@ namespace MyTools.TaoBao.Impl
 
             if (response.ResponseStatus == ResponseStatus.Completed)
             {
-                _log.LogInfo(Resource.Log_JfExchangeSuccess, userName, TextHelper.ToGb2312NotRemove(Encoding.Default.GetString(response.RawBytes))); 
+                _log.LogInfo(Resource.Log_JfExchangeSuccess, "", TextHelper.ToGb2312NotRemove(Encoding.Default.GetString(response.RawBytes))); 
             }
             else
             {
-                _log.LogError(Resource.Log_JfExchangeFailure,userName);
+                _log.LogError(Resource.Log_JfExchangeFailure,"");
             }
              
             #endregion
