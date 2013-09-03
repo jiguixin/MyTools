@@ -683,7 +683,7 @@ namespace MyTools.TaoBao.Impl
         {
             url.ThrowIfNullOrEmpty(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
 
-            if (!url.IsValidateUrl())
+            if (!url.IsUrl())
             {
                 throw new Exception(Resource.Exception_UrlInvalid);
             }
@@ -782,7 +782,7 @@ namespace MyTools.TaoBao.Impl
 
             foreach (JToken jToken in a)
             {
-                if (jToken["available"].ToBoolean())
+                if (jToken["available"].ToType<bool>())
                 {
                     string sCode = jToken["size_code"].ToString();
                     string sName = jToken["size_name"].ToString();
@@ -799,7 +799,7 @@ namespace MyTools.TaoBao.Impl
                             MarketPrice = goodsInfo.SelectToken(Resource.SysConfig_GetMarketPriceId).Value<double>(),
                             MySalePrice =
                                 (goodsInfo.SelectToken(Resource.SysConfig_GetMarketPriceId).Value<double>()*SysConst.DiscountRatio)
-                                      .ToInt32(),
+                                      .ToType<int>(),
                             AvlNum = avlNum
                         });
                 }
@@ -892,7 +892,7 @@ namespace MyTools.TaoBao.Impl
 
             JObject jObj = JObject.Parse(result);
 
-            return jObj["avl_num"].ToInt32();
+            return jObj["avl_num"].ToType<int>();
         }
 
         //替换通过AJAX得到的数据替换空格、换行符和括号
@@ -991,7 +991,7 @@ namespace MyTools.TaoBao.Impl
             nodeSalesVolume.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                       new StackTrace()));
 
-            return nodeSalesVolume.InnerText.ToInt32();
+            return nodeSalesVolume.InnerText.ToType<int>();
         }
 
         //得到SVIP价格
@@ -1002,7 +1002,7 @@ namespace MyTools.TaoBao.Impl
             htmlNodeSvipPrice.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                         new StackTrace()));
 
-            return htmlNodeSvipPrice.InnerText.ToDouble();
+            return htmlNodeSvipPrice.InnerText.ToType<double>();
         }
 
         //得到VIP价格
@@ -1013,7 +1013,7 @@ namespace MyTools.TaoBao.Impl
             htmlNodeVipPrice.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                                                        new StackTrace()));
 
-            return htmlNodeVipPrice.InnerText.ToDouble();
+            return htmlNodeVipPrice.InnerText.ToType<double>();
         }
 
         //得到售价
@@ -1048,7 +1048,7 @@ namespace MyTools.TaoBao.Impl
 
                 #endregion
 
-                HtmlDocument doc = new HtmlDocument();
+                var doc = new HtmlDocument();
 
                 doc.LoadHtml(htmlContent);
                 doc.OptionDefaultStreamEncoding = Encoding.UTF8;

@@ -81,7 +81,7 @@ namespace MyTools.TaoBao.Impl
         public string GetItemProps(string cid)
         {
             var sb = new StringBuilder();
-            var lstMustProps = GetPropsByCid(cid.ToLong()).Where(p=>p.Must);
+            var lstMustProps = GetPropsByCid(cid.ToType<Int64>()).Where(p=>p.Must);
 
             foreach (var prop in lstMustProps)
             {   
@@ -99,7 +99,7 @@ namespace MyTools.TaoBao.Impl
         /// <returns></returns>
         public List<string> GetProps(string propName, string cid)
         {
-            var props = GetPropsByCid(cid.ToLong());
+            var props = GetPropsByCid(cid.ToType<Int64>());
 
             var prop = (from p in props where p.Name.Contains(propName) select p).First();
 
@@ -126,7 +126,7 @@ namespace MyTools.TaoBao.Impl
         /// <returns></returns>
         public List<string> GetSaleProp(bool isColorProp, string cid)
         {
-            var prop = GetPropsByCid(cid.ToLong(),isColorProp,true).First();
+            var prop = GetPropsByCid(cid.ToType<Int64>(), isColorProp, true).First();
 
             return prop.PropValues.Select(pValue => "{0}:{1}".StringFormat(prop.Pid, pValue.Vid)).ToList(); 
         }

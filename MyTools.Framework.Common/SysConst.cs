@@ -21,8 +21,8 @@ namespace MyTools.Framework.Common
         public static readonly string AppLoginUser = ConfigurationManager.AppSettings["AppLoginUser"];
         public static readonly string AppKey = ConfigurationManager.AppSettings["appKey"];
         public static readonly string AppSecret = ConfigurationManager.AppSettings["appSecret"];
-        public static readonly string PostageId = ConfigurationManager.AppSettings["PostageId"]; 
-        public static readonly double DiscountRatio = ConfigurationManager.AppSettings["DiscountRatio"].ToDouble();
+        public static readonly string PostageId = ConfigurationManager.AppSettings["PostageId"];
+        public static readonly double DiscountRatio = ConfigurationManager.AppSettings["DiscountRatio"].ToType<double>();
         public static readonly string PrefixTitle = ConfigurationManager.AppSettings["PrefixTitle"];
         /// <summary>
         /// 要替换的产品的原标题部份名字->在更新产品时使用
@@ -42,15 +42,15 @@ namespace MyTools.Framework.Common
         /// <summary>
         /// 买该产品的成本折扣是多少，如打折卷是5折的
         /// </summary>
-        public static readonly double CostRatio = ConfigurationManager.AppSettings["CostRatio"].ToDouble(); //成果折扣
+        public static readonly double CostRatio = ConfigurationManager.AppSettings["CostRatio"].ToType<double>(); //成果折扣
         /// <summary>
         /// 额外的成果价，如，购买打折卷的钱，以及 电话、车费、请人吃饭等。
         /// </summary>
-        public static readonly double CostExtraPrice = ConfigurationManager.AppSettings["CostExtraPrice"].ToDouble();
+        public static readonly double CostExtraPrice = ConfigurationManager.AppSettings["CostExtraPrice"].ToType<double>();
          /// <summary>
         /// 强制更新商品，目前主要针对价格和库存
         /// </summary>
-        public static readonly bool IsEnforceUpdate = ConfigurationManager.AppSettings["IsEnforceUpdate"].ToBoolean();
+        public static readonly bool IsEnforceUpdate = ConfigurationManager.AppSettings["IsEnforceUpdate"].ToType<bool>();
 
         /// <summary>
         /// 邦购积分兑换相应产品，如多少红包，多少邦购币

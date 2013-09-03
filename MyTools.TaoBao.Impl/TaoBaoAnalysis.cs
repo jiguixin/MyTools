@@ -164,10 +164,10 @@ namespace MyTools.TaoBao.Impl
                     drNew["款号"] = query.GetNumberStr();
                     if (marketPrice > 0)
                     {
-                        drNew["成本价"] = (marketPrice*SysConst.CostRatio).ToInt32() + SysConst.CostExtraPrice;
+                        drNew["成本价"] = (marketPrice*SysConst.CostRatio).ToType<int>() + SysConst.CostExtraPrice;
                     }
                     drNew["售价"] = salePrice;
-                    drNew["利润"] = drNew["售价"].ToDouble() - drNew["成本价"].ToDouble();
+                    drNew["利润"] = drNew["售价"].ToType<double>() - drNew["成本价"].ToType<double>();
                     excel.AddNewRow(drNew);
                     _log.LogInfo(Resource.Log_ExportSingleRivalGoodsInfoSuccess.StringFormat(drNew["用户名"]));
                 }
@@ -197,10 +197,10 @@ namespace MyTools.TaoBao.Impl
         { 
             #region 得到taobao该对手的价格数据 并添加到excel中
 
-            var salePrice = item.SelectSingleNode("div[@class='row row-focus']/div[1]").InnerText.GetNumber();
-            var postage = item.SelectSingleNode("div[@class='row row-focus']/div[2]").InnerText.GetNumber();
-            var salesVolume = item.SelectSingleNode("div[@class='row']/div[1]").InnerText.GetNumber();
-            var evaluate = item.SelectSingleNode("div[@class='row']/div[2]").InnerText.GetNumber();
+            var salePrice = item.SelectSingleNode("div[@class='row row-focus']/div[1]").InnerText.GetNumberDecimal();
+            var postage = item.SelectSingleNode("div[@class='row row-focus']/div[2]").InnerText.GetNumberDecimal();
+            var salesVolume = item.SelectSingleNode("div[@class='row']/div[1]").InnerText.GetNumberDecimal();
+            var evaluate = item.SelectSingleNode("div[@class='row']/div[2]").InnerText.GetNumberDecimal();
             var url = item.SelectSingleNode("h3[@class='summary']/a").Attributes["href"].Value.Trim();
             var title = XmlHelper.XmlDecode(item.SelectSingleNode("h3[@class='summary']/a/@title").InnerText.Trim());
             var rivalName = item.SelectSingleNode("div[@class='row']/div[@class='col seller']/a").InnerText.Trim();

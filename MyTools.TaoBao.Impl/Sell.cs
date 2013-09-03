@@ -67,14 +67,14 @@ namespace MyTools.TaoBao.Impl
                 var lstRep = rep.ToList();
                 var repCount = lstRep.Count;
 
-                var avgPostage = lstRep[0].Postage.ToDouble() / repCount;
+                var avgPostage = lstRep[0].Postage.ToType<double>() / repCount;
                 foreach (var c in lstRep)
                 {
                     notRepeat.Remove(c);
 
                     var exportModel = new ExportModel(c);
                      
-                    var newPrice = c.Price.ToDouble() + avgPostage;
+                    var newPrice = c.Price.ToType<double>()+ avgPostage;
                     exportModel.TotalPrice = newPrice;
 
                     AddDataRow(exportModel, dt, excel, repCount); 

@@ -120,6 +120,7 @@ namespace MyTools.TaoBao.Impl
         ///     通过指定部分没有更新成功的商品重新更新
         /// </summary>
         /// <param name="numIds">多个产品以“，”号分割</param>
+        /// <param name="isModifyPrice"></param>
         public void UpdateGoodsByAssign(string numIds,bool isModifyPrice = true)
         {
             List<Item> lstItem = GetGoodsList(numIds);
@@ -473,7 +474,7 @@ namespace MyTools.TaoBao.Impl
                 {
                     Fields =
                         "num_iid,title,nick,outer_id,price,num,location,post_fee,express_fee,ems_fee,sku,props_name,props,input_pids,input_str,pic_url,property_alias,item_weight,item_size,created,has_showcase,item_img,prop_img,desc",
-                    NumIid = numId.ToLong()
+                    NumIid = numId.ToType<Int64>()
                 };
 
             return GetGoods(req);
@@ -669,7 +670,7 @@ namespace MyTools.TaoBao.Impl
                     {
                         foreach (var size in banggoProduct.ColorList.SelectMany(color => color.SizeList))
                         {
-                            size.MySalePrice = item.Price.ToDouble();
+                            size.MySalePrice = item.Price.ToType<double>();
                         }
                     }
 
@@ -806,14 +807,7 @@ namespace MyTools.TaoBao.Impl
             bProduct.OuterId = bProduct.GoodsSn;
 
 
-            if (bProduct.ParentCatalog == "外套")
-            {
-                bProduct.Cid = _catalog.GetCid(bProduct.Category, bProduct.Catalog).ToLong();
-            }
-            else
-            {
-                bProduct.Cid = _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToLong();
-            }
+            bProduct.Cid = bProduct.ParentCatalog == "外套" ? _catalog.GetCid(bProduct.Category, bProduct.Catalog).ToType<Int64>() : _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToType<Int64>();
              
             bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", SysUtils.GetImgByte(bProduct.ThumbUrl));
 
@@ -832,7 +826,7 @@ namespace MyTools.TaoBao.Impl
             }
             else
             {
-                bProduct.PostageId = deliveryTemplateId.ToLong();
+                bProduct.PostageId = deliveryTemplateId.ToType<Int64>();
                 bProduct.ItemWeight = Resource.SysConfig_ItemWeight;
             }
 
