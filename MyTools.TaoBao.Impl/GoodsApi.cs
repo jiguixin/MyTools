@@ -154,7 +154,7 @@ namespace MyTools.TaoBao.Impl
                         Title = item.Title.Replace(SysConst.OriginalTitle, SysConst.NewTitle)
                     };
                       
-                    DeleteSkuOnlyOne(item);
+                    DeleteAllSku(item);
 
                     UpdateGoodsAndUploadPic(banggoProductEdit);
                 }
@@ -201,7 +201,7 @@ namespace MyTools.TaoBao.Impl
                             };
                         //  Util.CopyModel(item, banggoProduct); node: 不能在这赋值，这样就会造成有些为NULL的给赋成了默认值 
 
-                        DeleteSkuOnlyOne(item);
+                        DeleteAllSku(item);
 
                         UpdateGoodsAndUploadPic(banggoProduct);
                     }
@@ -660,7 +660,7 @@ namespace MyTools.TaoBao.Impl
 
                     #region 删除SKU只保留1个可用SKU
 
-                    DeleteSkuOnlyOne(item);
+                    DeleteAllSku(item);
 
                     #endregion
 
@@ -695,8 +695,8 @@ namespace MyTools.TaoBao.Impl
             }
         }
 
-        //删除SKU只保留1个可用SKU,并将该产品对应的销售图片给删除掉
-        private void DeleteSkuOnlyOne(Item item)
+        //现在淘宝可以将SKU全部删除完,并将该产品对应的销售图片给删除掉 
+        private void DeleteAllSku(Item item)
         {
             if (item.Skus.Count == 0 || item.Skus[0].Properties.IsNullOrEmpty())
             {
@@ -711,7 +711,7 @@ namespace MyTools.TaoBao.Impl
                 // ReSharper restore EmptyGeneralCatchClause
                 {
                 }
-            } 
+            }
 
             //不用排序，默认取最开始那个
             //List<Sku> skus = item.Skus.OrderByDescending(f => f.Quantity).ToList();
@@ -720,7 +720,8 @@ namespace MyTools.TaoBao.Impl
             if (skus == null)
                 return;
 
-             //判断sku的第一个库存是不是为0如果为0者修改该SKU将其设置为1，因为淘宝不允许SKU总数为0
+             /*//以前淘宝不允许把所有SKU全部删除完
+            //判断sku的第一个库存是不是为0如果为0者修改该SKU将其设置为1，因为淘宝不允许SKU总数为0
             if (skus.Count > 0)
             {
                 var modifySku = skus[0];
@@ -734,9 +735,9 @@ namespace MyTools.TaoBao.Impl
                             Quantity = 1
                         }); 
                 }
-            }
-
-            for (int i = 1; i < skus.Count; i++)
+            }*/
+            //现在淘宝可以把所有SKU全部删除完了
+            for (int i = 0; i < skus.Count; i++)
             {
                 Sku sku = skus[i];
 
