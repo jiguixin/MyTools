@@ -16,8 +16,10 @@ namespace MyTools
     public partial class FrmPublishGoods : Form
     {
         private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
-         
+
         private readonly IGoodsApi _goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
+
+        private readonly IBanggoMgt _banggoMgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
 
         delegate void ChangeTextBoxValue(string str); // 新增委托代理
 
@@ -60,31 +62,44 @@ namespace MyTools
         private void bgwRun_DoWork(object sender, DoWorkEventArgs e)
         {
 
-            var urlResult = e.Argument as string;
+            var inputSource = e.Argument as string;
 
-            if (urlResult != null)
+            if (inputSource != null)
             {
-                string[] urls = urlResult.Split(';');
+                string[] source = inputSource.Split(';');
 
-                foreach (string url in urls)
-                {
-                    try
+                foreach (string s in source)
+                { 
+                    if (s.IsUrl())
                     {
-                        if (string.IsNullOrWhiteSpace(url))
-                        {
-                            continue;
-                        }
-                        Item item = _goodsApi.PublishGoodsForBanggoToTaobao(url);
-                         
-                        Thread.Sleep(1000);
+                        PublishGoods(s);
                     }
-                    catch (Exception ex)
+                    else //如果输入的是款号
                     {
-                        _log.LogError(ex.Message, ex);
+                        var gUrl = _banggoMgt.GetGoodsUrl(s);
+
+                        if (!gUrl.IsEmptyString())
+                        {
+                            PublishGoods(gUrl);
+                        } 
                     }
 
                     Thread.Sleep(1000);
                 }
+            }
+        }
+
+        private void PublishGoods(string url)
+        {
+            try
+            {
+                Item item = _goodsApi.PublishGoodsForBanggoToTaobao(url);
+
+                Thread.Sleep(1000);
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex.Message, ex);
             }
         }
 

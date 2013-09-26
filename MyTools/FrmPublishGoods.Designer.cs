@@ -69,9 +69,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(183, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(113, 12);
+            this.label1.Size = new System.Drawing.Size(149, 12);
             this.label1.TabIndex = 1;
-            this.label1.Text = "多个URL以\";\"号分割";
+            this.label1.Text = "多个URL、款号以\";\"号分割";
             // 
             // btnPublish
             // 
