@@ -106,6 +106,8 @@ namespace MyTools.Framework.Common
             ManCatalogBanggoToTaobaoCid.Add("鞋", "50005867");//工装制服
             ManCatalogBanggoToTaobaoCid.Add("鞋类", "50005867");//工装制服
             ManCatalogBanggoToTaobaoCid.Add("外套", "50005867");//工装制服
+            ManCatalogBanggoToTaobaoCid.Add("棉服", "50011165");//棉衣
+            
 
 
 

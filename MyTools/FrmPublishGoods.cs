@@ -69,7 +69,10 @@ namespace MyTools
                 string[] source = inputSource.Split(';');
 
                 foreach (string s in source)
-                { 
+                {
+                    if (s.IsEmptyString())
+                        continue;
+
                     if (s.IsUrl())
                     {
                         PublishGoods(s);

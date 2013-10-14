@@ -249,9 +249,9 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="numId"></param>
         /// <param name="properties"></param>
-        public void DeleteGoodsSku(long numId, string properties)
+        public void DeleteGoodsSku(long numId, string properties,string goodsSn="")
         {
-            _log.LogInfo(Resource.Log_DeleteGoodsSkuing.StringFormat(numId, properties));
+            _log.LogInfo(Resource.Log_DeleteGoodsSkuing.StringFormat(numId, properties,goodsSn));
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
             var req = new ItemSkuDeleteRequest {NumIid = numId, Properties = properties};
 
@@ -261,10 +261,10 @@ namespace MyTools.TaoBao.Impl
             {
                 var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
                                                   response.SubErrMsg, response.TopForbiddenFields);
-                _log.LogError(Resource.Log_DeleteGoodsSkuFailure.StringFormat(numId, properties), ex);
-                throw ex;
+
+                _log.LogError(Resource.Log_DeleteGoodsSkuFailure.StringFormat(numId, properties,goodsSn), ex); 
             }
-            _log.LogInfo(Resource.Log_DeleteGoodsSkuSuccess.StringFormat(numId, properties));
+            _log.LogInfo(Resource.Log_DeleteGoodsSkuSuccess.StringFormat(numId, properties,goodsSn));
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace MyTools.TaoBao.Impl
         /// <returns></returns>
         public Sku UpdateSku(ItemSkuUpdateRequest req)
         { 
-            _log.LogInfo(Resource.Log_UpdateSkuing.StringFormat(req.NumIid, req.Properties));
+            _log.LogInfo(Resource.Log_UpdateSkuing.StringFormat(req.NumIid, req.Properties,req.OuterId));
             
             req.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
 
@@ -285,11 +285,11 @@ namespace MyTools.TaoBao.Impl
             {
                 var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
                                                response.SubErrMsg, response.TopForbiddenFields);
-                _log.LogError(Resource.Log_UpdateSkuFailure.StringFormat(req.NumIid, req.Properties), ex);
-                throw ex;
+                _log.LogError(Resource.Log_UpdateSkuFailure.StringFormat(req.NumIid, req.Properties, req.OuterId), ex);
+                
             }
 
-            _log.LogInfo(Resource.Log_UpdateSkuSuccess.StringFormat(req.NumIid, req.Properties));
+            _log.LogInfo(Resource.Log_UpdateSkuSuccess.StringFormat(req.NumIid, req.Properties, req.OuterId));
             
             return response.Sku; 
         }
@@ -391,9 +391,9 @@ namespace MyTools.TaoBao.Impl
         /// <param name="imgId">图片ID</param>
         /// <param name="numId">商品编号</param>
         /// <returns></returns>
-        public PropImg DeleteItemPropimg(long imgId, long numId)
+        public PropImg DeleteItemPropimg(long imgId, long numId,string goodsSn="")
         {
-            _log.LogInfo(Resource.Log_DeleteItemPropingimg,imgId, numId);
+            _log.LogInfo(Resource.Log_DeleteItemPropingimg,imgId, numId,goodsSn);
 
             var req = new ItemPropimgDeleteRequest { NumIid = numId, Id=imgId };
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
@@ -404,10 +404,10 @@ namespace MyTools.TaoBao.Impl
                 var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
                                                   response.SubErrMsg, response.TopForbiddenFields);
 
-                _log.LogError(Resource.Log_DeleteItemPropimgFailure.StringFormat(imgId, numId), ex);
+                _log.LogError(Resource.Log_DeleteItemPropimgFailure.StringFormat(imgId, numId, goodsSn), ex);
             }
 
-            _log.LogInfo(Resource.Log_DeleteItemPropimgSuccess, imgId, numId);
+            _log.LogInfo(Resource.Log_DeleteItemPropimgSuccess, imgId, numId, goodsSn);
 
              return response.PropImg; 
         }
@@ -719,30 +719,26 @@ namespace MyTools.TaoBao.Impl
 
             if (skus == null)
                 return;
-
-             /*//以前淘宝不允许把所有SKU全部删除完
-            //判断sku的第一个库存是不是为0如果为0者修改该SKU将其设置为1，因为淘宝不允许SKU总数为0
-            if (skus.Count > 0)
-            {
-                var modifySku = skus[0];
-
-                if (modifySku.Quantity == 0)
-                {
-                     UpdateSku(new ItemSkuUpdateRequest()
-                        {
-                            NumIid = item.NumIid,
-                            Properties = modifySku.Properties,
-                            Quantity = 1
-                        }); 
-                }
-            }*/
+             
             //现在淘宝可以把所有SKU全部删除完了
             for (int i = 0; i < skus.Count; i++)
             {
                 Sku sku = skus[i];
 
-                DeleteGoodsSku(item.NumIid, sku.Properties);
+                //如果数量为0，删除SKU会报错
+                if (sku.Quantity == 0)
+                {
+                    UpdateSku(new ItemSkuUpdateRequest()
+                        {
+                            NumIid = item.NumIid,
+                            Properties = sku.Properties,
+                            Quantity = 1,
+                            OuterId = item.OuterId
+                        });
+                }
 
+                DeleteGoodsSku(item.NumIid, sku.Properties, item.OuterId);
+                  
                 Thread.Sleep(500);
             }
 
@@ -752,7 +748,7 @@ namespace MyTools.TaoBao.Impl
 
             foreach (var propImg in goods.PropImgs)
             {
-                DeleteItemPropimg(propImg.Id, item.NumIid);
+                DeleteItemPropimg(propImg.Id, item.NumIid,item.OuterId);
                 Thread.Sleep(100);
             }
              

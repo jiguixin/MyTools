@@ -67,7 +67,7 @@ namespace MyTools.TaoBao.Interface
         /// </summary>
         /// <param name="numId"></param>
         /// <param name="properties"></param>
-        void DeleteGoodsSku(long numId, string properties);
+        void DeleteGoodsSku(long numId, string properties,string goodSn = "");
 
         /// <summary>
         /// taobao.item.sku.update 更新SKU信息
@@ -117,7 +117,7 @@ namespace MyTools.TaoBao.Interface
         /// <param name="imgId">图片ID</param>
         /// <param name="numId">商品编号</param>
         /// <returns></returns>
-        PropImg DeleteItemPropimg(long imgId, long numId);
+        PropImg DeleteItemPropimg(long imgId, long numId,string goodsSn="");
 
         /// <summary>
         /// taobao.item.update.delisting 商品下架
