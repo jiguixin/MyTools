@@ -331,8 +331,15 @@ namespace MyTools
             {
                 //_banggoMgt.JfExchange(user.UserName, user.Password);
                 System.Threading.Thread.Sleep(2000); 
-            }
+            } 
+        }
 
+        //按条件下架商品
+        private void btnGoodsDelisting_Click(object sender, EventArgs e)
+        {
+            var frm = new FrmGoodsDelisting();
+            frm.MdiParent = this;
+            frm.Show();
         }
 
     }

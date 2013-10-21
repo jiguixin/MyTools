@@ -439,6 +439,32 @@ namespace MyTools.TaoBao.Impl
         }
 
         /// <summary>
+        /// 按指定条件下架该产品
+        /// </summary>
+        /// <param name="lstSearch"></param>
+        public void GoodsDelistingFromOnSale(IEnumerable<string> lstSearch)
+        {
+            foreach (var search in lstSearch)
+            {
+                if (search.IsEmptyString())
+                {
+                    continue;
+                }
+
+                List<Item> lstItem = GetOnSaleGoods(search);
+
+                foreach (var item in lstItem)
+                {
+                    Thread.Sleep(200);
+
+                    GoodsDelisting(item.NumIid);
+                }
+            }
+
+           
+        }
+
+        /// <summary>
         ///     得到单个商品信息
         ///     taobao.item.get
         /// </summary>

@@ -65,6 +65,12 @@
     <Compile Include="FrmExportBanggoAndTaobaoGoodsInfo.Designer.cs">
       <DependentUpon>FrmExportBanggoAndTaobaoGoodsInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmGoodsDelisting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmGoodsDelisting.Designer.cs">
+      <DependentUpon>FrmGoodsDelisting.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmInputVerifyCode.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,6 +118,9 @@
     </Compile>
     <EmbeddedResource Include="FrmExportBanggoAndTaobaoGoodsInfo.resx">
       <DependentUpon>FrmExportBanggoAndTaobaoGoodsInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmGoodsDelisting.resx">
+      <DependentUpon>FrmGoodsDelisting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmInputVerifyCode.resx">
       <DependentUpon>FrmInputVerifyCode.cs</DependentUpon>

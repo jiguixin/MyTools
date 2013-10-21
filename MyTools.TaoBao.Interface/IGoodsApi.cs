@@ -127,6 +127,12 @@ namespace MyTools.TaoBao.Interface
         Item GoodsDelisting(long numId);
 
         /// <summary>
+        /// 按指定条件下架该产品
+        /// </summary>
+        /// <param name="lstSearch"></param>
+        void GoodsDelistingFromOnSale(IEnumerable<string> lstSearch);
+
+        /// <summary>
         /// 得到单个商品信息
         /// taobao.item.get
         /// </summary>
