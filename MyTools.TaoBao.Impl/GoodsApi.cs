@@ -153,6 +153,20 @@ namespace MyTools.TaoBao.Impl
                         //替换原来的产品标题
                         Title = item.Title.Replace(SysConst.OriginalTitle, SysConst.NewTitle)
                     };
+
+                    #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
+
+                    if (!SysConst.IsEnforceUpdate)
+                    {
+                        if (item.Num == banggoProductEdit.ColorList.Sum(p => p.AvlNumForColor))
+                        {
+                            _log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
+                            return item;
+                        }
+                    }
+
+                    #endregion
+
                       
                     DeleteAllSku(item);
 
