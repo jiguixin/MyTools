@@ -84,6 +84,10 @@ namespace MyTools.TaoBao.Impl
 
             HtmlNode selectNodesForProductBrandCode =
                 doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductBrandCodeXPath);
+            if (selectNodesForProductBrandCode == null)
+            {
+                FileHelper.WriteFileLog("邦购没有的产品.txt", requestModel.GoodsSn);
+            }
             selectNodesForProductBrandCode.ThrowIfNull(Resource.Exception_XPathGetDataError.StringFormat(
                 new StackTrace()));
 
