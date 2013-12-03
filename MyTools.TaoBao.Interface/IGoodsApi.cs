@@ -42,6 +42,13 @@ namespace MyTools.TaoBao.Interface
         void UpdateGoodsFromOnSale(IEnumerable<string> lstSearch, bool isModifyPrice = true);
 
         /// <summary>
+        /// 更新产品库存和价格信息，包括修改标题和发货地址
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="isModifyPrice"></param>
+        void UpdateGoodsSkuInfo(string search = null, double discountRatio = 0.68, int stock = 3, string originalTitle = "xx", string newTitle = "xx", bool isModifyPrice = true);
+
+        /// <summary>
         /// 通过指定部分没有更新成功的商品重新更新
         /// </summary> 
         /// <param name="nulIds">多个产品以“，”号分割</param>

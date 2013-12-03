@@ -116,6 +116,74 @@ namespace MyTools.TaoBao.Impl
             }
         }
 
+
+        /// <summary>
+        /// 更新产品库存和价格信息，包括修改标题和发货地址
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="isModifyPrice"></param>
+        public void UpdateGoodsSkuInfo(string search = null, double discountRatio = 0.68, int stock = 3, string originalTitle = "xx",string newTitle="xx", bool isModifyPrice = true)
+        {
+            List<Item> lstItem = GetOnSaleGoods(search);
+
+            foreach (var item in lstItem)
+            {
+                Thread.Sleep(100);
+                //获取产品原价
+                var oPrice = item.Title.GetNumberInt();
+
+                var req = new ItemUpdateRequest();
+                req.NumIid = item.NumIid;
+                req.Title = item.Title.Replace(originalTitle, newTitle);
+                  
+                req.LocationState = SysConst.LocationState;
+                req.LocationCity = SysConst.LocationCity;
+                //req.LocationState = "浙江";
+                //req.LocationCity = "杭州";
+                if (isModifyPrice)
+                {
+                    req.Price = (oPrice*discountRatio).ToType<int>().ToString();
+                }
+
+
+                var skus = GetSkusByNumId(item.NumIid.ToString()).ToArray();
+                var lastSku = skus[skus.Count() - 1];
+                for (int i = 0; i < skus.Count()-1; i++)
+                {
+                    Thread.Sleep(100);
+                    var skuReq = new ItemSkuUpdateRequest()
+                        {
+                            NumIid = item.NumIid,
+                            Properties = skus[i].Properties,
+                            Quantity = stock,
+                            OuterId = item.OuterId
+                        };
+                    if (isModifyPrice)
+                    {
+                        skuReq.Price = req.Price;
+                    }
+                    UpdateSku(skuReq);
+                    Thread.Sleep(100);
+                }
+
+                UpdateGoodsBase(req, item.NumIid, item.OuterId, req.Title);
+
+                var skuLastReq = new ItemSkuUpdateRequest()
+                    {
+                        NumIid = item.NumIid,
+                        Properties = lastSku.Properties,
+                        Quantity = stock,
+                        OuterId = item.OuterId
+                    };
+                if (isModifyPrice)
+                {
+                    skuLastReq.Price = req.Price;
+                }
+                UpdateSku(skuLastReq);
+            }
+
+        }
+
         /// <summary>
         ///     通过指定部分没有更新成功的商品重新更新
         /// </summary>
@@ -606,12 +674,18 @@ namespace MyTools.TaoBao.Impl
         }
 
         public Item UpdateGoods(Product product)
-        {
-            _log.LogInfo(Resource.Log_UpdateGoodsing.StringFormat(product.NumIid, product.OuterId));
-
+        { 
             var req = new ItemUpdateRequest();
 
             Util.CopyModel(product, req);
+             
+            return UpdateGoodsBase(req, product.NumIid, product.OuterId, product.Title);
+        }
+
+
+        private Item UpdateGoodsBase(ItemUpdateRequest req, long? numiid, string outerId, string title)
+        {
+            _log.LogInfo(Resource.Log_UpdateGoodsing.StringFormat(numiid, outerId));
 
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
             ItemUpdateResponse response = _client.Execute(req, tContext.SessionKey);
@@ -620,13 +694,13 @@ namespace MyTools.TaoBao.Impl
             {
                 var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
                                                   response.SubErrMsg, response.TopForbiddenFields);
-                _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(product.NumIid, product.OuterId), ex);
+                _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(numiid, outerId), ex);
                 throw ex;
             }
 
             Item item = response.Item;
 
-            _log.LogInfo(Resource.Log_UpdateGoodsSuccess, product.Title, item.NumIid);
+            _log.LogInfo(Resource.Log_UpdateGoodsSuccess, title, item.NumIid);
 
             return item;
         }

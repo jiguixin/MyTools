@@ -424,15 +424,15 @@
     <comment>将banggo的产品信息填充到taobao实体类中完成</comment>
   </data>
   <data name="Log_UpdateSkuing" xml:space="preserve">
-    <value>正在更新SKU信息...-&gt;NumId:{0};Properties:{1};GoodsSn:{1};</value>
+    <value>正在更新SKU信息...-&gt;NumId:{0};Properties:{1};GoodsSn:{2};</value>
     <comment>正在更新SKU信息...</comment>
   </data>
   <data name="Log_UpdateSkuFailure" xml:space="preserve">
-    <value>更新SKU信息出错-&gt;NumId:{0};Properties:{1};GoodsSn:{1};</value>
+    <value>更新SKU信息出错-&gt;NumId:{0};Properties:{1};GoodsSn:{2};</value>
     <comment>更新SKU信息出错</comment>
   </data>
   <data name="Log_UpdateSkuSuccess" xml:space="preserve">
-    <value>成功更新SKU信息-&gt;NumId:{0};Properties:{1};GoodsSn:{1};</value>
+    <value>成功更新SKU信息-&gt;NumId:{0};Properties:{1};GoodsSn:{2};</value>
     <comment>成功更新SKU信息</comment>
   </data>
   <data name="Log_ModifyGoodsDetailTempFailure" xml:space="preserve">

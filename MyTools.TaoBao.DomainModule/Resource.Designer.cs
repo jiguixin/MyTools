@@ -547,7 +547,7 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 更新SKU信息出错-&gt;NumId:{0};Properties:{1};GoodsSn:{1}; 的本地化字符串。
+        ///   查找类似 更新SKU信息出错-&gt;NumId:{0};Properties:{1};GoodsSn:{2}; 的本地化字符串。
         /// </summary>
         public static string Log_UpdateSkuFailure {
             get {
@@ -556,7 +556,7 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 正在更新SKU信息...-&gt;NumId:{0};Properties:{1};GoodsSn:{1}; 的本地化字符串。
+        ///   查找类似 正在更新SKU信息...-&gt;NumId:{0};Properties:{1};GoodsSn:{2}; 的本地化字符串。
         /// </summary>
         public static string Log_UpdateSkuing {
             get {
@@ -565,7 +565,7 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
-        ///   查找类似 成功更新SKU信息-&gt;NumId:{0};Properties:{1};GoodsSn:{1}; 的本地化字符串。
+        ///   查找类似 成功更新SKU信息-&gt;NumId:{0};Properties:{1};GoodsSn:{2}; 的本地化字符串。
         /// </summary>
         public static string Log_UpdateSkuSuccess {
             get {

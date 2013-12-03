@@ -342,5 +342,11 @@ namespace MyTools
             frm.Show();
         }
 
+        private void btnUpdateSku_Click(object sender, EventArgs e)
+        {
+            var frm = new FrmUpdateGoodsSku();
+            frm.MdiParent = this;
+            frm.Show();
+        } 
     }
 }

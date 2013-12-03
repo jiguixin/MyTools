@@ -116,6 +116,12 @@
     <Compile Include="FrmPublishGoodsFromExcel.Designer.cs">
       <DependentUpon>FrmPublishGoodsFromExcel.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmUpdateGoodsSku.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmUpdateGoodsSku.Designer.cs">
+      <DependentUpon>FrmUpdateGoodsSku.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="FrmExportBanggoAndTaobaoGoodsInfo.resx">
       <DependentUpon>FrmExportBanggoAndTaobaoGoodsInfo.cs</DependentUpon>
     </EmbeddedResource>
@@ -154,6 +160,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmPublishGoodsFromExcel.resx">
       <DependentUpon>FrmPublishGoodsFromExcel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmUpdateGoodsSku.resx">
+      <DependentUpon>FrmUpdateGoodsSku.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config">
       <SubType>Designer</SubType>
