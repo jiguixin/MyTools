@@ -18,7 +18,7 @@ namespace MyTools.TaoBao.Interface
     public interface IBanggoMgt
     {
         /// <summary>
-        /// 得到单个产品信息
+        /// 得到单个产品信息,在线数据
         /// </summary>
         /// <param name="requestModel"></param>
         /// <returns></returns>

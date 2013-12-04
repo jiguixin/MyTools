@@ -119,68 +119,99 @@ namespace MyTools.TaoBao.Impl
 
         /// <summary>
         /// 更新产品库存和价格信息，包括修改标题和发货地址
+        /// 如果淘宝上没有上该产品，自动去获取邦购的产品信息并发布一个新产品
         /// </summary>
-        /// <param name="search"></param>
+        /// <param name="lstSearch">如果想上传上产品必须跟款号</param>
         /// <param name="isModifyPrice"></param>
-        public void UpdateGoodsSkuInfo(string search = null, double discountRatio = 0.68, int stock = 3, string originalTitle = "xx",string newTitle="xx", bool isModifyPrice = true)
+        public void UpdateGoodsSkuInfo(IEnumerable<string> lstSearch, double discountRatio = 0.68, int stock = 3, string originalTitle = "xx",string newTitle="xx", bool isModifyPrice = true)
         {
-            List<Item> lstItem = GetOnSaleGoods(search);
-
-            foreach (var item in lstItem)
+            foreach (var search in lstSearch)
             {
-                Thread.Sleep(100);
-                //获取产品原价
-                var oPrice = item.Title.GetNumberInt();
+                if (search.IsEmptyString()) continue;
 
-                var req = new ItemUpdateRequest();
-                req.NumIid = item.NumIid;
-                req.Title = item.Title.Replace(originalTitle, newTitle);
-                  
-                req.LocationState = SysConst.LocationState;
-                req.LocationCity = SysConst.LocationCity;
-                //req.LocationState = "浙江";
-                //req.LocationCity = "杭州";
-                if (isModifyPrice)
+                List<Item> lstItem = GetOnSaleGoods(search);
+                if (lstItem != null && lstItem.Count > 0)
                 {
-                    req.Price = (oPrice*discountRatio).ToType<int>().ToString();
-                }
+                    #region 更新SKU信息
 
+                    foreach (var item in lstItem)
+                    {
+                        Thread.Sleep(100);
+                        //获取产品原价
+                        var oPrice = item.Title.GetNumberInt();
 
-                var skus = GetSkusByNumId(item.NumIid.ToString()).ToArray();
-                var lastSku = skus[skus.Count() - 1];
-                for (int i = 0; i < skus.Count()-1; i++)
-                {
-                    Thread.Sleep(100);
-                    var skuReq = new ItemSkuUpdateRequest()
+                        var req = new ItemUpdateRequest();
+                        req.NumIid = item.NumIid;
+                        req.Title = item.Title.Replace(originalTitle, newTitle);
+
+                        req.LocationState = SysConst.LocationState;
+                        req.LocationCity = SysConst.LocationCity;
+                        //req.LocationState = "浙江";
+                        //req.LocationCity = "杭州";
+                        if (isModifyPrice)
                         {
-                            NumIid = item.NumIid,
-                            Properties = skus[i].Properties,
-                            Quantity = stock,
-                            OuterId = item.OuterId
-                        };
-                    if (isModifyPrice)
-                    {
-                        skuReq.Price = req.Price;
+                            req.Price = (oPrice * discountRatio).ToType<int>().ToString();
+                        }
+
+
+                        var skus = GetSkusByNumId(item.NumIid.ToString()).ToArray();
+                        var lastSku = skus[skus.Count() - 1];
+                        for (int i = 0; i < skus.Count() - 1; i++)
+                        {
+                            Thread.Sleep(100);
+                            var skuReq = new ItemSkuUpdateRequest()
+                                             {
+                                                 NumIid = item.NumIid,
+                                                 Properties = skus[i].Properties,
+                                                 Quantity = stock,
+                                                 OuterId = item.OuterId
+                                             };
+                            if (isModifyPrice)
+                            {
+                                skuReq.Price = req.Price;
+                            }
+                            UpdateSku(skuReq);
+                            Thread.Sleep(100);
+                        }
+
+                        UpdateGoodsBase(req, item.NumIid, item.OuterId, req.Title);
+
+                        var skuLastReq = new ItemSkuUpdateRequest()
+                                             {
+                                                 NumIid = item.NumIid,
+                                                 Properties = lastSku.Properties,
+                                                 Quantity = stock,
+                                                 OuterId = item.OuterId
+                                             };
+                        if (isModifyPrice)
+                        {
+                            skuLastReq.Price = req.Price;
+                        }
+                        UpdateSku(skuLastReq);
                     }
-                    UpdateSku(skuReq);
-                    Thread.Sleep(100);
+
+                    #endregion
                 }
-
-                UpdateGoodsBase(req, item.NumIid, item.OuterId, req.Title);
-
-                var skuLastReq = new ItemSkuUpdateRequest()
-                    {
-                        NumIid = item.NumIid,
-                        Properties = lastSku.Properties,
-                        Quantity = stock,
-                        OuterId = item.OuterId
-                    };
-                if (isModifyPrice)
+                else
                 {
-                    skuLastReq.Price = req.Price;
+                    try
+                    {
+                        BanggoProduct banggoProduct =
+              _banggoMgt.GetGoodsInfo(new BanggoRequestModel { GoodsSn = search, Referer = _banggoMgt.GetGoodsUrl(search) });
+
+                        if (banggoProduct.ColorList.IsNullOrEmpty())
+                            continue;
+
+                        PublishGoodsAndUploadPic(banggoProduct);
+                    }
+                    catch (Exception e)
+                    {
+                        _log.LogError("发布该产品失败，邦购没有该产品:{0}", e, search);
+                    } 
                 }
-                UpdateSku(skuLastReq);
             }
+           
+
 
         }
 
@@ -297,7 +328,7 @@ namespace MyTools.TaoBao.Impl
                 }
                 else
                 {
-                    #region 发布商品 
+                    #region 发布商品 从EXCEL中读取
 
                     try
                     {

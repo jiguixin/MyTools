@@ -68,12 +68,14 @@ namespace MyTools
 
             IEnumerable<string> lstSearchs = TextHelper.StringToArray<string>(result);
 
-            foreach (var search in lstSearchs)
-            {
-                _goodsApi.UpdateGoodsSkuInfo(search, discountRatio: txtRate.Text.ToType<double>(), stock: txtStock.Text.ToType<int>(), originalTitle: txtOriginalTitle.Text, newTitle: txtNewTitle.Text, isModifyPrice: !chkNotModifyPrice.Checked); 
-            }
-           
-               
+            _goodsApi.UpdateGoodsSkuInfo(
+                lstSearchs,
+                discountRatio: txtRate.Text.ToType<double>(),
+                stock: txtStock.Text.ToType<int>(),
+                originalTitle: txtOriginalTitle.Text,
+                newTitle: txtNewTitle.Text,
+                isModifyPrice: !chkNotModifyPrice.Checked);
+
         }
 
         private void bgwRun_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
