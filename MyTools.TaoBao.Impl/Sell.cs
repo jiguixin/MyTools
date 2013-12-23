@@ -63,21 +63,31 @@ namespace MyTools.TaoBao.Impl
              
             var notRepeat = query.ToList();
             foreach (var rep in repeat)
-            {
+            {                 
                 var lstRep = rep.ToList();
                 var repCount = lstRep.Count;
-
                 var avgPostage = lstRep[0].Postage.ToType<double>() / repCount;
-                foreach (var c in lstRep)
+
+                //获取他的备注信息，检查是否有';'号分割不同的来源
+                var firstItem = lstRep[0];
+                var remarks = firstItem.Remark.ToString();
+                string[] sources = null;
+                if (remarks.Contains("};{"))
                 {
-                    notRepeat.Remove(c);
+                    sources = remarks.Split(';');
+                }
+
+                for (int index = 0; index < lstRep.Count; index++)
+                {
+                    var c = lstRep[index];
+                    notRepeat.Remove(c); 
 
                     var exportModel = new ExportModel(c);
-                     
-                    var newPrice = c.Price.ToType<double>()+ avgPostage;
-                    exportModel.TotalPrice = newPrice;
 
-                    AddDataRow(exportModel, dt, excel, repCount); 
+                    var newPrice = c.Price.ToType<double>() + avgPostage;
+                    exportModel.TotalPrice = newPrice;
+                     
+                    this.AddDataRow(exportModel, dt, excel, repCount, sources == null?null: sources[index]);
                 }
             }
 
@@ -94,9 +104,12 @@ namespace MyTools.TaoBao.Impl
 
 
 
-        private void AddDataRow(dynamic q, DataTable dt, ExcelHelper excel,int repOrder =0)
+        private void AddDataRow(dynamic q, DataTable dt, ExcelHelper excel,int repOrder =0,string stuffRemark = null)
         {
-            var jRemark = TextHelper.ToEngInterpunction(TextHelper.ToDBC(q.Remark.ToString().Trim('\'')));
+            //如果是多个来源，那就要用单独的来源
+            var jRemark =
+                TextHelper.ToEngInterpunction(
+                    stuffRemark ?? TextHelper.ToDBC(q.Remark.ToString().Trim('\'')));
 
             DataRow dr = dt.NewRow();
             dr["订单编号"] = q.OrderNo;
@@ -110,7 +123,7 @@ namespace MyTools.TaoBao.Impl
             dr["购买数量"] = q.Count;
             //                dr["结帐情况"]
             //                dr["结帐时间"]
-
+           
             JObject jObj = JObject.Parse(jRemark);
             if (jObj != null)
             {
