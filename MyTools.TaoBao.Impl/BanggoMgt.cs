@@ -429,28 +429,35 @@ namespace MyTools.TaoBao.Impl
         /// 通过款号搜索得到该产品的URL
         /// </summary>
         /// <param name="goodsSn">款号</param>
-        /// <returns>要是邦购上已经售完就返回NULL</returns>
+        /// <returns>要是邦购上已经售完与获取时发生错误就返回NULL</returns>
         public string GetGoodsUrl(string goodsSn)
         {
-            string searchUrl = "http://search.banggo.com/Search/a_a.shtml?clickType=1&word={0}";
+            try
+            { 
+                string searchUrl = "http://search.banggo.com/Search/a_a.shtml?clickType=1&word={0}";
 
-            var htmlDocument = new HtmlDocument();
-             
-            string result = HttpHelper.GETDataToUrl(searchUrl.StringFormat(goodsSn), Encoding.UTF8); ;
+                var htmlDocument = new HtmlDocument();
 
-            htmlDocument.LoadHtml(result);
+                string result = HttpHelper.GETDataToUrl(searchUrl.StringFormat(goodsSn), Encoding.UTF8);
+                 
+                htmlDocument.LoadHtml(result);
 
-            var searchResultNode =
-                htmlDocument.DocumentNode.SelectSingleNode("/html/body/div[@class='wrapper']/div[@class='contentWrapper']/div[@id='content']/div[@class='search_list ']/ul/li/a");
+                var searchResultNode =
+                    htmlDocument.DocumentNode.SelectSingleNode(
+                        "/html/body/div[@class='wrapper']/div[@class='contentWrapper']/div[@id='content']/div[@class='search_list ']/ul/li/a");
 
-            if (searchResultNode.IsNull())
+                if (searchResultNode.IsNull())
+                {
+                    _log.LogWarning("GoodsSn:{0}->在邦购上没有找到其URL，可能是产品已售完", goodsSn);
+                    return null;
+                }
+                return searchResultNode.Attributes["href"].Value.Trim();
+            }
+            catch (Exception e)
             {
-                _log.LogWarning("GoodsSn:{0}->在邦购上没有找到其URL，可能是产品已售完",goodsSn);
+                _log.LogError("GoodsSn:{0}->通过GoodsSn去获取邦购的URL地址出错".StringFormat(goodsSn), e);
                 return null;
-            } 
-
-            return searchResultNode.Attributes["href"].Value.Trim();
-
+            }
         }
 
         /// <summary>

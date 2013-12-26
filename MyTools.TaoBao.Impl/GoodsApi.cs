@@ -74,41 +74,9 @@ namespace MyTools.TaoBao.Impl
             Item item = VerifyGoodsExist(goodsSn);
             if (item.IsNotNull())
             {
-                //todo：需要重构
-                try
-                {
-                    var banggoProductEdit = new BanggoProduct(false)
-                    {
-                        ColorList = _banggoMgt.GetProductColorByOnline(new BanggoRequestModel() { GoodsSn = item.OuterId, Referer = banggoProductUrl }),
-                        GoodsSn = item.OuterId,
-                        GoodsUrl = banggoProductUrl,
-                        Cid = item.Cid,
-                        NumIid = item.NumIid,
-                        //替换原来的产品标题
-                        Title = item.Title.Replace(SysConst.OriginalTitle, SysConst.NewTitle)
-                    };
+                //修改库存信息 
+                UpdateGoodsInternalSingle(item, banggoProductUrl, false);
 
-                    #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
-
-                    if (!SysConst.IsEnforceUpdate)
-                    {
-                        if (item.Num == banggoProductEdit.ColorList.Sum(p => p.AvlNumForColor))
-                        {
-                            _log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
-                            return item;
-                        }
-                    }
-
-                    #endregion
-
-                    DeleteAllSku(item);
-
-                    UpdateGoodsAndUploadPic(banggoProductEdit);
-                }
-                catch (Exception ex)
-                {
-                    _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(item.NumIid, item.OuterId), ex);
-                }
                 return item;
             }
 
@@ -806,75 +774,81 @@ namespace MyTools.TaoBao.Impl
             foreach (Item item in lstItem)
             {
                 Thread.Sleep(1000);
-                try
+
+                //通过款号查询如果没有得到产品的URL或得不到库存，就将该产品进行下架。
+                string goodsUrl = _banggoMgt.GetGoodsUrl(item.OuterId);
+
+                this.UpdateGoodsInternalSingle(item, goodsUrl, isModifyPrice);
+
+            }
+        }
+
+        //更新单条产品
+        private void UpdateGoodsInternalSingle(Item item, string goodsUrl, bool isModifyPrice = true)
+        {
+            try
+            {
+                if (goodsUrl.IsNullOrEmpty())
                 {
-                    //通过款号查询如果没有得到产品的URL或得不到库存，就将该产品进行下架。
-                    string goodsUrl = _banggoMgt.GetGoodsUrl(item.OuterId);
-
-                    if (goodsUrl.IsNullOrEmpty())
-                    {
-                        GoodsDelisting(item.NumIid);
-
-                        continue;
-                    }
-
-                    //如果邦购上该产品还在售，就获取他的SKU信息。 
-                    var banggoProduct = new BanggoProduct(false)
-                    {
-                        ColorList = _banggoMgt.GetProductColorByOnline(new BanggoRequestModel
-                        {
-                            GoodsSn = item.OuterId,
-                            Referer = goodsUrl
-                        })
-                    };
-
-                    #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
-
-                    if (!SysConst.IsEnforceUpdate)
-                    {
-                        if (item.Num == banggoProduct.ColorList.Sum(p => p.AvlNumForColor))
-                        {
-                            _log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
-                            continue;
-                        }
-                    }
-
-                    #endregion
-
-                    #region 删除SKU只保留1个可用SKU
-
-                    DeleteAllSku(item);
-
-                    #endregion
-
-                    #region 如果是不修改价格（IsModifyPrice = false），则读取Item的price 填充到MySalePrice 中
-
-                    if (!isModifyPrice)
-                    {
-                        foreach (var size in banggoProduct.ColorList.SelectMany(color => color.SizeList))
-                        {
-                            size.MySalePrice = item.Price.ToType<double>();
-                        }
-                    }
-
-                    #endregion
-                     
-                    //替换原来的产品标题
-                    banggoProduct.Title = item.Title.Replace(SysConst.OriginalTitle, SysConst.NewTitle);
-
-                    banggoProduct.GoodsSn = item.OuterId;
-                    banggoProduct.GoodsUrl = goodsUrl;
-                    banggoProduct.Cid = item.Cid;
-                    banggoProduct.NumIid = item.NumIid;
-                    banggoProduct.OuterId = item.OuterId;
-
-                    UpdateGoodsAndUploadPic(banggoProduct);
+                    // this.GoodsDelisting(item.NumIid); //不进行下架，如在获取产品时，网络问题等因素
+                    this._log.LogInfo("GoodsSn:{0}->没有在邦购上获取URL不能进行进行操作".StringFormat(item.OuterId));
+                    return;
                 }
-                // ReSharper disable EmptyGeneralCatchClause
-                catch
-                // ReSharper restore EmptyGeneralCatchClause
+
+                //如果邦购上该产品还在售，就获取他的SKU信息。 
+                var banggoProduct = new BanggoProduct(false)
+                                        {
+                                            ColorList =
+                                                this._banggoMgt.GetProductColorByOnline(
+                                                    new BanggoRequestModel
+                                                        {
+                                                            GoodsSn = item.OuterId,
+                                                            Referer = goodsUrl
+                                                        }),
+                                            GoodsSn = item.OuterId,
+                                            GoodsUrl = goodsUrl,
+                                            Cid = item.Cid,
+                                            NumIid = item.NumIid,
+                                            OuterId = item.OuterId,
+                                            //替换原来的产品标题
+                                            Title =
+                                                item.Title.Replace(
+                                                    SysConst.OriginalTitle,
+                                                    SysConst.NewTitle)
+                                        };
+
+                #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
+
+                if (!SysConst.IsEnforceUpdate)
                 {
+                    if (item.Num == banggoProduct.ColorList.Sum(p => p.AvlNumForColor))
+                    {
+                        this._log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
+                        return;
+                    }
                 }
+
+                #endregion
+
+                this.DeleteAllSku(item);
+
+                #region 如果是不修改价格（IsModifyPrice = false），则读取Item的price 填充到MySalePrice 中
+
+                if (!isModifyPrice)
+                {
+                    foreach (var size in banggoProduct.ColorList.SelectMany(color => color.SizeList))
+                    {
+                        size.MySalePrice = item.Price.ToType<double>();
+                    }
+                }
+
+                #endregion
+
+                this.UpdateGoodsAndUploadPic(banggoProduct);
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(item.NumIid, item.OuterId), ex);
             }
         }
 
