@@ -94,7 +94,11 @@ namespace MyTools.TaoBao.Impl
             #endregion
              
             foreach (var q in notRepeat)
-            { 
+            {
+                if (string.IsNullOrEmpty(q.Remark.ToString()))
+                {
+                    continue;
+                }
                 AddDataRow(q, dt, excel);
             }
 
@@ -123,7 +127,8 @@ namespace MyTools.TaoBao.Impl
             dr["购买数量"] = q.Count;
             //                dr["结帐情况"]
             //                dr["结帐时间"]
-           
+
+            jRemark = jRemark.Trim('\'');
             JObject jObj = JObject.Parse(jRemark);
             if (jObj != null)
             {
