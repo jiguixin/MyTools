@@ -23,8 +23,13 @@ using Newtonsoft.Json.Linq;
 
 namespace MyTools.TaoBao.Impl
 {
+    using Infrastructure.Crosscutting.IoC;
+    using Infrastructure.Crosscutting.Logging;
+
     public class Sell:ISell
     {
+        private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
+
         public void ExportSellDetail(string sourcePath)
         {
             var ds = ExcelHelper.GetExcelDataSet(sourcePath);
@@ -114,6 +119,12 @@ namespace MyTools.TaoBao.Impl
             var jRemark =
                 TextHelper.ToEngInterpunction(
                     stuffRemark ?? TextHelper.ToDBC(q.Remark.ToString().Trim('\'')));
+              jRemark = jRemark.Trim('\'');
+            if (!VerifyRemark(jRemark))
+            {
+                _log.LogError("订单号：{0},的来源信息不合法.", q.OrderNo);
+                return;
+            }
 
             DataRow dr = dt.NewRow();
             dr["订单编号"] = q.OrderNo;
@@ -127,8 +138,7 @@ namespace MyTools.TaoBao.Impl
             dr["购买数量"] = q.Count;
             //                dr["结帐情况"]
             //                dr["结帐时间"]
-
-            jRemark = jRemark.Trim('\'');
+             
             JObject jObj = JObject.Parse(jRemark);
             if (jObj != null)
             {
@@ -170,6 +180,19 @@ namespace MyTools.TaoBao.Impl
             GetColorAndSize(dr, q.Props.ToString());
 
             excel.AddNewRow(dr);
+        }
+
+        private bool VerifyRemark(string jRemark)
+        {
+            try
+            {
+                JObject jObj = JObject.Parse(jRemark);
+                return true;
+            }
+            catch (Exception)
+            { 
+                return false; 
+            } 
         }
 
         #region helper
