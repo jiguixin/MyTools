@@ -70,48 +70,76 @@ namespace MyTools.TaoBao.Impl
             foreach (var rep in repeat)
             {                 
                 var lstRep = rep.ToList();
-                var repCount = lstRep.Count;
-                var avgPostage = lstRep[0].Postage.ToType<double>() / repCount;
+
+                var repCount = lstRep.Sum(order => order.Count.ToType<int>());   //购买的产品实际总数,不只是订单数
+
+                var singleAvgPrice = lstRep[0].TotalPrice.ToType<double>() / repCount;
 
                 //获取他的备注信息，检查是否有';'号分割不同的来源
-                var firstItem = lstRep[0];
-                var remarks = firstItem.Remark.ToString();
-                string[] sources = null;
-                if (remarks.Contains("};{"))
-                {
-                    sources = remarks.Split(';');
-                }
+                var sources = GetOtherSource(lstRep);
 
                 for (int index = 0; index < lstRep.Count; index++)
                 {
                     var c = lstRep[index];
-                    notRepeat.Remove(c); 
+                    notRepeat.Remove(c);
 
-                    var exportModel = new ExportModel(c);
+                    //todo :对一个组合订单下的某个产品包含购买了几件情况
 
-                    var newPrice = c.Price.ToType<double>() + avgPostage;
-                    exportModel.TotalPrice = newPrice;
-                     
-                    this.AddDataRow(exportModel, dt, excel, repCount, sources == null?null: sources[index]);
+                    for (int j = 0; j < c.Count.ToType<int>(); j++)
+                    {
+                        var exportModel = new ExportModel(c);
+
+                        exportModel.TotalPrice = singleAvgPrice;
+
+                        this.AddDataRow(
+                            exportModel,
+                            dt,
+                            excel,
+                            sources == null ? repCount : 1,
+                            //如果压货来源不是同一个来源那么付款金额就是每个备注中的价格
+                            sources == null ? null : sources[index+j]);
+                    }
                 }
             }
-
+             
             #endregion
              
+            //只购买了一个订单的产品，有可能一个订单下买了几件相同的产品
             foreach (var q in notRepeat)
             {
                 if (string.IsNullOrEmpty(q.Remark.ToString()))
                 {
                     continue;
                 }
-                AddDataRow(q, dt, excel);
+
+                var lstRep = new[]{ q };
+                var sources = GetOtherSource(lstRep); 
+                //todo:需要要修改
+                for (int i = 0; i < q.Count.ToType<int>(); i++)
+                {
+                    var exportModel = new ExportModel(q);
+                    exportModel.Count = 1;
+                    exportModel.TotalPrice = q.TotalPrice.ToType<double>() / q.Count.ToType<int>();
+                    AddDataRow(q, dt, excel, 1, sources == null ? null : sources[i]);
+                } 
             }
 
             excel.Dispose();
             Process.Start("Sell");
         }
 
-
+        //获取他的备注信息，检查是否有';'号分割不同的来源 
+        private static string[] GetOtherSource(IEnumerable<dynamic> lstRep)
+        {
+            var firstItem = lstRep.First();
+            var remarks = firstItem.Remark.ToString();
+            string[] sources = null;
+            if (remarks.Contains("};{")) //注：如果要指定不同来源，那么就必须每个产品都要加来源
+            {
+                sources = remarks.Split(';');
+            }
+            return sources;
+        }
 
         private void AddDataRow(dynamic q, DataTable dt, ExcelHelper excel,int repOrder =0,string stuffRemark = null)
         {
