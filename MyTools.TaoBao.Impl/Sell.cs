@@ -72,8 +72,8 @@ namespace MyTools.TaoBao.Impl
                 var lstRep = rep.ToList();
 
                 var repCount = lstRep.Sum(order => order.Count.ToType<int>());   //购买的产品实际总数,不只是订单数
-
-                var singleAvgPrice = lstRep[0].TotalPrice.ToType<double>() / repCount;
+                
+                var singleAvgPrice = decimal.Round((decimal)(lstRep[0].TotalPrice.ToType<double>() / repCount),2);
 
                 //获取他的备注信息，检查是否有';'号分割不同的来源
                 var sources = GetOtherSource(lstRep);
@@ -83,13 +83,12 @@ namespace MyTools.TaoBao.Impl
                     var c = lstRep[index];
                     notRepeat.Remove(c);
 
-                    //todo :对一个组合订单下的某个产品包含购买了几件情况
-
+                    //对一个组合订单下的某个产品包含购买了几件情况
                     for (int j = 0; j < c.Count.ToType<int>(); j++)
                     {
                         var exportModel = new ExportModel(c);
-
-                        exportModel.TotalPrice = singleAvgPrice;
+                        exportModel.Count = 1;
+                        exportModel.TotalPrice = (double)singleAvgPrice;
 
                         this.AddDataRow(
                             exportModel,
@@ -113,14 +112,15 @@ namespace MyTools.TaoBao.Impl
                 }
 
                 var lstRep = new[]{ q };
-                var sources = GetOtherSource(lstRep); 
-                //todo:需要要修改
-                for (int i = 0; i < q.Count.ToType<int>(); i++)
+                var sources = GetOtherSource(lstRep);
+                var orderCount = q.Count.ToType<int>();
+                 
+                for (int i = 0; i < orderCount; i++)
                 {
                     var exportModel = new ExportModel(q);
                     exportModel.Count = 1;
                     exportModel.TotalPrice = q.TotalPrice.ToType<double>() / q.Count.ToType<int>();
-                    AddDataRow(q, dt, excel, 1, sources == null ? null : sources[i]);
+                    AddDataRow(exportModel, dt, excel, orderCount, sources == null ? null : sources[i]);
                 } 
             }
 
@@ -165,7 +165,7 @@ namespace MyTools.TaoBao.Impl
             dr["单件售价"] = q.Price;
             dr["购买数量"] = q.Count;
             //                dr["结帐情况"]
-            //                dr["结帐时间"]
+            //                dr["结帐时间"] 
              
             JObject jObj = JObject.Parse(jRemark);
             if (jObj != null)
