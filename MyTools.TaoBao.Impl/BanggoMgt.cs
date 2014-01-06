@@ -124,10 +124,12 @@ namespace MyTools.TaoBao.Impl
             HtmlNode selectNodesForProductCatalog =
                 doc.DocumentNode.SelectSingleNode(Resource.SysConfig_GetBanggoProductCatalogXPath);
 
-            selectNodesForProductCatalog.ThrowIfNull(Resource.Exception_XPathGetDataError.StringFormat(
-                new StackTrace()));
+           // selectNodesForProductCatalog.ThrowIfNull(Resource.Exception_XPathGetDataError.StringFormat(
+             //   new StackTrace()));
 
-            product.Catalog = selectNodesForProductCatalog.InnerText;
+            product.Catalog = selectNodesForProductCatalog != null ? selectNodesForProductCatalog.InnerText : "";
+
+            
 
             #endregion
 

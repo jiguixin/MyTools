@@ -555,7 +555,7 @@ namespace MyTools.TaoBao.Impl
         public List<Item> GetOnSaleGoods(string search = null)
         {
             //得到当前用户的在售商品列表 
-            var req = new ItemsOnsaleGetRequest { Fields = "num_iid,num,cid,title,price,outer_id", PageSize = 199 };
+            var req = new ItemsOnsaleGetRequest { Fields = "num_iid,num,cid,title,outer_id,price,pic_url", PageSize = 199 };
             if (!search.IsNullOrEmpty())
                 req.Q = search;
 
@@ -713,7 +713,7 @@ namespace MyTools.TaoBao.Impl
             goodsSn.ThrowIfNullOrEmpty(
                 Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
 
-            var req = new ItemsOnsaleGetRequest { Fields = "num_iid,num,cid,title,outer_id,price", Q = goodsSn, PageSize = 10 };
+            var req = new ItemsOnsaleGetRequest { Fields = "num_iid,num,cid,title,outer_id,price,pic_url", Q = goodsSn, PageSize = 10 };
             List<Item> onSaleGoods = GetOnSaleGoods(req);
 
             if (onSaleGoods != null && onSaleGoods.Count > 0)
@@ -835,6 +835,19 @@ namespace MyTools.TaoBao.Impl
                                                     SysConst.OriginalTitle,
                                                     SysConst.NewTitle)
                                         };
+
+
+                if (SysConst.IsModifyMainPic)
+                { 
+                    Bitmap watermark = imageWatermark.CreateWatermark((Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(item.PicUrl)),
+                                                               (Bitmap)
+                                                               imageWatermark.SetByteToImage(
+                                                                   SysUtils.GetImgByte(SysConst.ImgWatermark)),
+                                                               ImageWatermark.WatermarkPosition.RightTop,
+                                                               3);
+
+                    banggoProduct.Image = new FileItem("aa.jpg",imageWatermark.BitmapToBytes(watermark,ImageFormat.Jpeg));
+                }
 
                 #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
 

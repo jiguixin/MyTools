@@ -41,7 +41,7 @@ namespace MyTools.TaoBao.DomainModule
             get
             {
                 //从banggo正向填充标题
-                if (!Catalog.IsNullOrEmpty() && !Brand.IsNullOrEmpty() && !ParentCatalog.IsNullOrEmpty() && !GoodsSn.IsNullOrEmpty() && MarketPrice > 0)
+                if (!Brand.IsNullOrEmpty() && !ParentCatalog.IsNullOrEmpty() && !GoodsSn.IsNullOrEmpty() && MarketPrice > 0)
                 {
                     string startTitle = null;
                     if (ParentCatalog == "外套")
