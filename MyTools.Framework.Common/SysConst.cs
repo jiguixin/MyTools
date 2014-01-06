@@ -61,6 +61,21 @@ namespace MyTools.Framework.Common
         /// 读取用于修改淘宝上产品详情的样式
         /// </summary>
         public static readonly string GoodsDetailTemplate = FileHelper.ReadFileContent("GoodsDetailTemplate.css");
+
+        /// <summary>
+        /// 文本水印
+        /// </summary>
+        public static readonly string TextWatermark = ConfigurationManager.AppSettings["TextWatermark"];
+
+        /// <summary>
+        /// 是否要修改主图
+        /// </summary>
+        public static readonly bool IsModifyMainPic = ConfigurationManager.AppSettings["IsModifyMainPic"].ToType<bool>();
+
+        /// <summary>
+        /// 图片水印，用于促销,只修改主图
+        /// </summary>
+        public static readonly string ImgWatermark = ConfigurationManager.AppSettings["ImgWatermark"];
          
         #endregion
 

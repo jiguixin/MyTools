@@ -33,6 +33,9 @@ using Product = MyTools.TaoBao.DomainModule.Product;
 
 namespace MyTools.TaoBao.Impl
 {
+    using System.Drawing;
+    using System.Drawing.Imaging;
+
     public class GoodsApi : IGoodsApi
     {
         #region Members
@@ -51,6 +54,8 @@ namespace MyTools.TaoBao.Impl
         private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
         private readonly IShop _shop = InstanceLocator.Current.GetInstance<IShop>(Resource.SysConfig_GetDataWay);
         public List<SellerCat> SellercatsList;
+
+        private ImageWatermark imageWatermark = new ImageWatermark();
 
         #endregion
 
@@ -685,12 +690,21 @@ namespace MyTools.TaoBao.Impl
                                   ? urlImg.Segments[len - 1]
                                   : "{0}-{1}.jpg".StringFormat(numId.ToString(CultureInfo.InvariantCulture), properties);
 
-            var fItem = new FileItem(fileName, SysUtils.GetImgByte(urlImg.ToString()));
+            Bitmap watermark = imageWatermark.CreateWatermark(
+               (Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(urlImg.ToString())),
+               SysConst.TextWatermark,
+               ImageWatermark.WatermarkPosition.RigthBottom,
+               3);
+
+            var fItem = new FileItem(fileName, imageWatermark.BitmapToBytes(watermark, ImageFormat.Jpeg));
+
+//            var fItem = new FileItem(fileName, SysUtils.GetImgByte(urlImg.ToString()));
             return UploadItemPropimgInternal(numId, properties, fItem);
         }
 
         /// <summary>
         /// 检查该产品是否已经上架
+        /// taobao.items.onsale.get 获取当前会话用户出售中的商品列表
         /// </summary>
         /// <param name="goodsSn">款号</param>
         /// <returns></returns>
@@ -699,7 +713,7 @@ namespace MyTools.TaoBao.Impl
             goodsSn.ThrowIfNullOrEmpty(
                 Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
 
-            var req = new ItemsOnsaleGetRequest { Fields = "num_iid,num,cid,title,outer_id", Q = goodsSn, PageSize = 10 };
+            var req = new ItemsOnsaleGetRequest { Fields = "num_iid,num,cid,title,outer_id,price", Q = goodsSn, PageSize = 10 };
             List<Item> onSaleGoods = GetOnSaleGoods(req);
 
             if (onSaleGoods != null && onSaleGoods.Count > 0)
@@ -727,9 +741,14 @@ namespace MyTools.TaoBao.Impl
                 throw new Exception((Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
                     new StackTrace())));
 
-            #endregion
+            #endregion 
 
-            var fItem = new FileItem(imgPath);
+             Bitmap watermark = imageWatermark.CreateWatermark(
+               (Bitmap)imageWatermark.SetByteToImage(FileHelper.ReadFile(imgPath)),
+               SysConst.TextWatermark,
+               ImageWatermark.WatermarkPosition.RigthBottom,
+               3); 
+            var fItem = new FileItem("{0}-{1}.jpg".StringFormat(numId.ToString(CultureInfo.InvariantCulture), properties),imageWatermark.BitmapToBytes(watermark,ImageFormat.Jpeg));
 
             return UploadItemPropimgInternal(numId, properties, fItem);
         }
@@ -870,31 +889,32 @@ namespace MyTools.TaoBao.Impl
                 }
             }
 
-            //不用排序，默认取最开始那个
-            //List<Sku> skus = item.Skus.OrderByDescending(f => f.Quantity).ToList();
+            //不用排序，默认取最开始那个 
             List<Sku> skus = item.Skus;
 
             if (skus == null)
                 return;
+
+            var zeroSkus = skus.Where(s => s.Quantity == 0);
+
+            foreach (var zeroSku in zeroSkus)
+            {
+                //如果数量为0，删除SKU会报错
+                UpdateSku(new ItemSkuUpdateRequest()
+                {
+                    NumIid = item.NumIid,
+                    Properties = zeroSku.Properties,
+                    Quantity = 1,
+                    OuterId = item.OuterId
+                });
+                Thread.Sleep(200);
+            }
+
              
             //现在淘宝可以把所有SKU全部删除完了
-            for (int i = 0; i < skus.Count; i++)
-            {
-                Sku sku = skus[i];
-
-                //如果数量为0，删除SKU会报错
-                if (sku.Quantity == 0)
-                {
-                    UpdateSku(new ItemSkuUpdateRequest()
-                        {
-                            NumIid = item.NumIid,
-                            Properties = sku.Properties,
-                            Quantity = 1,
-                            OuterId = item.OuterId
-                        });
-                }
-
-                DeleteGoodsSku(item.NumIid, sku.Properties, item.OuterId);
+            foreach (Sku sku in skus)
+            { 
+                this.DeleteGoodsSku(item.NumIid, sku.Properties, item.OuterId);
                   
                 Thread.Sleep(500);
             }
@@ -909,7 +929,6 @@ namespace MyTools.TaoBao.Impl
                 Thread.Sleep(100);
             }
              
-
             #endregion
         }
          
@@ -948,8 +967,24 @@ namespace MyTools.TaoBao.Impl
 
 
             bProduct.Cid = bProduct.ParentCatalog == "外套" ? _catalog.GetCid(bProduct.Category, bProduct.Catalog).ToType<Int64>() : _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToType<Int64>();
+
+            Bitmap watermark = imageWatermark.CreateWatermark(
+                (Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(bProduct.ThumbUrl)),
+                SysConst.TextWatermark,
+                ImageWatermark.WatermarkPosition.RigthBottom,
+                3);
+            
+            if (SysConst.IsModifyMainPic)
+            {
+                watermark = imageWatermark.CreateWatermark(watermark,
+                (Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(SysConst.ImgWatermark)),
+                ImageWatermark.WatermarkPosition.RightTop,
+                3);
+            }
              
-            bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", SysUtils.GetImgByte(bProduct.ThumbUrl));
+            bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", imageWatermark.BitmapToBytes(watermark,ImageFormat.Jpeg));
+
+            //bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", SysUtils.GetImgByte(bProduct.ThumbUrl));
 
             var tContext = InstanceLocator.Current.GetInstance<TopContext>();
 
@@ -976,6 +1011,8 @@ namespace MyTools.TaoBao.Impl
             SetOptionalProps(bProduct);
             
             SetSkuInfo(bProduct);
+
+            watermark.Dispose();
 
             _log.LogInfo(Resource.Log_StuffProductInfoSuccess.StringFormat(bProduct.GoodsSn));
         }
