@@ -124,6 +124,8 @@ namespace MyTools.TaoBao.DomainModule
                 StuffStatus = "new";
                 LocationState = SysConst.LocationState;
                 LocationCity = SysConst.LocationCity;
+                SubStock = 2;
+                ValidThru = 14;   
             }
         }
 
