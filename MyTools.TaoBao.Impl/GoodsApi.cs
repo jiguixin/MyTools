@@ -696,7 +696,7 @@ namespace MyTools.TaoBao.Impl
                ImageWatermark.WatermarkPosition.RigthBottom,
                3);
 
-            var fItem = new FileItem(fileName, imageWatermark.BitmapToBytes(watermark, ImageFormat.Jpeg));
+            var fItem = new FileItem(fileName, imageWatermark.SetBitmapToBytes(watermark, ImageFormat.Jpeg));
 
 //            var fItem = new FileItem(fileName, SysUtils.GetImgByte(urlImg.ToString()));
             return UploadItemPropimgInternal(numId, properties, fItem);
@@ -748,7 +748,7 @@ namespace MyTools.TaoBao.Impl
                SysConst.TextWatermark,
                ImageWatermark.WatermarkPosition.RigthBottom,
                3); 
-            var fItem = new FileItem("{0}-{1}.jpg".StringFormat(numId.ToString(CultureInfo.InvariantCulture), properties),imageWatermark.BitmapToBytes(watermark,ImageFormat.Jpeg));
+            var fItem = new FileItem("{0}-{1}.jpg".StringFormat(numId.ToString(CultureInfo.InvariantCulture), properties),imageWatermark.SetBitmapToBytes(watermark,ImageFormat.Jpeg));
 
             return UploadItemPropimgInternal(numId, properties, fItem);
         }
@@ -846,7 +846,7 @@ namespace MyTools.TaoBao.Impl
                                                                ImageWatermark.WatermarkPosition.RightTop,
                                                                3);
 
-                    banggoProduct.Image = new FileItem("aa.jpg",imageWatermark.BitmapToBytes(watermark,ImageFormat.Jpeg));
+                    banggoProduct.Image = new FileItem("aa.jpg",imageWatermark.SetBitmapToBytes(watermark,ImageFormat.Jpeg));
                 }
 
                 #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
@@ -995,7 +995,7 @@ namespace MyTools.TaoBao.Impl
                 3);
             }
              
-            bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", imageWatermark.BitmapToBytes(watermark,ImageFormat.Jpeg));
+            bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", imageWatermark.SetBitmapToBytes(watermark,ImageFormat.Jpeg));
 
             //bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", SysUtils.GetImgByte(bProduct.ThumbUrl));
 
