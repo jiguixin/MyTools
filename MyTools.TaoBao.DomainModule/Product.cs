@@ -25,6 +25,20 @@ namespace MyTools.TaoBao.DomainModule
     public class Product : ProductBase
     { 
         /// <summary>
+        /// 设置添加商品时的必要属性
+        /// </summary>
+        public void SetAddProperty()
+        {
+            FreightPayer = "buyer";
+            Type = "fixed";
+            StuffStatus = "new";
+            LocationState = SysConst.LocationState;
+            LocationCity = SysConst.LocationCity;
+            SubStock = 2;
+            ValidThru = 14;
+        }
+
+        /// <summary>
         /// 市场价
         /// </summary>
         public virtual double MarketPrice { get; set; }
@@ -38,7 +52,12 @@ namespace MyTools.TaoBao.DomainModule
         /// 销量
         /// </summary>
         public virtual int SalesVolume { get; set; }
-
+         
+        /// <summary>
+        /// 产品地址
+        /// </summary>
+        public string GoodsUrl { get; set; }
+          
         /// <summary>
         ///     产品编号，款号
         /// </summary>

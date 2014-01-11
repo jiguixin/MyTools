@@ -15,12 +15,7 @@ namespace MyTools.TaoBao.DomainModule
     public class BanggoProduct : Product
     {
         #region Members
-         
-        /// <summary>
-        /// 产品地址
-        /// </summary>
-        public string GoodsUrl { get; set; }
-         
+      
         private string _title;
 
         /// <summary>
@@ -95,25 +90,7 @@ namespace MyTools.TaoBao.DomainModule
         #endregion
 
         #region Constructor
-
-        /// <summary>
-        /// 是否是添加产品，因为添加需要设置一些默认值，但是修改就不需要这些默认值
-        /// </summary>
-        /// <param name="isAdd">新增为true</param>
-        public BanggoProduct(bool isAdd = true)
-        {
-            if (isAdd)
-            {
-                FreightPayer = "buyer";
-                Type = "fixed";
-                StuffStatus = "new";
-                LocationState = SysConst.LocationState;
-                LocationCity = SysConst.LocationCity;
-                SubStock = 2;
-                ValidThru = 14;   
-            }
-        }
-
+         
         #endregion
 
         #region Public Methods

@@ -116,7 +116,7 @@ namespace MyTools.TaoBao.Impl
 
             string brand = _mgtBanggo.ResolveProductUrlRetBrand(goodsUrl);
 
-            string goodsSn = _mgtBanggo.ResolveProductUrlRetGoodsSn(goodsUrl);
+            string goodsSn = _mgtBanggo.GetGoodsSn(goodsUrl);
 
             if (lstProductColor != null && lstProductColor.Count > 0 && lstProductColor[0].SizeList.Count > 0)
             {

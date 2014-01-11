@@ -15,44 +15,23 @@ using RestSharp;
 
 namespace MyTools.TaoBao.Interface
 {
-    public interface IBanggoMgt
-    {
-        /// <summary>
-        /// 得到单个产品信息,在线数据
-        /// </summary>
-        /// <param name="requestModel"></param>
-        /// <returns></returns>
-        BanggoProduct GetGoodsInfo(RequestModel requestModel);
-         
+    public interface IBanggoMgt : IRequest
+    { 
          /// <summary>
         /// 读取或构造单个产品的基础信息。
         /// 包括：标题、价格、销量、产品描述        
         /// </summary>
         /// <param name="product">产品</param>
         /// <param name="requestModel">请求模型</param>
-        void GetProductBaseInfo(BanggoProduct product, RequestModel requestModel);
+        //void GetProductBaseInfo(BanggoProduct product, RequestModel requestModel);
         
-        /// <summary>
-        /// 得到可售商品Sku
-        /// </summary>
-        /// <param name="product">产品</param>
-        /// <param name="requestModel">请求模型</param>
-        void GetProductSku(BanggoProduct product, RequestModel requestModel);
-
         /// <summary>
         /// 得到SKU基本信息不包括，颜色和尺码, 主要用于手动发布产品功能
         /// </summary>
         /// <param name="product"></param>
         /// <param name="requestModel"></param>
         HtmlDocument GetProductSkuBase(BanggoProduct product, RequestModel requestModel);
-
-        /// <summary>
-        /// 解析产品的URL 得到款号
-        /// </summary>
-        /// <param name="url">产品的URL</param>
-        /// <returns></returns>
-        string ResolveProductUrlRetGoodsSn(string url);
-
+         
         /// <summary>
         /// 解析产品的URL 得到品牌
         /// </summary>
@@ -102,14 +81,7 @@ namespace MyTools.TaoBao.Interface
         /// </summary>
         /// <param name="productUrls"></param>
         void ExportProductColorsForExcel(params string[] productUrls);
-
-        /// <summary>
-        /// 通过款号搜索得到该产品的URL
-        /// </summary>
-        /// <param name="goodsSn">款号</param>
-        /// <returns></returns>
-        string GetGoodsUrl(string goodsSn);
-
+         
         /// <summary>
         /// 邦购上的用户登录
         /// </summary>

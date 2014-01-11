@@ -217,6 +217,35 @@ namespace UnitTest
         #endregion
 
 
+        #region 父类与子类的转换
+
+        [Test]
+        public void SupperToChild()
+        {
+            Childer c = new Childer() {SName = "父类", CName = "子类"};
+            SToC(c);
+        }
+
+        private void SToC(Supper s)
+        {
+            Childer c = (Childer) s;
+            Console.WriteLine(c.CName);
+
+        }
+
+
+        public class Supper
+        {
+            public string SName { get; set; }
+        }
+
+        public class Childer : Supper
+        {
+            public string CName { get; set; } 
+        }
+
+        #endregion
+
 
     } 
 }

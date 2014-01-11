@@ -52,7 +52,7 @@ namespace MyTools.TaoBao.Impl
         private readonly Dictionary<string, string> _dicColorMap = new Dictionary<string, string>();
 
         private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
-        private readonly IShop _shop = InstanceLocator.Current.GetInstance<IShop>(Resource.SysConfig_GetDataWay);
+      
         public List<SellerCat> SellercatsList;
 
         private ImageWatermark imageWatermark = new ImageWatermark();
@@ -74,7 +74,7 @@ namespace MyTools.TaoBao.Impl
         /// <returns></returns>
         public Item PublishGoodsForBanggoToTaobao(string banggoProductUrl)
         {
-            string goodsSn = _banggoMgt.ResolveProductUrlRetGoodsSn(banggoProductUrl);
+            string goodsSn = _banggoMgt.GetGoodsSn(banggoProductUrl);
 
             Item item = VerifyGoodsExist(goodsSn);
             if (item.IsNotNull())
@@ -85,13 +85,14 @@ namespace MyTools.TaoBao.Impl
                 return item;
             }
 
-            BanggoProduct banggoProduct =
-                _banggoMgt.GetGoodsInfo(new RequestModel { GoodsSn = goodsSn, Referer = banggoProductUrl });
+            Product product =
+                _banggoMgt.GetGoodsInfo(new RequestModel { GoodsSn = goodsSn, Referer = banggoProductUrl }); 
+            product.SetAddProperty();
 
-            if (banggoProduct.ColorList.IsNullOrEmpty())
+            if (product.ColorList.IsNullOrEmpty())
                 return null;
 
-            return PublishGoodsAndUploadPic(banggoProduct);
+            return PublishGoodsAndUploadPic(product);
         }
          
         /// <summary>
@@ -171,13 +172,13 @@ namespace MyTools.TaoBao.Impl
         }
           
         //发布商品并上传图片
-        private Item PublishGoodsAndUploadPic(BanggoProduct banggoProduct)
+        private Item PublishGoodsAndUploadPic(Product product)
         {
-            StuffProductInfo(banggoProduct);
+            StuffProductInfo(product);
 
-            Item item = PublishGoods(banggoProduct);
+            Item item = PublishGoods(product);
 
-            foreach (ProductColor pColor in banggoProduct.ColorList)
+            foreach (ProductColor pColor in product.ColorList)
             {
                 UploadItemPropimg(item.NumIid, pColor.MapProps, new Uri(pColor.ImgUrl));
                 Thread.Sleep(500);
@@ -323,13 +324,14 @@ namespace MyTools.TaoBao.Impl
                 {
                     try
                     {
-                        BanggoProduct banggoProduct =
+                        Product product =
               _banggoMgt.GetGoodsInfo(new RequestModel { GoodsSn = search, Referer = _banggoMgt.GetGoodsUrl(search) });
+                        product.SetAddProperty();
 
-                        if (banggoProduct.ColorList.IsNullOrEmpty())
+                        if (product.ColorList.IsNullOrEmpty())
                             continue;
 
-                        PublishGoodsAndUploadPic(banggoProduct);
+                        PublishGoodsAndUploadPic(product);
                     }
                     catch (Exception e)
                     {
@@ -381,23 +383,17 @@ namespace MyTools.TaoBao.Impl
         /// <summary>
         ///     更新商品信息包括SKU信息,必须保证BSizeToTSize有值
         /// </summary>
-        public void UpdateGoodsInfo(BanggoProduct banggoProduct)
+        public void UpdateGoodsInfo(Product product)
         {
             //1，填充必填项到props
-            string itemProps = _catalog.GetItemProps(banggoProduct.Cid.ToString());
-            banggoProduct.Props = itemProps; //只先提取必填项
-
-            //2，读取banggo上现在还有那些尺码填充到，BanggoProduct-> BSizeToTSize
-//            if (banggoProduct.BSizeToTSize == null)  
-//            {
-            //                为了让低层代码不依赖具体的数据源，所以将获取BSizeToTSize的方法提前，让前端就准备好
-//            }
-
-            //3，SetSkuInfo 
-            SetSkuInfo(banggoProduct);
+            string itemProps = _catalog.GetItemProps(product.Cid.ToString());
+            product.Props = itemProps; //只先提取必填项
+             
+            //2，SetSkuInfo 
+            SetSkuInfo(product);
             Thread.Sleep(200);
 
-            UpdateGoods(banggoProduct);
+            UpdateGoods(product);
         }
          
         public Item UpdateGoods(Product product)
@@ -458,33 +454,8 @@ namespace MyTools.TaoBao.Impl
                     this._log.LogInfo("GoodsSn:{0}->没有在邦购上获取URL不能进行进行操作".StringFormat(item.OuterId));
                     return;
                 }
-                #region old
-
-                /*old  //如果邦购上该产品还在售，就获取他的SKU信息。 
-                  var banggoProduct = new BanggoProduct(false)
-                                          {
-                                              ColorList =
-                                                  this._banggoMgt.GetProductColorByOnline(
-                                                      new BanggoRequestModel
-                                                          {
-                                                              GoodsSn = item.OuterId,
-                                                              Referer = goodsUrl
-                                                          }),
-                                              GoodsSn = item.OuterId,
-                                              GoodsUrl = goodsUrl,
-                                              Cid = item.Cid,
-                                              NumIid = item.NumIid,
-                                              OuterId = item.OuterId,
-                                              //替换原来的产品标题
-                                              Title =
-                                                  item.Title.Replace(
-                                                      SysConst.OriginalTitle,
-                                                      SysConst.NewTitle)
-                                          };*/
-
-                #endregion
-
-                var banggoProduct = new BanggoProduct(false)
+                  
+                var product = new Product 
                 {
                     GoodsSn = item.OuterId,
                     GoodsUrl = goodsUrl,
@@ -497,7 +468,7 @@ namespace MyTools.TaoBao.Impl
                             SysConst.OriginalTitle,
                             SysConst.NewTitle)
                 };
-                this._banggoMgt.GetProductSku(banggoProduct, new RequestModel
+                this._banggoMgt.GetProductSku(product, new RequestModel
                 {
                     GoodsSn = item.OuterId,
                     Referer = goodsUrl
@@ -516,15 +487,15 @@ namespace MyTools.TaoBao.Impl
                                                                 3);*/
                     #endregion
 
-                    Bitmap watermark = SetTextAndIconWatermark(banggoProduct.ThumbUrl, true);
-                    banggoProduct.Image = new FileItem("aa.jpg", imageWatermark.SetBitmapToBytes(watermark, ImageFormat.Jpeg));
+                    Bitmap watermark = SetTextAndIconWatermark(product.ThumbUrl, true);
+                    product.Image = new FileItem("aa.jpg", imageWatermark.SetBitmapToBytes(watermark, ImageFormat.Jpeg));
                 }
 
                 #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
 
                 if (!SysConst.IsEnforceUpdate)
                 {
-                    if (item.Num == banggoProduct.ColorList.Sum(p => p.AvlNumForColor))
+                    if (item.Num == product.ColorList.Sum(p => p.AvlNumForColor))
                     {
                         this._log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
                         return;
@@ -539,7 +510,7 @@ namespace MyTools.TaoBao.Impl
 
                 if (!isModifyPrice)
                 {
-                    foreach (var size in banggoProduct.ColorList.SelectMany(color => color.SizeList))
+                    foreach (var size in product.ColorList.SelectMany(color => color.SizeList))
                     {
                         size.MySalePrice = item.Price.ToType<double>();
                     }
@@ -547,7 +518,7 @@ namespace MyTools.TaoBao.Impl
 
                 #endregion
 
-                this.UpdateGoodsAndUploadPic(banggoProduct);
+                this.UpdateGoodsAndUploadPic(product);
             }
             catch (Exception ex)
             {
@@ -556,14 +527,14 @@ namespace MyTools.TaoBao.Impl
         }
 
         //更新商品并上传相应的销售图片
-        private void UpdateGoodsAndUploadPic(BanggoProduct banggoProduct)
+        private void UpdateGoodsAndUploadPic(Product product)
         {
-            UpdateGoodsInfo(banggoProduct);
+            UpdateGoodsInfo(product);
 
-            foreach (ProductColor pColor in banggoProduct.ColorList)
+            foreach (ProductColor pColor in product.ColorList)
             {
-                if (banggoProduct.NumIid != null)
-                    UploadItemPropimg(banggoProduct.NumIid.Value, pColor.MapProps, new Uri(pColor.ImgUrl));
+                if (product.NumIid != null)
+                    UploadItemPropimg(product.NumIid.Value, pColor.MapProps, new Uri(pColor.ImgUrl));
 
                 Thread.Sleep(500);
             }
@@ -1006,13 +977,20 @@ namespace MyTools.TaoBao.Impl
         }
 
         //填充产品信息，将banggo的数据填充进相应的请求模型中
-        private void StuffProductInfo(BanggoProduct bProduct)
+        private void StuffProductInfo(Product bProduct)
         {
             _log.LogInfo(Resource.Log_StuffProductInfoing.StringFormat(bProduct.GoodsSn));
             bProduct.OuterId = bProduct.GoodsSn;
 
             //todo:建议cid，SellerCids 由具体请求类去获取
-            bProduct.Cid = bProduct.ParentCatalog == "外套" ? _catalog.GetCid(bProduct.Category, bProduct.Catalog).ToType<Int64>() : _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToType<Int64>();
+           /* bProduct.Cid = bProduct.ParentCatalog == "外套" ? _catalog.GetCid(bProduct.Category, bProduct.Catalog).ToType<Int64>() : _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToType<Int64>();
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+            bProduct.SellerCids = _shop.GetSellerCids(tContext.UserNick,
+                                                      "{0} - {1}".StringFormat(bProduct.Brand, bProduct.Category),
+                                                      bProduct.ParentCatalog);
+*/
+            _banggoMgt.SetCidAndSellerCids(bProduct);
 
             var watermark = SetTextAndIconWatermark(bProduct.ThumbUrl,true);
 
@@ -1020,11 +998,7 @@ namespace MyTools.TaoBao.Impl
 
             //bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", SysUtils.GetImgByte(bProduct.ThumbUrl));
 
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
-
-            bProduct.SellerCids = _shop.GetSellerCids(tContext.UserNick,
-                                                      "{0} - {1}".StringFormat(bProduct.Brand, bProduct.Category),
-                                                      bProduct.ParentCatalog);
+          
 
             //得到运费模版
             string deliveryTemplateId = _delivery.GetDeliveryTemplateId(Resource.SysConfig_DeliveryTemplateName);
@@ -1076,7 +1050,7 @@ namespace MyTools.TaoBao.Impl
         }
 
         //包括设置品牌、货号
-        private void SetOptionalProps(BanggoProduct bProduct)
+        private void SetOptionalProps(Product bProduct)
         {
             //取消在Props中增加品牌，因为在更新SKU没办法得到Brand
             /* var rm = new ResourceManager(typeof(Resource).FullName,
@@ -1114,7 +1088,7 @@ namespace MyTools.TaoBao.Impl
             return response.PropImg;
         }
 
-        private void SetSkuInfo(BanggoProduct bProduct)
+        private void SetSkuInfo(Product bProduct)
         {
             #region var
 

@@ -29,6 +29,7 @@ using MyTools.TaoBao.Interface;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using Top.Api.Util;
 
 namespace MyTools.TaoBao.Impl
 {
@@ -36,7 +37,9 @@ namespace MyTools.TaoBao.Impl
     {
         #region Var
 
-        private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create(); 
+        private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
+        private readonly IShop _shop = InstanceLocator.Current.GetInstance<IShop>(Resource.SysConfig_GetDataWay);
+        private readonly ICatalog _catalog = InstanceLocator.Current.GetInstance<ICatalog>(Resource.SysConfig_GetDataWay);
 
         private StringBuilder sbDesc = new StringBuilder();
          
@@ -45,11 +48,27 @@ namespace MyTools.TaoBao.Impl
         #region Public Method
 
         /// <summary>
+        /// 设计在淘宝上的类目和设计店铺的类目
+        /// </summary>
+        /// <param name="product"></param>
+        public void SetCidAndSellerCids(Product product)
+        {
+            BanggoProduct bProduct = (BanggoProduct) product;
+
+            bProduct.Cid = bProduct.ParentCatalog == "外套" ? _catalog.GetCid(bProduct.Category, bProduct.Catalog).ToType<Int64>() : _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToType<Int64>();
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+
+            bProduct.SellerCids = _shop.GetSellerCids(tContext.UserNick,
+                                                      "{0} - {1}".StringFormat(bProduct.Brand, bProduct.Category),
+                                                      bProduct.ParentCatalog);
+        }
+
+        /// <summary>
         ///     得到单个产品信息
         /// </summary>
         /// <param name="requestModel"></param>
         /// <returns></returns>
-        public BanggoProduct GetGoodsInfo(RequestModel requestModel)
+        public Product GetGoodsInfo(RequestModel requestModel)
         {
             var product = new BanggoProduct {GoodsSn = requestModel.GoodsSn};
 
@@ -67,7 +86,7 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="product">产品</param>
         /// <param name="requestModel">请求模型</param>
-        public void GetProductBaseInfo(BanggoProduct product, RequestModel requestModel)
+        private void GetProductBaseInfo(BanggoProduct product, RequestModel requestModel)
         {
             #region 得到banggo数据
 
@@ -203,12 +222,30 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="product">产品</param>
         /// <param name="requestModel">请求模型</param>
-        public void GetProductSku(BanggoProduct product, RequestModel requestModel)
+        public void GetProductSku(Product product, RequestModel requestModel)
         {
-            var doc = GetProductSkuBase(product, requestModel);
+            BanggoProduct banggoProduct;
+            bool isError = false;
+            try//如果该对象以前是父类，那么此时就直接强制转换，如果不是都重新new一个子类,然后进行赋值
+            {
+                banggoProduct = (BanggoProduct) product;
+            }
+            catch (Exception)
+            {
+                isError = true;
+                banggoProduct = new BanggoProduct();
+                Util.CopyModel(product, banggoProduct);
+            }
+
+            var doc = GetProductSkuBase(banggoProduct, requestModel);
              
-            product.ColorList = GetProductColorByOnline(requestModel, doc);
-             
+            banggoProduct.ColorList = GetProductColorByOnline(requestModel, doc);
+
+            if (isError) //如果是new的一个新对象，那么，就要把在GetProductSkuBase,GetProductColorByOnline中获取到的值，赋给product对象
+            {
+                Util.CopyModel(banggoProduct,product);
+            }
+
         }
 
         /// <summary>
@@ -242,7 +279,7 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="url">产品的URL</param>
         /// <returns></returns>
-        public string ResolveProductUrlRetGoodsSn(string url)
+        public string GetGoodsSn(string url)
         {
             CheckGoodsUrl(url);
 
@@ -367,7 +404,7 @@ namespace MyTools.TaoBao.Impl
         {
             if (productUrl.IsNullOrEmpty())
                 throw new Exception(Resource.Exception_NotFoundAuthorizedCode.StringFormat(new StackTrace()));
-            string goodsSn = ResolveProductUrlRetGoodsSn(productUrl);
+            string goodsSn = GetGoodsSn(productUrl);
 
             _log.LogInfo(Resource.Log_ExportProductColorForExceling.StringFormat(goodsSn));
 
@@ -413,7 +450,7 @@ namespace MyTools.TaoBao.Impl
 
             foreach (var productUrl in productUrls)
             {
-                string goodsSn = ResolveProductUrlRetGoodsSn(productUrl);
+                string goodsSn = GetGoodsSn(productUrl);
 
                 var request = new RequestModel { GoodsSn = goodsSn, Referer = productUrl };
 
