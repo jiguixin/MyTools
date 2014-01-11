@@ -39,6 +39,21 @@ namespace MyTools.TaoBao.DomainModule
         /// </summary>
         public virtual int SalesVolume { get; set; }
 
+        /// <summary>
+        ///     产品编号，款号
+        /// </summary>
+        public string GoodsSn { get; set; }
+         
+        /// <summary>
+        ///     品牌
+        /// </summary>
+        public string Brand { get; set; }
+ 
+        /// <summary>
+        ///     商品主图 url
+        /// </summary>
+        public string ThumbUrl { get; set; }
+
 
         public List<ProductColor> ColorList { get; set; }
          

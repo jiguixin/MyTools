@@ -15,22 +15,12 @@ namespace MyTools.TaoBao.DomainModule
     public class BanggoProduct : Product
     {
         #region Members
-
-        /// <summary>
-        ///     品牌
-        /// </summary>
-        public string Brand { get; set; }
-
+         
         /// <summary>
         /// 产品地址
         /// </summary>
         public string GoodsUrl { get; set; }
-
-        /// <summary>
-        ///     款号
-        /// </summary>
-        public string GoodsSn { get; set; }
-
+         
         private string _title;
 
         /// <summary>
@@ -101,11 +91,6 @@ namespace MyTools.TaoBao.DomainModule
         ///     商品目录，如 针织短袖恤
         /// </summary>
         public string Catalog { get; set; }
-
-        /// <summary>
-        ///     商品主图 url
-        /// </summary>
-        public string ThumbUrl { get; set; }
 
         #endregion
 

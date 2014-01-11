@@ -86,7 +86,7 @@ namespace MyTools.TaoBao.Impl
             }
 
             BanggoProduct banggoProduct =
-                _banggoMgt.GetGoodsInfo(new BanggoRequestModel { GoodsSn = goodsSn, Referer = banggoProductUrl });
+                _banggoMgt.GetGoodsInfo(new RequestModel { GoodsSn = goodsSn, Referer = banggoProductUrl });
 
             if (banggoProduct.ColorList.IsNullOrEmpty())
                 return null;
@@ -100,74 +100,74 @@ namespace MyTools.TaoBao.Impl
         /// <param name="filePath"></param>
         public void PublishGoodsFromExcel(string filePath)
         {
-            IEnumerable<PublishGoods> lstPublishGoods = GetPublishGoodsFromExcel(filePath);
+            //IEnumerable<PublishGoods> lstPublishGoods = GetPublishGoodsFromExcel(filePath);
 
-            foreach (PublishGoods pgModel in lstPublishGoods)
-            {
-                Thread.Sleep(500);
+            //foreach (PublishGoods pgModel in lstPublishGoods)
+            //{
+            //    Thread.Sleep(500);
 
-                Item item = VerifyGoodsExist(pgModel.GoodsSn);
-                if (item.IsNotNull())
-                {
-                    #region 更新现有商品
+            //    Item item = VerifyGoodsExist(pgModel.GoodsSn);
+            //    if (item.IsNotNull())
+            //    {
+            //        #region 更新现有商品
 
-                    try
-                    {
-                        var banggoProduct = new BanggoProduct(false)
-                        {
-                            ColorList = pgModel.ProductColors,
-                            GoodsSn = item.OuterId,
-                            GoodsUrl = pgModel.Url,
-                            Cid = item.Cid,
-                            NumIid = item.NumIid,
-                            //替换原来的产品标题
-                            Title = item.Title.Replace(SysConst.OriginalTitle, SysConst.NewTitle)
-                        };
-                        //  Util.CopyModel(item, banggoProduct); node: 不能在这赋值，这样就会造成有些为NULL的给赋成了默认值 
-                        var req = new BanggoRequestModel { GoodsSn = banggoProduct.GoodsSn, Referer = banggoProduct.GoodsUrl };
+            //        try
+            //        {
+            //            var banggoProduct = new BanggoProduct(false)
+            //            {
+            //                ColorList = pgModel.ProductColors,
+            //                GoodsSn = item.OuterId,
+            //                GoodsUrl = pgModel.Url,
+            //                Cid = item.Cid,
+            //                NumIid = item.NumIid,
+            //                //替换原来的产品标题
+            //                Title = item.Title.Replace(SysConst.OriginalTitle, SysConst.NewTitle)
+            //            };
+            //            //  Util.CopyModel(item, banggoProduct); node: 不能在这赋值，这样就会造成有些为NULL的给赋成了默认值 
+            //            var req = new BanggoRequestModel { GoodsSn = banggoProduct.GoodsSn, Referer = banggoProduct.GoodsUrl };
 
-                        banggoProduct.BSizeToTSize = _banggoMgt.GetBSizeToTSize(_banggoMgt.GetGoodsDetialElementData(req));
+            //            banggoProduct.BSizeToTSize = _banggoMgt.GetBSizeToTSize(_banggoMgt.GetGoodsDetialElementData(req));
 
-                        DeleteAllSku(item); 
+            //            DeleteAllSku(item); 
 
-                        UpdateGoodsAndUploadPic(banggoProduct);
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(item.NumIid, item.OuterId), ex);
-                        continue;
-                    }
+            //            UpdateGoodsAndUploadPic(banggoProduct);
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(item.NumIid, item.OuterId), ex);
+            //            continue;
+            //        }
 
-                    #endregion
-                }
-                else
-                {
-                    #region 发布商品 从EXCEL中读取
+            //        #endregion
+            //    }
+            //    else
+            //    {
+            //        #region 发布商品 从EXCEL中读取
 
-                    try
-                    {
-                        var product = new BanggoProduct { GoodsSn = pgModel.GoodsSn };
+            //        try
+            //        {
+            //            var product = new BanggoProduct { GoodsSn = pgModel.GoodsSn };
 
-                        var requestModel = new BanggoRequestModel { Referer = pgModel.Url, GoodsSn = pgModel.GoodsSn };
+            //            var requestModel = new BanggoRequestModel { Referer = pgModel.Url, GoodsSn = pgModel.GoodsSn };
 
-                        _banggoMgt.GetProductBaseInfo(product, requestModel);
+            //            _banggoMgt.GetProductBaseInfo(product, requestModel);
 
-                        _banggoMgt.GetProductSkuBase(product, requestModel);
+            //            _banggoMgt.GetProductSkuBase(product, requestModel);
 
-                        product.ColorList = pgModel.ProductColors;
+            //            product.ColorList = pgModel.ProductColors;
 
-                        PublishGoodsAndUploadPic(product);
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.LogError(Resource.Log_PublishGoodsFailure.StringFormat(pgModel.GoodsSn), ex);
-                        continue;
-                    }
+            //            PublishGoodsAndUploadPic(product);
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            _log.LogError(Resource.Log_PublishGoodsFailure.StringFormat(pgModel.GoodsSn), ex);
+            //            continue;
+            //        }
 
-                    #endregion
-                }
-                Thread.Sleep(500);
-            }
+            //        #endregion
+            //    }
+            //    Thread.Sleep(500);
+            //}
         }
           
         //发布商品并上传图片
@@ -324,7 +324,7 @@ namespace MyTools.TaoBao.Impl
                     try
                     {
                         BanggoProduct banggoProduct =
-              _banggoMgt.GetGoodsInfo(new BanggoRequestModel { GoodsSn = search, Referer = _banggoMgt.GetGoodsUrl(search) });
+              _banggoMgt.GetGoodsInfo(new RequestModel { GoodsSn = search, Referer = _banggoMgt.GetGoodsUrl(search) });
 
                         if (banggoProduct.ColorList.IsNullOrEmpty())
                             continue;
@@ -497,7 +497,7 @@ namespace MyTools.TaoBao.Impl
                             SysConst.OriginalTitle,
                             SysConst.NewTitle)
                 };
-                this._banggoMgt.GetProductSku(banggoProduct, new BanggoRequestModel
+                this._banggoMgt.GetProductSku(banggoProduct, new RequestModel
                 {
                     GoodsSn = item.OuterId,
                     Referer = goodsUrl

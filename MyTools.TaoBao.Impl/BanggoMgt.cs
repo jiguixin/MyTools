@@ -21,6 +21,7 @@ using HtmlAgilityPack;
 using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
+using Infrastructure.Crosscutting.Utility;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.Framework.Common;
 using MyTools.TaoBao.DomainModule;
@@ -48,7 +49,7 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="requestModel"></param>
         /// <returns></returns>
-        public BanggoProduct GetGoodsInfo(BanggoRequestModel requestModel)
+        public BanggoProduct GetGoodsInfo(RequestModel requestModel)
         {
             var product = new BanggoProduct {GoodsSn = requestModel.GoodsSn};
 
@@ -66,7 +67,7 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="product">产品</param>
         /// <param name="requestModel">请求模型</param>
-        public void GetProductBaseInfo(BanggoProduct product, BanggoRequestModel requestModel)
+        public void GetProductBaseInfo(BanggoProduct product, RequestModel requestModel)
         {
             #region 得到banggo数据
 
@@ -202,7 +203,7 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="product">产品</param>
         /// <param name="requestModel">请求模型</param>
-        public void GetProductSku(BanggoProduct product, BanggoRequestModel requestModel)
+        public void GetProductSku(BanggoProduct product, RequestModel requestModel)
         {
             var doc = GetProductSkuBase(product, requestModel);
              
@@ -215,7 +216,7 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="product"></param>
         /// <param name="requestModel"></param>
-        public HtmlDocument GetProductSkuBase(BanggoProduct product, BanggoRequestModel requestModel)
+        public HtmlDocument GetProductSkuBase(BanggoProduct product, RequestModel requestModel)
         {
             string result = GetGoodsPriceAndColorContent(requestModel);
 
@@ -277,7 +278,7 @@ namespace MyTools.TaoBao.Impl
         /// </summary>
         /// <param name="requestModel">Referer\GoodsSn 必须传入</param>
         /// <returns></returns>
-        public List<ProductColor> GetProductColorByOnline(BanggoRequestModel requestModel)
+        public List<ProductColor> GetProductColorByOnline(RequestModel requestModel)
         {
             var doc = GetGoodsDetialElementData(requestModel);
 
@@ -285,8 +286,11 @@ namespace MyTools.TaoBao.Impl
         }
 
         //得到产品的颜色和大小数据，通过在线读取，该方法主要用于以自动无干预自动上产品
-        public List<ProductColor> GetProductColorByOnline(BanggoRequestModel requestModel, HtmlDocument doc)
+        public List<ProductColor> GetProductColorByOnline(RequestModel requestModelbase, HtmlDocument doc)
         {
+            BanggoRequestModel requestModel = new BanggoRequestModel();  
+            Util.CopyModel(requestModelbase, requestModel);
+
             HtmlNode htmlNodeColorList = doc.GetElementbyId(Resource.SysConfig_ColorListId);
 
             if (htmlNodeColorList.IsNull())
@@ -327,7 +331,7 @@ namespace MyTools.TaoBao.Impl
         }
 
         //得到产品详细界面的Data元素数据
-        public HtmlDocument GetGoodsDetialElementData(BanggoRequestModel requestModel)
+        public HtmlDocument GetGoodsDetialElementData(RequestModel requestModel)
         {
             //得到产品详情界面数据
             string result = GetGoodsPriceAndColorContent(requestModel);
@@ -374,7 +378,7 @@ namespace MyTools.TaoBao.Impl
 
             DataTable dt = excel.ReadTable(sheetName);
 
-            var request = new BanggoRequestModel {GoodsSn = goodsSn, Referer = productUrl};
+            var request = new RequestModel {GoodsSn = goodsSn, Referer = productUrl};
 
             var lstProductColor = GetProductColorByOnline(request);
 
@@ -411,7 +415,7 @@ namespace MyTools.TaoBao.Impl
             {
                 string goodsSn = ResolveProductUrlRetGoodsSn(productUrl);
 
-                var request = new BanggoRequestModel { GoodsSn = goodsSn, Referer = productUrl };
+                var request = new RequestModel { GoodsSn = goodsSn, Referer = productUrl };
 
                 var lstProductColor = GetProductColorByOnline(request);
                   
@@ -733,7 +737,7 @@ namespace MyTools.TaoBao.Impl
         }
          
         //得到Price/getGoodsPrice(获得该商品的价格、颜色)的响应内容
-        private static string GetGoodsPriceAndColorContent(BanggoRequestModel requestModel)
+        private static string GetGoodsPriceAndColorContent(RequestModel requestModel)
         {
             var cookieJar = new CookieContainer();
 
@@ -870,7 +874,7 @@ namespace MyTools.TaoBao.Impl
 
 
         //读取Desc数据，因为有些产品描述的Id是productinfo_div
-        private static string GetProductDesc(BanggoRequestModel requestModel, HtmlNodeCollection imgNodes,
+        private static string GetProductDesc(RequestModel requestModel, HtmlNodeCollection imgNodes,
                                              HtmlDocument doc, string detailId)
         {
             string desc;
@@ -920,48 +924,48 @@ namespace MyTools.TaoBao.Impl
 
 
         //得到产品的颜色和大小 （todo: 暂时没有用该方法）
-        private void GetProductAndSize(BanggoProduct product, BanggoRequestModel requestModel, HtmlDocument doc)
-        {
-            HtmlNode htmlNodeColorList = doc.GetElementbyId(Resource.SysConfig_ColorListId);
+        //private void GetProductAndSize(BanggoProduct product, BanggoRequestModel requestModel, HtmlDocument doc)
+        //{
+        //    HtmlNode htmlNodeColorList = doc.GetElementbyId(Resource.SysConfig_ColorListId);
 
-            htmlNodeColorList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-                new StackTrace()));
+        //    htmlNodeColorList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+        //        new StackTrace()));
 
-            HtmlNodeCollection colors = htmlNodeColorList.SelectNodes("li/a");
+        //    HtmlNodeCollection colors = htmlNodeColorList.SelectNodes("li/a");
 
-            colors.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-                new StackTrace()));
-
-
-            //HtmlNode htmlNodeSizeList = doc.GetElementbyId(Resource.SysConfig_SizeListId);
-            //htmlNodeSizeList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-            //                                           new StackTrace()));
-
-            //HtmlNodeCollection sizes = htmlNodeSizeList.SelectNodes("a");
-            //sizes.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-            //                                new StackTrace()));
-
-            //product.BSizeToTSize = new Dictionary<string, string>();
-
-            //foreach (HtmlNode sizeNode in sizes)
-            //{
-            //    product.BSizeToTSize.Add(sizeNode.InnerText.Trim(), null);
-            //}
+        //    colors.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+        //        new StackTrace()));
 
 
-            product.ColorList = new List<ProductColor>();
+        //    //HtmlNode htmlNodeSizeList = doc.GetElementbyId(Resource.SysConfig_SizeListId);
+        //    //htmlNodeSizeList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+        //    //                                           new StackTrace()));
 
-            foreach (HtmlNode colorNode in colors)
-            {
-                string colorInfo = colorNode.Attributes["onclick"].Value;
+        //    //HtmlNodeCollection sizes = htmlNodeSizeList.SelectNodes("a");
+        //    //sizes.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
+        //    //                                new StackTrace()));
 
-                ProductColor productColor = CreateProductColor(colorInfo);
+        //    //product.BSizeToTSize = new Dictionary<string, string>();
 
-                requestModel.ColorCode = productColor.ColorCode;
-                productColor.SizeList = GetAvailableSize(requestModel);
-                product.ColorList.Add(productColor);
-            }
-        }
+        //    //foreach (HtmlNode sizeNode in sizes)
+        //    //{
+        //    //    product.BSizeToTSize.Add(sizeNode.InnerText.Trim(), null);
+        //    //}
+
+
+        //    product.ColorList = new List<ProductColor>();
+
+        //    foreach (HtmlNode colorNode in colors)
+        //    {
+        //        string colorInfo = colorNode.Attributes["onclick"].Value;
+
+        //        ProductColor productColor = CreateProductColor(colorInfo);
+
+        //        requestModel.ColorCode = productColor.ColorCode;
+        //        productColor.SizeList = GetAvailableSize(requestModel);
+        //        product.ColorList.Add(productColor);
+        //    }
+        //}
 
        
          
