@@ -35,7 +35,7 @@ namespace MyTools.TaoBao.Impl
 {
     using System.Drawing;
     using System.Drawing.Imaging;
-
+    
     public class GoodsApi : IGoodsApi
     {
         #region Members
@@ -124,8 +124,11 @@ namespace MyTools.TaoBao.Impl
                             Title = item.Title.Replace(SysConst.OriginalTitle, SysConst.NewTitle)
                         };
                         //  Util.CopyModel(item, banggoProduct); node: 不能在这赋值，这样就会造成有些为NULL的给赋成了默认值 
+                        var req = new BanggoRequestModel { GoodsSn = banggoProduct.GoodsSn, Referer = banggoProduct.GoodsUrl };
 
-                        DeleteAllSku(item);
+                        banggoProduct.BSizeToTSize = _banggoMgt.GetBSizeToTSize(_banggoMgt.GetGoodsDetialElementData(req));
+
+                        DeleteAllSku(item); 
 
                         UpdateGoodsAndUploadPic(banggoProduct);
                     }
@@ -375,6 +378,28 @@ namespace MyTools.TaoBao.Impl
             return response.Sku;
         }
          
+        /// <summary>
+        ///     更新商品信息包括SKU信息,必须保证BSizeToTSize有值
+        /// </summary>
+        public void UpdateGoodsInfo(BanggoProduct banggoProduct)
+        {
+            //1，填充必填项到props
+            string itemProps = _catalog.GetItemProps(banggoProduct.Cid.ToString());
+            banggoProduct.Props = itemProps; //只先提取必填项
+
+            //2，读取banggo上现在还有那些尺码填充到，BanggoProduct-> BSizeToTSize
+//            if (banggoProduct.BSizeToTSize == null)  
+//            {
+            //                为了让低层代码不依赖具体的数据源，所以将获取BSizeToTSize的方法提前，让前端就准备好
+//            }
+
+            //3，SetSkuInfo 
+            SetSkuInfo(banggoProduct);
+            Thread.Sleep(200);
+
+            UpdateGoods(banggoProduct);
+        }
+         
         public Item UpdateGoods(Product product)
         {
             var req = new ItemUpdateRequest();
@@ -406,27 +431,144 @@ namespace MyTools.TaoBao.Impl
             return item;
         }
 
-        /// <summary>
-        ///     更新商品信息包括SKU信息
-        /// </summary>
-        public void UpdateGoodsInfo(BanggoProduct banggoProduct)
+   
+        //更新商品的内部方法
+        private void UpdateGoodsInternal(IEnumerable<Item> lstItem, bool isModifyPrice = true)
         {
-            //1，填充必填项到props
-            string itemProps = _catalog.GetItemProps(banggoProduct.Cid.ToString());
-            banggoProduct.Props = itemProps; //只先提取必填项
+            //遍历在售商品列表中的商品，通过outerid去查询banggo上的该产品信息
+            foreach (Item item in lstItem)
+            {
+                Thread.Sleep(1000);
 
-            //2，读取banggo上现在还有那些尺码填充到，BanggoProduct-> BSizeToTSize
+                //通过款号查询如果没有得到产品的URL或得不到库存，就将该产品进行下架。
+                string goodsUrl = _banggoMgt.GetGoodsUrl(item.OuterId);
 
-            var req = new BanggoRequestModel { GoodsSn = banggoProduct.GoodsSn, Referer = banggoProduct.GoodsUrl };
-
-            banggoProduct.BSizeToTSize = _banggoMgt.GetBSizeToTSize(_banggoMgt.GetGoodsDetialElementData(req));
-            //3，SetSkuInfo 
-            SetSkuInfo(banggoProduct);
-            Thread.Sleep(200);
-
-            UpdateGoods(banggoProduct);
+                this.UpdateGoodsInternalSingle(item, goodsUrl, isModifyPrice);
+            }
         }
-         
+
+        //更新单条产品
+        private void UpdateGoodsInternalSingle(Item item, string goodsUrl, bool isModifyPrice = true)
+        {
+            try
+            {
+                if (goodsUrl.IsNullOrEmpty())
+                {
+                    // this.GoodsDelisting(item.NumIid); //不进行下架，如在获取产品时，网络问题等因素
+                    this._log.LogInfo("GoodsSn:{0}->没有在邦购上获取URL不能进行进行操作".StringFormat(item.OuterId));
+                    return;
+                }
+                #region old
+
+                /*old  //如果邦购上该产品还在售，就获取他的SKU信息。 
+                  var banggoProduct = new BanggoProduct(false)
+                                          {
+                                              ColorList =
+                                                  this._banggoMgt.GetProductColorByOnline(
+                                                      new BanggoRequestModel
+                                                          {
+                                                              GoodsSn = item.OuterId,
+                                                              Referer = goodsUrl
+                                                          }),
+                                              GoodsSn = item.OuterId,
+                                              GoodsUrl = goodsUrl,
+                                              Cid = item.Cid,
+                                              NumIid = item.NumIid,
+                                              OuterId = item.OuterId,
+                                              //替换原来的产品标题
+                                              Title =
+                                                  item.Title.Replace(
+                                                      SysConst.OriginalTitle,
+                                                      SysConst.NewTitle)
+                                          };*/
+
+                #endregion
+
+                var banggoProduct = new BanggoProduct(false)
+                {
+                    GoodsSn = item.OuterId,
+                    GoodsUrl = goodsUrl,
+                    Cid = item.Cid,
+                    NumIid = item.NumIid,
+                    OuterId = item.OuterId,
+                    //替换原来的产品标题
+                    Title =
+                        item.Title.Replace(
+                            SysConst.OriginalTitle,
+                            SysConst.NewTitle)
+                };
+                this._banggoMgt.GetProductSku(banggoProduct, new BanggoRequestModel
+                {
+                    GoodsSn = item.OuterId,
+                    Referer = goodsUrl
+                });
+
+                if (SysConst.IsModifyMainPic)
+                {
+                    #region old
+
+                    /* old //todo 些处可以修改了，因为能获取到主图URL了
+                     Bitmap watermark = imageWatermark.CreateWatermark((Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(item.PicUrl)),
+                                                                (Bitmap)
+                                                                imageWatermark.SetByteToImage(
+                                                                    SysUtils.GetImgByte(SysConst.ImgWatermark)),
+                                                                ImageWatermark.WatermarkPosition.RightTop,
+                                                                3);*/
+                    #endregion
+
+                    Bitmap watermark = SetTextAndIconWatermark(banggoProduct.ThumbUrl, true);
+                    banggoProduct.Image = new FileItem("aa.jpg", imageWatermark.SetBitmapToBytes(watermark, ImageFormat.Jpeg));
+                }
+
+                #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
+
+                if (!SysConst.IsEnforceUpdate)
+                {
+                    if (item.Num == banggoProduct.ColorList.Sum(p => p.AvlNumForColor))
+                    {
+                        this._log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
+                        return;
+                    }
+                }
+
+                #endregion
+
+                this.DeleteAllSku(item);
+
+                #region 如果是不修改价格（IsModifyPrice = false），则读取Item的price 填充到MySalePrice 中
+
+                if (!isModifyPrice)
+                {
+                    foreach (var size in banggoProduct.ColorList.SelectMany(color => color.SizeList))
+                    {
+                        size.MySalePrice = item.Price.ToType<double>();
+                    }
+                }
+
+                #endregion
+
+                this.UpdateGoodsAndUploadPic(banggoProduct);
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(item.NumIid, item.OuterId), ex);
+            }
+        }
+
+        //更新商品并上传相应的销售图片
+        private void UpdateGoodsAndUploadPic(BanggoProduct banggoProduct)
+        {
+            UpdateGoodsInfo(banggoProduct);
+
+            foreach (ProductColor pColor in banggoProduct.ColorList)
+            {
+                if (banggoProduct.NumIid != null)
+                    UploadItemPropimg(banggoProduct.NumIid.Value, pColor.MapProps, new Uri(pColor.ImgUrl));
+
+                Thread.Sleep(500);
+            }
+        }
+
         #endregion
           
         #region QueryGoods
@@ -690,11 +832,12 @@ namespace MyTools.TaoBao.Impl
                                   ? urlImg.Segments[len - 1]
                                   : "{0}-{1}.jpg".StringFormat(numId.ToString(CultureInfo.InvariantCulture), properties);
 
-            Bitmap watermark = imageWatermark.CreateWatermark(
+          /*  Bitmap watermark = imageWatermark.CreateWatermark(
                (Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(urlImg.ToString())),
                SysConst.TextWatermark,
                ImageWatermark.WatermarkPosition.RigthBottom,
-               3);
+               3);*/
+            Bitmap watermark = SetTextAndIconWatermark(urlImg.ToString(), false);
 
             var fItem = new FileItem(fileName, imageWatermark.SetBitmapToBytes(watermark, ImageFormat.Jpeg));
 
@@ -747,7 +890,8 @@ namespace MyTools.TaoBao.Impl
                (Bitmap)imageWatermark.SetByteToImage(FileHelper.ReadFile(imgPath)),
                SysConst.TextWatermark,
                ImageWatermark.WatermarkPosition.RigthBottom,
-               3); 
+               3);
+
             var fItem = new FileItem("{0}-{1}.jpg".StringFormat(numId.ToString(CultureInfo.InvariantCulture), properties),imageWatermark.SetBitmapToBytes(watermark,ImageFormat.Jpeg));
 
             return UploadItemPropimgInternal(numId, properties, fItem);
@@ -786,103 +930,6 @@ namespace MyTools.TaoBao.Impl
 
         #region Private Methods
 
-        //更新商品的内部方法
-        private void UpdateGoodsInternal(IEnumerable<Item> lstItem, bool isModifyPrice = true)
-        {
-            //遍历在售商品列表中的商品，通过outerid去查询banggo上的该产品信息
-            foreach (Item item in lstItem)
-            {
-                Thread.Sleep(1000);
-
-                //通过款号查询如果没有得到产品的URL或得不到库存，就将该产品进行下架。
-                string goodsUrl = _banggoMgt.GetGoodsUrl(item.OuterId);
-
-                this.UpdateGoodsInternalSingle(item, goodsUrl, isModifyPrice);
-
-            }
-        }
-
-        //更新单条产品
-        private void UpdateGoodsInternalSingle(Item item, string goodsUrl, bool isModifyPrice = true)
-        {
-            try
-            {
-                if (goodsUrl.IsNullOrEmpty())
-                {
-                    // this.GoodsDelisting(item.NumIid); //不进行下架，如在获取产品时，网络问题等因素
-                    this._log.LogInfo("GoodsSn:{0}->没有在邦购上获取URL不能进行进行操作".StringFormat(item.OuterId));
-                    return;
-                }
-
-                //如果邦购上该产品还在售，就获取他的SKU信息。 
-                var banggoProduct = new BanggoProduct(false)
-                                        {
-                                            ColorList =
-                                                this._banggoMgt.GetProductColorByOnline(
-                                                    new BanggoRequestModel
-                                                        {
-                                                            GoodsSn = item.OuterId,
-                                                            Referer = goodsUrl
-                                                        }),
-                                            GoodsSn = item.OuterId,
-                                            GoodsUrl = goodsUrl,
-                                            Cid = item.Cid,
-                                            NumIid = item.NumIid,
-                                            OuterId = item.OuterId,
-                                            //替换原来的产品标题
-                                            Title =
-                                                item.Title.Replace(
-                                                    SysConst.OriginalTitle,
-                                                    SysConst.NewTitle)
-                                        };
-
-
-                if (SysConst.IsModifyMainPic)
-                { 
-                    Bitmap watermark = imageWatermark.CreateWatermark((Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(item.PicUrl)),
-                                                               (Bitmap)
-                                                               imageWatermark.SetByteToImage(
-                                                                   SysUtils.GetImgByte(SysConst.ImgWatermark)),
-                                                               ImageWatermark.WatermarkPosition.RightTop,
-                                                               3);
-
-                    banggoProduct.Image = new FileItem("aa.jpg",imageWatermark.SetBitmapToBytes(watermark,ImageFormat.Jpeg));
-                }
-
-                #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
-
-                if (!SysConst.IsEnforceUpdate)
-                {
-                    if (item.Num == banggoProduct.ColorList.Sum(p => p.AvlNumForColor))
-                    {
-                        this._log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
-                        return;
-                    }
-                }
-
-                #endregion
-
-                this.DeleteAllSku(item);
-
-                #region 如果是不修改价格（IsModifyPrice = false），则读取Item的price 填充到MySalePrice 中
-
-                if (!isModifyPrice)
-                {
-                    foreach (var size in banggoProduct.ColorList.SelectMany(color => color.SizeList))
-                    {
-                        size.MySalePrice = item.Price.ToType<double>();
-                    }
-                }
-
-                #endregion
-
-                this.UpdateGoodsAndUploadPic(banggoProduct);
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(item.NumIid, item.OuterId), ex);
-            }
-        }
 
         //现在淘宝可以将SKU全部删除完,并将该产品对应的销售图片给删除掉 
         private void DeleteAllSku(Item item)
@@ -944,21 +991,7 @@ namespace MyTools.TaoBao.Impl
              
             #endregion
         }
-         
-        //更新商品并上传相应的销售图片
-        private void UpdateGoodsAndUploadPic(BanggoProduct banggoProduct)
-        {
-            UpdateGoodsInfo(banggoProduct);
-
-            foreach (ProductColor pColor in banggoProduct.ColorList)
-            {
-                if (banggoProduct.NumIid != null)
-                    UploadItemPropimg(banggoProduct.NumIid.Value, pColor.MapProps, new Uri(pColor.ImgUrl));
-
-                Thread.Sleep(500);
-            }
-        }
-
+        
        
         //重EXCEL中读取要发布的数据用于发布或更新商品SKU
         private static IEnumerable<PublishGoods> GetPublishGoodsFromExcel(string filePath)
@@ -978,23 +1011,11 @@ namespace MyTools.TaoBao.Impl
             _log.LogInfo(Resource.Log_StuffProductInfoing.StringFormat(bProduct.GoodsSn));
             bProduct.OuterId = bProduct.GoodsSn;
 
-
+            //todo:建议cid，SellerCids 由具体请求类去获取
             bProduct.Cid = bProduct.ParentCatalog == "外套" ? _catalog.GetCid(bProduct.Category, bProduct.Catalog).ToType<Int64>() : _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToType<Int64>();
 
-            Bitmap watermark = imageWatermark.CreateWatermark(
-                (Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(bProduct.ThumbUrl)),
-                SysConst.TextWatermark,
-                ImageWatermark.WatermarkPosition.RigthBottom,
-                3);
-            
-            if (SysConst.IsModifyMainPic)
-            {
-                watermark = imageWatermark.CreateWatermark(watermark,
-                (Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(SysConst.ImgWatermark)),
-                ImageWatermark.WatermarkPosition.RightTop,
-                3);
-            }
-             
+            var watermark = SetTextAndIconWatermark(bProduct.ThumbUrl,true);
+
             bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", imageWatermark.SetBitmapToBytes(watermark,ImageFormat.Jpeg));
 
             //bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", SysUtils.GetImgByte(bProduct.ThumbUrl));
@@ -1028,6 +1049,30 @@ namespace MyTools.TaoBao.Impl
             watermark.Dispose();
 
             _log.LogInfo(Resource.Log_StuffProductInfoSuccess.StringFormat(bProduct.GoodsSn));
+        }
+
+        //添加文字水印和图片水印
+        private Bitmap SetTextAndIconWatermark(string picUrl,bool isMainPic)
+        {
+            Bitmap watermark = imageWatermark.CreateWatermark(
+                (Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(picUrl)),
+                SysConst.TextWatermark,
+                ImageWatermark.WatermarkPosition.RigthBottom,
+                3);
+
+            if (isMainPic)//只有该图片地址是主图才会去给主图加图片水印
+            {
+                if (SysConst.IsModifyMainPic)
+                {
+                    watermark = imageWatermark.CreateWatermark(watermark,
+                                                               (Bitmap)
+                                                               imageWatermark.SetByteToImage(
+                                                                   SysUtils.GetImgByte(SysConst.ImgWatermark)),
+                                                               ImageWatermark.WatermarkPosition.RightTop,
+                                                               3);
+                }
+            }
+            return watermark;
         }
 
         //包括设置品牌、货号
