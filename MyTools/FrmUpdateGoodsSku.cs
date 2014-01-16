@@ -11,6 +11,7 @@ using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Logging.TraceSource;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
+using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
 using MyTools.Utility;
 using Infrastructure.Crosscutting.Declaration;
@@ -19,7 +20,9 @@ namespace MyTools
 {
     public partial class FrmUpdateGoodsSku : Form
     {  
-        private readonly IGoodsApi _goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
+        private readonly IGoodsPublish _goodsPublish = InstanceLocator.Current.GetInstance<IGoodsPublish>(Resource.SysConfig_Banggo);
+
+        private readonly IRequest _request = InstanceLocator.Current.GetInstance<IRequest>(Resource.SysConfig_Banggo);
 
         delegate void ChangeTextBoxValue(string str); // 新增委托代理
 
@@ -68,7 +71,7 @@ namespace MyTools
 
             IEnumerable<string> lstSearchs = TextHelper.StringToArray<string>(result);
 
-            _goodsApi.UpdateGoodsSkuInfo(
+            _goodsPublish.UpdateGoodsSkuInfo(_request,
                 lstSearchs,
                 discountRatio: txtRate.Text.ToType<double>(),
                 stock: txtStock.Text.ToType<int>(),

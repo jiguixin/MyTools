@@ -47,6 +47,10 @@ namespace MyTools.TaoBao.Impl.NinjectModuleConfig
 
             this.Bind<IGoodsApi>().To<GoodsApi>().InSingletonScope();
 
+            this.Bind<IGoodsPublish>().To<GoodsApi>().InSingletonScope().Named(Resource.SysConfig_Banggo);
+
+            this.Bind<IRequest>().To<BanggoMgt>().InSingletonScope().Named(Resource.SysConfig_Banggo);
+
             this.Bind<ITopClient>().To<DefaultTopClient>().InSingletonScope().WithConstructorArgument("serverUrl", Resource.SysConfig_RealTaobaoServerUrl).WithConstructorArgument("appKey", SysConst.AppKey).WithConstructorArgument("appSecret", SysConst.AppSecret);
 
             this.Bind<ILoggerFactory>().ToMethod(x => new TraceSourceLogFactory()).InSingletonScope();

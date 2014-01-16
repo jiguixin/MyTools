@@ -39,13 +39,10 @@ namespace MyTools.TaoBao.Impl
     public class GoodsApi : IGoodsApi,IGoodsPublish
     {
         #region Members
-
-        private readonly IBanggoMgt _banggoMgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
-
+         
         private readonly ICatalog _catalog = InstanceLocator.Current.GetInstance<ICatalog>(Resource.SysConfig_GetDataWay);
         private readonly ITopClient _client = InstanceLocator.Current.GetInstance<ITopClient>();
-
-
+         
         private readonly IDelivery _delivery =
             InstanceLocator.Current.GetInstance<IDelivery>(Resource.SysConfig_GetDataWay);
 
@@ -185,6 +182,8 @@ namespace MyTools.TaoBao.Impl
 
                 if (product.ColorList.IsNullOrEmpty()) return null;
 
+                req.SetCidAndSellerCids(product);
+
                 return PublishGoodsAndUploadPic(product);
             }
             catch (Exception e)
@@ -197,34 +196,6 @@ namespace MyTools.TaoBao.Impl
         #endregion
 
         #region PublishGoods
-
-        /// <summary>
-        ///     从banggo上获取数据发布到淘宝
-        /// </summary>
-        /// <param name="banggoProductUrl"></param>
-        /// <returns></returns>
-        public Item PublishGoodsForBanggoToTaobao(string banggoProductUrl)
-        {
-            string goodsSn = _banggoMgt.GetGoodsSn(banggoProductUrl);
-
-            Item item = VerifyGoodsExist(goodsSn);
-            if (item.IsNotNull())
-            {
-                //修改库存信息 
-                UpdateGoodsInternalSingle(item, banggoProductUrl, false);
-
-                return item;
-            }
-
-            Product product =
-                _banggoMgt.GetGoodsInfo(new RequestModel { GoodsSn = goodsSn, Referer = banggoProductUrl }); 
-            product.SetAddProperty();
-
-            if (product.ColorList.IsNullOrEmpty())
-                return null;
-
-            return PublishGoodsAndUploadPic(product);
-        }
          
         /// <summary>
         /// 重EXCEL中发布产品
@@ -352,32 +323,7 @@ namespace MyTools.TaoBao.Impl
         #endregion
 
         #region UpdateGoods
-         
-        /// <summary>
-        /// 根据搜索条件列表查询已上架的商品，并更新相应库存
-        /// </summary>
-        /// <param name="lstSearch">多个搜索在线商品条件</param>
-        /// <param name="isModifyPrice">是否要修改商品价格,true是要修改，false是只更新库存不修改以前的价格</param>
-        public void UpdateGoodsFromOnSale(IEnumerable<string> lstSearch, bool isModifyPrice = true)
-        {
-            foreach (var search in lstSearch)
-            {
-                if (string.IsNullOrWhiteSpace(search))
-                    continue;
-                UpdateGoodsFromOnSale(search, isModifyPrice);
-            }
-        }
-
-        /// <summary>
-        /// 根据搜索条件查询已上架的商品，并更新相应库存
-        /// </summary>
-        public void UpdateGoodsFromOnSale(string search = null, bool isModifyPrice = true)
-        {
-            List<Item> lstItem = GetOnSaleGoods(search);
-
-            UpdateGoodsInternal(lstItem, isModifyPrice);
-        }
-
+           
         /// <summary>
         /// 根据搜索条件查询已上架的商品，并更新相应库存  IRequest
         /// </summary>
@@ -389,111 +335,17 @@ namespace MyTools.TaoBao.Impl
         }
          
         /// <summary>
-        /// 更新产品库存和价格信息，包括修改标题和发货地址
-        /// 如果淘宝上没有上该产品，自动去获取邦购的产品信息并发布一个新产品
-        /// </summary>
-        /// <param name="lstSearch">如果想上传上产品必须跟款号</param>
-        /// <param name="isModifyPrice"></param>
-        public void UpdateGoodsSkuInfo(IEnumerable<string> lstSearch, double discountRatio = 0.68, int stock = 3, string originalTitle = "xx", string newTitle = "xx", bool isModifyPrice = true)
-        {
-            foreach (var search in lstSearch)
-            {
-                if (search.IsEmptyString()) continue;
-
-                List<Item> lstItem = GetOnSaleGoods(search);
-                if (lstItem != null && lstItem.Count > 0)
-                {
-                    #region 更新SKU信息
-
-                    foreach (var item in lstItem)
-                    {
-                        Thread.Sleep(100);
-                        //获取产品原价
-                        var oPrice = item.Title.GetNumberInt();
-
-                        var req = new ItemUpdateRequest();
-                        req.NumIid = item.NumIid;
-                        req.Title = item.Title.Replace(originalTitle, newTitle);
-
-                        req.LocationState = SysConst.LocationState;
-                        req.LocationCity = SysConst.LocationCity; 
-                        if (isModifyPrice)
-                        {
-                            req.Price = (oPrice * discountRatio).ToType<int>().ToString();
-                        }
-
-
-                        var skus = GetSkusByNumId(item.NumIid.ToString()).ToArray();
-                        var lastSku = skus[skus.Count() - 1];
-                        for (int i = 0; i < skus.Count() - 1; i++)
-                        {
-                            Thread.Sleep(100);
-                            var skuReq = new ItemSkuUpdateRequest()
-                            {
-                                NumIid = item.NumIid,
-                                Properties = skus[i].Properties,
-                                Quantity = stock,
-                                OuterId = item.OuterId
-                            };
-                            if (isModifyPrice)
-                            {
-                                skuReq.Price = req.Price;
-                            }
-                            UpdateSku(skuReq);
-                            Thread.Sleep(100);
-                        }
-
-                        UpdateGoodsBase(req, item.NumIid, item.OuterId, req.Title);
-
-                        var skuLastReq = new ItemSkuUpdateRequest()
-                        {
-                            NumIid = item.NumIid,
-                            Properties = lastSku.Properties,
-                            Quantity = stock,
-                            OuterId = item.OuterId
-                        };
-                        if (isModifyPrice)
-                        {
-                            skuLastReq.Price = req.Price;
-                        }
-                        UpdateSku(skuLastReq);
-                    }
-
-                    #endregion
-                }
-                else
-                {
-                    try
-                    {
-                        Product product =
-              _banggoMgt.GetGoodsInfo(new RequestModel { GoodsSn = search, Referer = _banggoMgt.GetGoodsUrl(search) });
-                        product.SetAddProperty();
-
-                        if (product.ColorList.IsNullOrEmpty())
-                            continue;
-
-                        PublishGoodsAndUploadPic(product);
-                    }
-                    catch (Exception e)
-                    {
-                        _log.LogError("发布该产品失败，邦购没有该产品:{0}", e, search);
-                    }
-                }
-            } 
-        }
-
-        /// <summary>
         ///     通过指定部分没有更新成功的商品重新更新
         /// </summary>
         /// <param name="numIds">多个产品以“，”号分割</param>
         /// <param name="isModifyPrice"></param>
-        public void UpdateGoodsByAssign(string numIds, bool isModifyPrice = true)
+        public void UpdateGoodsByAssign(IRequest req, string numIds, bool isModifyPrice = true)
         {
             List<Item> lstItem = GetGoodsList(numIds);
 
-            UpdateGoodsInternal(lstItem, isModifyPrice);
+            UpdateGoodsInternal(req, lstItem, isModifyPrice);
         }
-         
+
         /// <summary>
         /// taobao.item.sku.update 更新SKU信息
         /// </summary>
@@ -582,23 +434,7 @@ namespace MyTools.TaoBao.Impl
                 this.UpdateGoodsInternalSingle(req,item, goodsUrl, isModifyPrice);
             }
         }
-
-   
-        //更新商品的内部方法
-        private void UpdateGoodsInternal(IEnumerable<Item> lstItem, bool isModifyPrice = true)
-        {
-            //遍历在售商品列表中的商品，通过outerid去查询banggo上的该产品信息
-            foreach (Item item in lstItem)
-            {
-                Thread.Sleep(1000);
-
-                //通过款号查询如果没有得到产品的URL或得不到库存，就将该产品进行下架。
-                string goodsUrl = _banggoMgt.GetGoodsUrl(item.OuterId);
-
-                this.UpdateGoodsInternalSingle(item, goodsUrl, isModifyPrice);
-            }
-        }
-
+         
         //更新单条产品
         private void UpdateGoodsInternalSingle(IRequest req,Item item, string goodsUrl, bool isModifyPrice = true)
         {
@@ -681,90 +517,7 @@ namespace MyTools.TaoBao.Impl
                 _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(item.NumIid, item.OuterId), ex);
             }
         }
-
-        //更新单条产品
-        private void UpdateGoodsInternalSingle(Item item, string goodsUrl, bool isModifyPrice = true)
-        {
-            try
-            {
-                if (goodsUrl.IsNullOrEmpty())
-                {
-                    // this.GoodsDelisting(item.NumIid); //不进行下架，如在获取产品时，网络问题等因素
-                    this._log.LogInfo("GoodsSn:{0}->没有在邦购上获取URL不能进行进行操作".StringFormat(item.OuterId));
-                    return;
-                }
-                  
-                var product = new Product 
-                {
-                    GoodsSn = item.OuterId,
-                    GoodsUrl = goodsUrl,
-                    Cid = item.Cid,
-                    NumIid = item.NumIid,
-                    OuterId = item.OuterId,
-                    //替换原来的产品标题
-                    Title =
-                        item.Title.Replace(
-                            SysConst.OriginalTitle,
-                            SysConst.NewTitle)
-                };
-                this._banggoMgt.GetProductSku(product, new RequestModel
-                {
-                    GoodsSn = item.OuterId,
-                    Referer = goodsUrl
-                });
-
-                if (SysConst.IsModifyMainPic)
-                {
-                    #region old
-
-                    /* old //todo 些处可以修改了，因为能获取到主图URL了
-                     Bitmap watermark = imageWatermark.CreateWatermark((Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(item.PicUrl)),
-                                                                (Bitmap)
-                                                                imageWatermark.SetByteToImage(
-                                                                    SysUtils.GetImgByte(SysConst.ImgWatermark)),
-                                                                ImageWatermark.WatermarkPosition.RightTop,
-                                                                3);*/
-                    #endregion
-
-                    Bitmap watermark = SetTextAndIconWatermark(product.ThumbUrl, true);
-                    product.Image = new FileItem("aa.jpg", imageWatermark.SetBitmapToBytes(watermark, ImageFormat.Jpeg));
-                }
-
-                #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
-
-                if (!SysConst.IsEnforceUpdate)
-                {
-                    if (item.Num == product.ColorList.Sum(p => p.AvlNumForColor))
-                    {
-                        this._log.LogInfo(Resource.Log_StockEqualNotUpdate.StringFormat(item.NumIid, item.OuterId));
-                        return;
-                    }
-                }
-
-                #endregion
-
-                this.DeleteAllSku(item);
-
-                #region 如果是不修改价格（IsModifyPrice = false），则读取Item的price 填充到MySalePrice 中
-
-                if (!isModifyPrice)
-                {
-                    foreach (var size in product.ColorList.SelectMany(color => color.SizeList))
-                    {
-                        size.MySalePrice = item.Price.ToType<double>();
-                    }
-                }
-
-                #endregion
-
-                this.UpdateGoodsAndUploadPic(product);
-            }
-            catch (Exception ex)
-            {
-                _log.LogError(Resource.Log_UpdateGoodsFailure.StringFormat(item.NumIid, item.OuterId), ex);
-            }
-        }
-
+         
         //更新商品并上传相应的销售图片
         private void UpdateGoodsAndUploadPic(Product product)
         {
@@ -933,8 +686,7 @@ namespace MyTools.TaoBao.Impl
 
             return response.Items;
         }
-
-
+         
         /// <summary>
         ///     根据商品ID列表获取SKU信息
         /// taobao.item.skus.get 根据商品ID列表获取SKU信息 
@@ -1132,15 +884,13 @@ namespace MyTools.TaoBao.Impl
 
             return response.Item;
         }
-
-
+         
         #endregion
  
         #endregion
 
         #region Private Methods
-
-
+         
         //现在淘宝可以将SKU全部删除完,并将该产品对应的销售图片给删除掉 
         private void DeleteAllSku(Item item)
         {
@@ -1201,8 +951,7 @@ namespace MyTools.TaoBao.Impl
              
             #endregion
         }
-        
-       
+         
         //重EXCEL中读取要发布的数据用于发布或更新商品SKU
         private static IEnumerable<PublishGoods> GetPublishGoodsFromExcel(string filePath)
         {
@@ -1220,16 +969,8 @@ namespace MyTools.TaoBao.Impl
         {
             _log.LogInfo(Resource.Log_StuffProductInfoing.StringFormat(bProduct.GoodsSn));
             bProduct.OuterId = bProduct.GoodsSn;
-
-            //todo:建议cid，SellerCids 由具体请求类去获取
-           /* bProduct.Cid = bProduct.ParentCatalog == "外套" ? _catalog.GetCid(bProduct.Category, bProduct.Catalog).ToType<Int64>() : _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToType<Int64>();
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
-
-            bProduct.SellerCids = _shop.GetSellerCids(tContext.UserNick,
-                                                      "{0} - {1}".StringFormat(bProduct.Brand, bProduct.Category),
-                                                      bProduct.ParentCatalog);
-*/
-            _banggoMgt.SetCidAndSellerCids(bProduct);
+             
+//            _banggoMgt.SetCidAndSellerCids(bProduct);
 
             var watermark = SetTextAndIconWatermark(bProduct.ThumbUrl,true);
 

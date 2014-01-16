@@ -11,14 +11,17 @@ using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Logging.TraceSource;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
+using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
 using MyTools.Utility;
 
 namespace MyTools
 {
     public partial class FrmUpdateGoodsFromOnSale : Form
-    {  
-        private readonly IGoodsApi _goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
+    {   
+        private readonly IGoodsPublish _goodsPublish = InstanceLocator.Current.GetInstance<IGoodsPublish>(Resource.SysConfig_Banggo);
+
+        private readonly IRequest _request = InstanceLocator.Current.GetInstance<IRequest>(Resource.SysConfig_Banggo);
 
         delegate void ChangeTextBoxValue(string str); // 新增委托代理
 
@@ -68,9 +71,9 @@ namespace MyTools
             IEnumerable<string> lstSearchs = TextHelper.StringToArray<string>(result);
 
             if (IsSearch)
-                _goodsApi.UpdateGoodsFromOnSale(lstSearchs, !chkNotModifyPrice.Checked);
+                _goodsPublish.UpdateGoodsFromOnSale(_request,lstSearchs, !chkNotModifyPrice.Checked);
             else
-                _goodsApi.UpdateGoodsByAssign(result,!chkNotModifyPrice.Checked);
+                _goodsPublish.UpdateGoodsByAssign(_request,result, !chkNotModifyPrice.Checked);
         }
 
         private void bgwRun_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

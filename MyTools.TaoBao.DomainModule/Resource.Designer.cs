@@ -592,6 +592,15 @@ namespace MyTools.TaoBao.DomainModule {
         }
         
         /// <summary>
+        ///   查找类似 Banggo 的本地化字符串。
+        /// </summary>
+        public static string SysConfig_Banggo {
+            get {
+                return ResourceManager.GetString("SysConfig_Banggo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 read_colorlist 的本地化字符串。
         /// </summary>
         public static string SysConfig_ColorListId {

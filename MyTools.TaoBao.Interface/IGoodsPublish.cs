@@ -27,6 +27,12 @@ namespace MyTools.TaoBao.Interface
         /// <param name="isModifyPrice "></param>
         /// <param name="lstSearch"></param>
         void UpdateGoodsFromOnSale(IRequest requestSource, IEnumerable<string> lstSearch, bool isModifyPrice = true);
+        /// <summary>
+        /// 通过指定部分没有更新成功的商品重新更新
+        /// </summary> 
+        /// <param name="nulIds">多个产品以“，”号分割</param>
+        /// <param name="isModifyPrice">是否要修改商品价格,true是要修改，false是只更新库存不修改以前的价格</param>
+        void UpdateGoodsByAssign(IRequest req,string nulIds, bool isModifyPrice = true);
 
         void UpdateGoodsSkuInfo(IRequest req,
             IEnumerable<string> lstSearch,

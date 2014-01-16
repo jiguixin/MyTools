@@ -492,4 +492,8 @@
     <value>numId:{0},imgId:{1};GoodsSn:{2},删除销售图片成功</value>
     <comment>删除销售图片成功</comment>
   </data>
+  <data name="SysConfig_Banggo" xml:space="preserve">
+    <value>Banggo</value>
+    <comment>Banggo字符串</comment>
+  </data>
 </root>

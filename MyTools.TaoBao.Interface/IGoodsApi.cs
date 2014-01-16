@@ -32,35 +32,35 @@ namespace MyTools.TaoBao.Interface
         /// </summary>
         /// <param name="search">搜索在线商品条件</param>
         /// <param name="isModifyPrice">是否要修改商品价格,true是要修改，false是只更新库存不修改以前的价格</param>
-        void UpdateGoodsFromOnSale(string search = null, bool isModifyPrice = true);
+       // void UpdateGoodsFromOnSale(string search = null, bool isModifyPrice = true);
 
         /// <summary>
         /// 从在售商品中更新库存
         /// </summary>
         /// <param name="lstSearch">多个搜索在线商品条件</param>
         /// <param name="isModifyPrice">是否要修改商品价格,true是要修改，false是只更新库存不修改以前的价格</param>
-        void UpdateGoodsFromOnSale(IEnumerable<string> lstSearch, bool isModifyPrice = true);
+        //void UpdateGoodsFromOnSale(IEnumerable<string> lstSearch, bool isModifyPrice = true);
 
         /// <summary>
         /// 更新产品库存和价格信息，包括修改标题和发货地址
         /// </summary>
         /// <param name="lstSearch"></param>
         /// <param name="isModifyPrice"></param>
-        void UpdateGoodsSkuInfo(IEnumerable<string> lstSearch, double discountRatio = 0.68, int stock = 3, string originalTitle = "xx", string newTitle = "xx", bool isModifyPrice = true);
+       // void UpdateGoodsSkuInfo(IEnumerable<string> lstSearch, double discountRatio = 0.68, int stock = 3, string originalTitle = "xx", string newTitle = "xx", bool isModifyPrice = true);
 
         /// <summary>
         /// 通过指定部分没有更新成功的商品重新更新
         /// </summary> 
         /// <param name="nulIds">多个产品以“，”号分割</param>
         /// <param name="isModifyPrice">是否要修改商品价格,true是要修改，false是只更新库存不修改以前的价格</param>
-        void UpdateGoodsByAssign(string nulIds, bool isModifyPrice = true);
+        //void UpdateGoodsByAssign(string nulIds, bool isModifyPrice = true);
 
         /// <summary>
         /// 从banggo上获取数据发布到淘宝
         /// </summary>
         /// <param name="banggoProductUrl"></param>
         /// <returns></returns>
-        Item PublishGoodsForBanggoToTaobao(string banggoProductUrl);
+        //Item PublishGoodsForBanggoToTaobao(string banggoProductUrl);
 
         /// <summary>
         /// 从EXCEL读取产品信息并发布

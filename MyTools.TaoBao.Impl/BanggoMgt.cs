@@ -332,18 +332,11 @@ namespace MyTools.TaoBao.Impl
 
             if (htmlNodeColorList.IsNull())
                 return null;
-            /*
-                        htmlNodeColorList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-                            new StackTrace()));*/
 
             HtmlNodeCollection colors = htmlNodeColorList.SelectNodes("li/a");
 
             if (colors.IsNull())
-                return null;
-            /*
-                        colors.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-                            new StackTrace()));*/
-
+                return null; 
 
             var colorList = new List<ProductColor>();
 
@@ -956,56 +949,7 @@ namespace MyTools.TaoBao.Impl
         }
 
         #region GetProductSku 相关方法
-         
-       
-
-
-        //得到产品的颜色和大小 （todo: 暂时没有用该方法）
-        //private void GetProductAndSize(BanggoProduct product, BanggoRequestModel requestModel, HtmlDocument doc)
-        //{
-        //    HtmlNode htmlNodeColorList = doc.GetElementbyId(Resource.SysConfig_ColorListId);
-
-        //    htmlNodeColorList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-        //        new StackTrace()));
-
-        //    HtmlNodeCollection colors = htmlNodeColorList.SelectNodes("li/a");
-
-        //    colors.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-        //        new StackTrace()));
-
-
-        //    //HtmlNode htmlNodeSizeList = doc.GetElementbyId(Resource.SysConfig_SizeListId);
-        //    //htmlNodeSizeList.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-        //    //                                           new StackTrace()));
-
-        //    //HtmlNodeCollection sizes = htmlNodeSizeList.SelectNodes("a");
-        //    //sizes.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(
-        //    //                                new StackTrace()));
-
-        //    //product.BSizeToTSize = new Dictionary<string, string>();
-
-        //    //foreach (HtmlNode sizeNode in sizes)
-        //    //{
-        //    //    product.BSizeToTSize.Add(sizeNode.InnerText.Trim(), null);
-        //    //}
-
-
-        //    product.ColorList = new List<ProductColor>();
-
-        //    foreach (HtmlNode colorNode in colors)
-        //    {
-        //        string colorInfo = colorNode.Attributes["onclick"].Value;
-
-        //        ProductColor productColor = CreateProductColor(colorInfo);
-
-        //        requestModel.ColorCode = productColor.ColorCode;
-        //        productColor.SizeList = GetAvailableSize(requestModel);
-        //        product.ColorList.Add(productColor);
-        //    }
-        //}
-
-       
-         
+           
         //得到该商品的价格和销量信息
         private static void GetPriceAndSalesVolume(BanggoProduct product, HtmlDocument doc)
         {

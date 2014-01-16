@@ -7,6 +7,7 @@ using Infrastructure.Crosscutting.Declaration;
 using Infrastructure.Crosscutting.IoC;
 using Infrastructure.Crosscutting.Logging;
 using Infrastructure.Crosscutting.Logging.TraceSource;
+using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
 using MyTools.Utility;
 using Top.Api.Domain;
@@ -16,11 +17,11 @@ namespace MyTools
     public partial class FrmPublishGoods : Form
     {
         private readonly ILogger _log = InstanceLocator.Current.GetInstance<ILoggerFactory>().Create();
+         
+        private readonly IGoodsPublish _goodsPublish = InstanceLocator.Current.GetInstance<IGoodsPublish>(Resource.SysConfig_Banggo);
 
-        private readonly IGoodsApi _goodsApi = InstanceLocator.Current.GetInstance<IGoodsApi>();
-
-        private readonly IBanggoMgt _banggoMgt = InstanceLocator.Current.GetInstance<IBanggoMgt>();
-
+        private readonly IRequest _request = InstanceLocator.Current.GetInstance<IRequest>(Resource.SysConfig_Banggo);
+         
         delegate void ChangeTextBoxValue(string str); // 新增委托代理
 
         private void SetRichTextBoxValue(string str)
@@ -79,7 +80,7 @@ namespace MyTools
                     }
                     else //如果输入的是款号
                     {
-                        var gUrl = _banggoMgt.GetGoodsUrl(s);
+                        var gUrl = _request.GetGoodsUrl(s);
 
                         if (!gUrl.IsEmptyString())
                         {
@@ -96,7 +97,7 @@ namespace MyTools
         {
             try
             {
-                Item item = _goodsApi.PublishGoodsForBanggoToTaobao(url);
+                Item item = _goodsPublish.PublishGoods(url,_request);
 
                 Thread.Sleep(1000);
             }
