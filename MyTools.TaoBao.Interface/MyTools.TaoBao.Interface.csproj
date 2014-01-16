@@ -56,6 +56,7 @@
     <Compile Include="IDelivery.cs" />
     <Compile Include="IDeliveryApi.cs" />
     <Compile Include="IGoodsApi.cs" />
+    <Compile Include="IGoodsPublish.cs" />
     <Compile Include="IItemCatsApi.cs" />
     <Compile Include="IRequest.cs" />
     <Compile Include="ISell.cs" />
