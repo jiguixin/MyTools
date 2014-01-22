@@ -44,7 +44,7 @@ namespace MyTools
         public FrmPublishGoods()
         {
             InitializeComponent();
-             
+
             TextBoxTraceListener tl = new TextBoxTraceListener();
             tl.Filter = new System.Diagnostics.EventTypeFilter(SourceLevels.Information);
             tl.ChangeTextBoxValue = SetText;

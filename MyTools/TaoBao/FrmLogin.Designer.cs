@@ -29,8 +29,9 @@
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.btnOk = new System.Windows.Forms.Button();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.txtAuthCode = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -46,6 +47,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.txtAuthCode);
             this.splitContainer1.Panel1.Controls.Add(this.btnOk);
             // 
             // splitContainer1.Panel2
@@ -54,6 +56,16 @@
             this.splitContainer1.Size = new System.Drawing.Size(849, 473);
             this.splitContainer1.SplitterDistance = 40;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // btnOk
+            // 
+            this.btnOk.Location = new System.Drawing.Point(395, 11);
+            this.btnOk.Name = "btnOk";
+            this.btnOk.Size = new System.Drawing.Size(75, 23);
+            this.btnOk.TabIndex = 0;
+            this.btnOk.Text = "执行";
+            this.btnOk.UseVisualStyleBackColor = true;
+            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // webBrowser1
             // 
@@ -65,15 +77,12 @@
             this.webBrowser1.TabIndex = 0;
             this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
             // 
-            // btnOk
+            // txtAuthCode
             // 
-            this.btnOk.Location = new System.Drawing.Point(241, 9);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(75, 23);
-            this.btnOk.TabIndex = 0;
-            this.btnOk.Text = "执行";
-            this.btnOk.UseVisualStyleBackColor = true;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            this.txtAuthCode.Location = new System.Drawing.Point(64, 11);
+            this.txtAuthCode.Name = "txtAuthCode";
+            this.txtAuthCode.Size = new System.Drawing.Size(325, 21);
+            this.txtAuthCode.TabIndex = 1;
             // 
             // FrmLogin
             // 
@@ -85,6 +94,7 @@
             this.Text = "FrmLogin";
             this.Load += new System.EventHandler(this.FrmLogin_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
@@ -97,5 +107,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.TextBox txtAuthCode;
     }
 }

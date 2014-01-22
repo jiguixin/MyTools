@@ -31,11 +31,13 @@ namespace MyTools.TaoBao
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            resultHtml = webBrowser1.DocumentText; 
+//            resultHtml = webBrowser1.DocumentText; 
+//              
+           // context = _comApi.Authorized(resultHtml); 
 
-//            this.DialogResult = DialogResult.OK;
+            context = TopUtils.GetTopContext(txtAuthCode.Text);
+            
 
-            context = _comApi.Authorized(resultHtml); 
             InstanceLocator.Current.RegisterInstance<TopContext>(context);
             this.Close();
         }

@@ -225,6 +225,26 @@ namespace MyTools.TaoBao.Interface
         /// <param name="req"></param>
         /// <returns></returns>
         List<Item> GetInventoryGoods(ItemsInventoryGetRequest req);
+
+        /// <summary>
+        /// taobao.picture.upload 上传单张图片
+        /// </summary>
+        /// <param name="req"></param>
+        /// <example>
+        /* example
+            ITopClient client = new DefaultTopClient(url, appkey, appsecret);
+            PictureUploadRequest req=new PictureUploadRequest();
+            req.PictureCategoryId = 123L;
+            FileItem fItem = new FileItem("fileLocation");
+            req.Img = fItem;
+            req.ImageInputTitle = "Bule.jpg";
+            req.Title = "图片名称";
+            req.ClientType = "client:computer";
+            PictureUploadResponse response = client.Execute(req, sessionKey);*/
+        /// </example>
+        /// <returns></returns>
+        Picture PictureUpload(PictureUploadRequest req);
+
     }
 
 }

@@ -72,8 +72,7 @@ namespace MyTools.TaoBao.DomainModule
         ///     商品主图 url
         /// </summary>
         public string ThumbUrl { get; set; }
-
-
+         
         public List<ProductColor> ColorList { get; set; }
          
         /// <summary>
@@ -85,6 +84,11 @@ namespace MyTools.TaoBao.DomainModule
         /// 商品数字id
         /// </summary>
         public virtual Nullable<long> NumIid { get; set; }
+
+        /// <summary>
+        /// 商品描述的图片信息
+        /// </summary>
+        public List<FileItem> GoodsDetailPic { get; set; }
 
         public Product()
         {

@@ -25,6 +25,7 @@ using Infrastructure.Crosscutting.Utility;
 using Infrastructure.Crosscutting.Utility.CommomHelper;
 using MyTools.Framework.Common;
 using MyTools.TaoBao.DomainModule;
+using MyTools.TaoBao.Impl.Utils;
 using MyTools.TaoBao.Interface;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -41,8 +42,7 @@ namespace MyTools.TaoBao.Impl
         private readonly IShop _shop = InstanceLocator.Current.GetInstance<IShop>(Resource.SysConfig_GetDataWay);
         private readonly ICatalog _catalog = InstanceLocator.Current.GetInstance<ICatalog>(Resource.SysConfig_GetDataWay);
 
-        private StringBuilder sbDesc = new StringBuilder();
-         
+        private StringBuilder sbDesc = new StringBuilder(); 
         #endregion
 
         #region Public Method
@@ -163,9 +163,11 @@ namespace MyTools.TaoBao.Impl
 
 
             sbDesc.AppendLine(
-                "Banggo 产品地址：<a href=\"{0}\" target=\"_blank\" title=\"{0}\">{0}</a> <br/>".StringFormat(
-                    requestModel.Referer));
-            if (imgNodes != null)
+                "款号：{1} -> Banggo 产品地址：<a href=\"{0}\" target=\"_blank\" title=\"{0}\">{0}</a> <br/>".StringFormat(
+                    requestModel.Referer,product.GoodsSn));
+            #region 这是用html的方式，现在淘宝不支持外链接图片，所以只有用截图的方法
+
+            /*  if (imgNodes != null)
             {
                 sbDesc.AppendLine(GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_GoodsDescId));
             }
@@ -209,9 +211,22 @@ namespace MyTools.TaoBao.Impl
                 }
 
                 #endregion
+            }*/
+
+            #endregion
+             
+            product.Desc = ModifyGoodsDetailsCss(sbDesc.ToString());
+
+            var lstFile = new List<FileItem>();
+             
+            using (var bitmap = CaputureHtmlElement.CaptureBanggo(requestModel.Referer))
+            {
+                var fileItem = new FileItem("{0}Detail.jpg".StringFormat(product.GoodsSn),ImageHelper.SetBitmapToBytes(bitmap,System.Drawing.Imaging.ImageFormat.Jpeg));
+                lstFile.Add(fileItem); 
             }
-              
-            product.Desc = ModifyGoodsDetailsCss(sbDesc.ToString()); ;
+
+
+            product.GoodsDetailPic = lstFile;
 
             #endregion
         }

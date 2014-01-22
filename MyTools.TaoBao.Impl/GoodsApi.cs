@@ -480,7 +480,7 @@ namespace MyTools.TaoBao.Impl
                     #endregion
 
                     Bitmap watermark = SetTextAndIconWatermark(product.ThumbUrl, true);
-                    product.Image = new FileItem("aa.jpg", imageWatermark.SetBitmapToBytes(watermark, ImageFormat.Jpeg));
+                    product.Image = new FileItem("aa.jpg", ImageHelper.SetBitmapToBytes(watermark, ImageFormat.Jpeg));
                 }
 
                 #region 如果没有强制更新者 判断邦购数据是否以淘宝现在的库存数量一样，如果一样就取消更新
@@ -801,7 +801,7 @@ namespace MyTools.TaoBao.Impl
                3);*/
             Bitmap watermark = SetTextAndIconWatermark(urlImg.ToString(), false);
 
-            var fItem = new FileItem(fileName, imageWatermark.SetBitmapToBytes(watermark, ImageFormat.Jpeg));
+            var fItem = new FileItem(fileName, ImageHelper.SetBitmapToBytes(watermark, ImageFormat.Jpeg));
 
 //            var fItem = new FileItem(fileName, SysUtils.GetImgByte(urlImg.ToString()));
             return UploadItemPropimgInternal(numId, properties, fItem);
@@ -849,12 +849,12 @@ namespace MyTools.TaoBao.Impl
             #endregion 
 
              Bitmap watermark = imageWatermark.CreateWatermark(
-               (Bitmap)imageWatermark.SetByteToImage(FileHelper.ReadFile(imgPath)),
+               (Bitmap)ImageHelper.SetByteToImage(FileHelper.ReadFile(imgPath)),
                SysConst.TextWatermark,
                ImageWatermark.WatermarkPosition.RigthBottom,
                3);
 
-            var fItem = new FileItem("{0}-{1}.jpg".StringFormat(numId.ToString(CultureInfo.InvariantCulture), properties),imageWatermark.SetBitmapToBytes(watermark,ImageFormat.Jpeg));
+            var fItem = new FileItem("{0}-{1}.jpg".StringFormat(numId.ToString(CultureInfo.InvariantCulture), properties),ImageHelper.SetBitmapToBytes(watermark,ImageFormat.Jpeg));
 
             return UploadItemPropimgInternal(numId, properties, fItem);
         }
@@ -883,6 +883,45 @@ namespace MyTools.TaoBao.Impl
             _log.LogInfo(Resource.Log_GoodsDelistingSuccess, numId);
 
             return response.Item;
+        }
+
+
+        /// <summary>
+        /// taobao.picture.upload 上传单张图片
+        /// </summary>
+        /// <param name="req"></param>
+        /// <example>
+        ///example
+        ///ITopClient client = new DefaultTopClient(url, appkey, appsecret);
+        ///PictureUploadRequest req=new PictureUploadRequest();
+        ///req.PictureCategoryId = 123L;
+        ///FileItem fItem = new FileItem("fileLocation");
+        ///req.Img = fItem;
+        ///req.ImageInputTitle = "Bule.jpg";
+        ///req.Title = "图片名称";
+        ///req.ClientType = "client:computer";
+        /// PictureUploadResponse response = client.Execute(req, sessionKey);
+        /// </example>
+        /// <returns></returns>
+        public Picture PictureUpload(PictureUploadRequest req)
+        {
+            _log.LogError("正在上传商品描述图片....");
+            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+             
+            PictureUploadResponse response = _client.Execute(req, tContext.SessionKey);
+
+            if (response.IsError)
+            {
+                var ex = new TopResponseException(response.ErrCode, response.ErrMsg, response.SubErrCode,
+                                                  response.SubErrMsg, response.TopForbiddenFields);
+
+                _log.LogError("上传商品描述图片失败", ex);
+
+                throw ex;
+            }
+
+            _log.LogError("上传商品描述图片成功");
+            return response.Picture;
         }
          
         #endregion
@@ -969,17 +1008,33 @@ namespace MyTools.TaoBao.Impl
         {
             _log.LogInfo(Resource.Log_StuffProductInfoing.StringFormat(bProduct.GoodsSn));
             bProduct.OuterId = bProduct.GoodsSn;
-             
-//            _banggoMgt.SetCidAndSellerCids(bProduct);
-
+              
             var watermark = SetTextAndIconWatermark(bProduct.ThumbUrl,true);
 
-            bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", imageWatermark.SetBitmapToBytes(watermark,ImageFormat.Jpeg));
+            bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", ImageHelper.SetBitmapToBytes(watermark,ImageFormat.Jpeg));
 
             //bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", SysUtils.GetImgByte(bProduct.ThumbUrl));
 
-          
+            foreach (var pic in bProduct.GoodsDetailPic)
+            {
+                try
+                {
+                    PictureUploadRequest picRequest = new PictureUploadRequest();
+                    picRequest.Img = pic;
+                    picRequest.PictureCategoryId = 0;
+                    picRequest.ImageInputTitle = pic.GetFileName();
 
+                    var picResult = PictureUpload(picRequest);
+                    string imgTag = "<img src='{0}' alt='{1}'/>".StringFormat(picResult.PicturePath, picResult.Title);
+                    bProduct.Desc += imgTag;
+                }
+                catch (Exception)
+                {
+
+                } 
+            }
+             
+             
             //得到运费模版
             string deliveryTemplateId = _delivery.GetDeliveryTemplateId(Resource.SysConfig_DeliveryTemplateName);
 
@@ -1009,7 +1064,7 @@ namespace MyTools.TaoBao.Impl
         private Bitmap SetTextAndIconWatermark(string picUrl,bool isMainPic)
         {
             Bitmap watermark = imageWatermark.CreateWatermark(
-                (Bitmap)imageWatermark.SetByteToImage(SysUtils.GetImgByte(picUrl)),
+                (Bitmap)ImageHelper.SetByteToImage(SysUtils.GetImgByte(picUrl)),
                 SysConst.TextWatermark,
                 ImageWatermark.WatermarkPosition.RigthBottom,
                 3);
@@ -1020,7 +1075,7 @@ namespace MyTools.TaoBao.Impl
                 {
                     watermark = imageWatermark.CreateWatermark(watermark,
                                                                (Bitmap)
-                                                               imageWatermark.SetByteToImage(
+                                                               ImageHelper.SetByteToImage(
                                                                    SysUtils.GetImgByte(SysConst.ImgWatermark)),
                                                                ImageWatermark.WatermarkPosition.RightTop,
                                                                3);

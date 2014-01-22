@@ -189,6 +189,14 @@ namespace UnitTest
             Console.WriteLine(TextHelper.ToGb2312NotRemove(s));
         }
 
+        [Test]
+        public void name()
+        {
+
+            DateTime dt = DateTime.Parse("2013-10-22").AddDays(98);
+            Console.WriteLine(dt.ToString());
+        }
+
 
         #region Helper
 
@@ -245,7 +253,7 @@ namespace UnitTest
         }
 
         #endregion
-
+          
 
     } 
 }
