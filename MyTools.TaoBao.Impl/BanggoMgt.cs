@@ -167,7 +167,7 @@ namespace MyTools.TaoBao.Impl
                     requestModel.Referer,product.GoodsSn));
             #region 这是用html的方式，现在淘宝不支持外链接图片，所以只有用截图的方法
 
-            /*  if (imgNodes != null)
+              if (imgNodes != null)
             {
                 sbDesc.AppendLine(GetProductDesc(requestModel, imgNodes, doc, Resource.SysConfig_GoodsDescId));
             }
@@ -211,13 +211,14 @@ namespace MyTools.TaoBao.Impl
                 }
 
                 #endregion
-            }*/
+            }
 
             #endregion
              
             product.Desc = ModifyGoodsDetailsCss(sbDesc.ToString());
 
-            var lstFile = new List<FileItem>();
+            //todo截图没有实现
+           /* var lstFile = new List<FileItem>();
              
             using (var bitmap = CaputureHtmlElement.CaptureBanggo(requestModel.Referer))
             {
@@ -226,7 +227,7 @@ namespace MyTools.TaoBao.Impl
             }
 
 
-            product.GoodsDetailPic = lstFile;
+            product.GoodsDetailPic = lstFile;*/
 
             #endregion
         }

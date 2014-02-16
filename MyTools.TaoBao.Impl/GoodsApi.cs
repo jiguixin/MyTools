@@ -1015,6 +1015,7 @@ namespace MyTools.TaoBao.Impl
 
             //bProduct.Image = new FileItem(bProduct.GoodsSn + ".jpg", SysUtils.GetImgByte(bProduct.ThumbUrl));
 
+            /* //todo:截图功能没有实现
             foreach (var pic in bProduct.GoodsDetailPic)
             {
                 try
@@ -1032,7 +1033,7 @@ namespace MyTools.TaoBao.Impl
                 {
 
                 } 
-            }
+            }*/
              
              
             //得到运费模版
