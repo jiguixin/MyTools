@@ -6,6 +6,9 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Infrastructure.CrossCutting.IoC.Ninject;
+using Infrastructure.Crosscutting.IoC;
+using MyTools.TaoBao.Impl;
 
 namespace MyTools.Web
 {
@@ -23,6 +26,9 @@ namespace MyTools.Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
+
+            InstanceLocator.SetLocator(
+              new NinjectContainer().WireDependenciesInAssemblies(typeof(ItemCatsApi).Assembly.FullName).Locator);
         }
     }
 }

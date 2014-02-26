@@ -59,8 +59,9 @@ namespace MyTools.Framework.Common
 
         /// <summary>
         /// 读取用于修改淘宝上产品详情的样式
+        /// todo:此处要修改，WEB没有该文件
         /// </summary>
-        public static readonly string GoodsDetailTemplate = FileHelper.ReadFileContent("GoodsDetailTemplate.css");
+        public static readonly string GoodsDetailTemplate = ""; //FileHelper.ReadFileContent("GoodsDetailTemplate.css");
 
         /// <summary>
         /// 文本水印
