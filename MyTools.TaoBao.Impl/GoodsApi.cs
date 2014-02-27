@@ -302,7 +302,7 @@ namespace MyTools.TaoBao.Impl
 
             Util.CopyModel(product, req);
 
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
             ItemAddResponse response = _client.Execute(req, tContext.SessionKey);
 
             if (response.IsError)
@@ -356,7 +356,7 @@ namespace MyTools.TaoBao.Impl
 
             req.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
 
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
 
             var response = _client.Execute(req, tContext.SessionKey);
 
@@ -402,7 +402,7 @@ namespace MyTools.TaoBao.Impl
         {
             _log.LogInfo(Resource.Log_UpdateGoodsing.StringFormat(numiid, outerId));
 
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
             ItemUpdateResponse response = _client.Execute(req, tContext.SessionKey);
 
             if (response.IsError)
@@ -570,7 +570,7 @@ namespace MyTools.TaoBao.Impl
         {
             req.ThrowIfNull(Resource.ExceptionTemplate_MethedParameterIsNullorEmpty.StringFormat(new StackTrace()));
 
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
 
             ItemGetResponse response = _client.Execute(req, tContext.SessionKey);
 
@@ -609,7 +609,7 @@ namespace MyTools.TaoBao.Impl
         /// <returns></returns>
         public List<Item> GetGoodsList(string numIds)
         {
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
 
             var req = new ItemsListGetRequest { Fields = "num_iid,cid,num,sku,title,price,outer_id", NumIids = numIds };
 
@@ -634,7 +634,7 @@ namespace MyTools.TaoBao.Impl
         public List<Item> GetOnSaleGoods(ItemsOnsaleGetRequest req)
         {
             _log.LogInfo(Resource.Log_GetOnSaleGoodsing.StringFormat(req.Q));
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
 
             ItemsOnsaleGetResponse response = _client.Execute(req, tContext.SessionKey);
 
@@ -670,7 +670,7 @@ namespace MyTools.TaoBao.Impl
         //得到卖家仓库中的商品
         public List<Item> GetInventoryGoods(ItemsInventoryGetRequest req)
         {
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
 
             ItemsInventoryGetResponse response = _client.Execute(req, tContext.SessionKey);
 
@@ -696,7 +696,7 @@ namespace MyTools.TaoBao.Impl
         public IEnumerable<Sku> GetSkusByNumId(string numIds)
         {
             _log.LogInfo(Resource.Log_GetSkusing.StringFormat(numIds));
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
 
             var req = new ItemSkusGetRequest
             {
@@ -732,7 +732,7 @@ namespace MyTools.TaoBao.Impl
         public void DeleteGoodsSku(long numId, string properties, string goodsSn = "")
         {
             _log.LogInfo(Resource.Log_DeleteGoodsSkuing.StringFormat(numId, properties, goodsSn));
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
             var req = new ItemSkuDeleteRequest { NumIid = numId, Properties = properties };
 
             ItemSkuDeleteResponse response = _client.Execute(req, tContext.SessionKey);
@@ -759,7 +759,7 @@ namespace MyTools.TaoBao.Impl
             _log.LogInfo(Resource.Log_DeleteItemPropingimg, imgId, numId, goodsSn);
 
             var req = new ItemPropimgDeleteRequest { NumIid = numId, Id = imgId };
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
             var response = _client.Execute(req, tContext.SessionKey);
 
             if (response.IsError)
@@ -869,7 +869,7 @@ namespace MyTools.TaoBao.Impl
             _log.LogInfo(Resource.Log_GoodsDelisting, numId);
 
             var req = new ItemUpdateDelistingRequest { NumIid = numId };
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
             ItemUpdateDelistingResponse response = _client.Execute(req, tContext.SessionKey);
 
             if (response.IsError)
@@ -906,7 +906,7 @@ namespace MyTools.TaoBao.Impl
         public Picture PictureUpload(PictureUploadRequest req)
         {
             _log.LogError("正在上传商品描述图片....");
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
              
             PictureUploadResponse response = _client.Execute(req, tContext.SessionKey);
 
@@ -1109,7 +1109,7 @@ namespace MyTools.TaoBao.Impl
 
             var req = new ItemPropimgUploadRequest {NumIid = numId, Image = fItem, Properties = properties};
 
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
             ItemPropimgUploadResponse response = _client.Execute(req, tContext.SessionKey);
 
             if (response.IsError)

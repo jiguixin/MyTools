@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Infrastructure.Crosscutting.IoC;
+using MyTools.TaoBao.DomainModule;
 using MyTools.TaoBao.Interface;
 using Top.Api.Util;
 
@@ -20,9 +21,7 @@ namespace MyTools.TaoBao
         private string authorizeUrl;
 
         private ICommonApi _comApi = InstanceLocator.Current.GetInstance<ICommonApi>();
-
-        private TopContext context;
-
+          
         public FrmLogin(string authorizeUrlParm)
         {
             this.authorizeUrl = authorizeUrlParm;
@@ -31,14 +30,20 @@ namespace MyTools.TaoBao
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-//            resultHtml = webBrowser1.DocumentText; 
-//              
-           // context = _comApi.Authorized(resultHtml); 
+            //            resultHtml = webBrowser1.DocumentText; 
+            //              
+            // context = _comApi.Authorized(resultHtml); 
 
-            context = TopUtils.GetTopContext(txtAuthCode.Text);
-            
+            var context = TopUtils.GetTopContext(txtAuthCode.Text);
 
-            InstanceLocator.Current.RegisterInstance<TopContext>(context);
+            InstanceLocator.Current.RegisterInstance<AuthorizedContext>(new AuthorizedContext()
+                {
+                    AppKey = context.AppKey,
+                    SessionKey = context.SessionKey,
+                    UserId = context.UserId.ToString(),
+                    UserNick = context.UserNick
+                });
+
             this.Close();
         }
 

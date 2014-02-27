@@ -1,45 +1,126 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
-@section featured {
-    <section class="featured">
-        <div class="content-wrapper">
-            <hgroup class="title">
-                <h1>@ViewBag.Title.</h1>
-                <h2>@ViewBag.Message</h2>
-            </hgroup>
-            <p>
-                To learn more about ASP.NET MVC visit
-                <a href="http://asp.net/mvc" title="ASP.NET MVC Website">http://asp.net/mvc</a>.
-                The page features <mark>videos, tutorials, and samples</mark> to help you get the most from ASP.NET MVC.
-                If you have any questions about ASP.NET MVC visit
-                <a href="http://forums.asp.net/1146.aspx/1?MVC" title="ASP.NET MVC Forum">our forums</a>.
-            </p>
+ 
+    <!-- 代码 开始 -->
+    <div id="banner">
+        <ul id="banner_img">
+            <li class="item1" style="display:block;">               
+                <div class="wrapper">
+                    <div class="ad_txt" style="top: 170px; opacity: 1;">
+                        <h2>打包咯</h2>
+                        <p style="padding-top: 0px; padding-bottom: 0px;">
+                           添宝贝、标价格、自动上下架
+                            <br>算收益、看库存...
+                            <br>统统“打包咯”！！！
+                        </p>
+                        <a href="#" target="_blank">查看详情&gt;</a>
+                    </div>
+                    <div class="ad_img" style="right: 10px; opacity: 1;">
+                        <img src="~/Images/dabaolo.png" width="506" height="404" alt="打包咯">
+                    </div>
+                </div>
+            </li>
+
+	<li class="item2" style="display: none;">
+                <div class="wrapper">
+                    <div class="ad_txt" style="top: 340px; opacity: 1;">
+                        <h2>轻松上宝贝</h2>
+                        <p style="padding-top: 0px; padding-bottom: 0px;">
+                           简单上传图片
+                            <br>轻松修改价格
+                            <br>支持上传word宝贝描述
+                        </p>
+                        <a href="#" target="_blank">查看详情&gt;</a>
+                    </div>
+                    <div class="ad_img" style="right: 120px; opacity: 1;">
+                        <img src="~/Images/baobei.png" width="506" height="404" alt="轻松上宝贝">
+                    </div>
+                </div>
+            </li>
+<li class="item3" style="display: none;">
+                <div class="wrapper">
+                    <div class="ad_txt" style="top: 340px; opacity: 1;">
+                        <h2>一键同步库存</h2>
+                        <p style="padding-top: 0px; padding-bottom: 0px;">
+                            简单更新库存数据
+                            <br>动态监控库存信息
+                            <br>及时库存预警
+                        </p>
+                        <a href="#" target="_blank">查看详情&gt;</a>
+                    </div>
+                    <div class="ad_img" style="right: 120px; opacity: 1;">
+                        <img src="~/Images/kucun.png" width="506" height="404" alt="打包咯">
+                    </div>
+                </div>
+            </li>
+                        
+            
+            <li class="item4" style="display: none;">
+                <div class="wrapper">
+                    <div class="ad_txt" style="top: 340px; opacity: 1;">
+                        <h2>克隆宝贝</h2>
+                        <p style="padding-top: 0px; padding-bottom: 0px;">
+                            克隆大型销售商宝贝
+                            <br>克隆淘宝同行宝贝
+                            <br>简单步骤一键发布
+                        </p>
+                        <a href="#" target="_blank">查看详情&gt;</a>
+                    </div>
+                    <div class="ad_img" style="right: 120px; opacity: 1;">
+                        <img src="~/Images/copy.png" width="506" height="404" alt="喝杯茶的功夫就能学会">
+                    </div>
+                </div>
+            </li>
+<li class="item5" style="display: none;">
+                <div class="wrapper">
+                    <div class="ad_txt" style="top: 340px; opacity: 1;">
+                        <h2>自动添加水印</h2>
+                        <p style="padding-top: 0px; padding-bottom: 0px;">
+                            您的专有图章
+                            <br>仿制他人盗图
+                            <br>无论是本地图片还是“克隆”宝贝
+			    <br>统统变成您的私人图片
+                        </p>
+                        <a href="#" target="_blank">查看详情&gt;</a>
+                    </div>
+                    <div class="ad_img" style="right: 120px; opacity: 1;">
+                        <img src="~/Images/shuiyin.png" width="506" height="404" alt="自动添加水印">
+                    </div>
+                </div>
+            </li>
+            <li class="item4" style="display: none;">
+                <div class="wrapper">
+                    <div class="ad_txt" style="top: 340px; opacity: 1;">
+                        <h2>竞争对手统计</h2>
+                        <p style="padding-top: 0px; padding-bottom: 0px;">
+                            对手销量统计
+                            <br>宝贝价格、销量走势分析
+                            <br>自己产品价格定位
+                        </p>
+                        <a href="#" target="_blank">查看详情&gt;</a>
+                    </div>
+                    <div class="ad_img" style="right: 120px; opacity: 1;">
+                        <img src="~/Images/chart.png" width="506" height="404" alt="竞争对手统计">
+                    </div>
+                </div>
+            </li>         
+                        
+        </ul>
+        <div id="banner_ctr">
+            <div id="drag_ctr" style="left: 20px;"></div>
+            <ul>
+                <li class="first-item"></li>
+                <li><img src="~/Images/dblIco.png" /></li>
+		<li><img src="~/Images/coatIco.png" /></li>
+                <li><img src="~/Images/storageIco.png" /></li>   
+		<li><img src="~/Images/copyIco.png" /></li>
+                <li><img src="~/Images/watermarkIco.png" /></li>
+                <li><img src="~/Images/chartIco.png" /></li>                             
+                <li class="last-item"></li>
+            </ul>
+            <div id="drag_arrow" style="left: 135px;"></div>
         </div>
-    </section>
-}
-<h3>We suggest the following:</h3>
-<ol class="round">
-    <li class="one">
-        <h5>Getting Started</h5>
-        ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-        enables a clean separation of concerns and that gives you full control over markup
-        for enjoyable, agile development. ASP.NET MVC includes many features that enable
-        fast, TDD-friendly development for creating sophisticated applications that use
-        the latest web standards.
-        <a href="http://go.microsoft.com/fwlink/?LinkId=245151">Learn more…</a>
-    </li>
-
-    <li class="two">
-        <h5>Add NuGet packages and jump-start your coding</h5>
-        NuGet makes it easy to install and update free libraries and tools.
-        <a href="http://go.microsoft.com/fwlink/?LinkId=245153">Learn more…</a>
-    </li>
-
-    <li class="three">
-        <h5>Find Web Hosting</h5>
-        You can easily find a web hosting company that offers the right mix of features
-        and price for your applications.
-        <a href="http://go.microsoft.com/fwlink/?LinkId=245157">Learn more…</a>
-    </li>
-</ol>
+    </div>
+    <script type="text/javascript" src="~/Scripts/fashionfoucs.js"></script>
+    <!-- 代码 结束 -->

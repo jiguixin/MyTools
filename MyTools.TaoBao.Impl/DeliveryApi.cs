@@ -64,7 +64,7 @@ namespace MyTools.TaoBao.Impl
         {
             var req = new DeliveryTemplatesGetRequest {Fields = fields};
 
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
 
             DeliveryTemplatesGetResponse response = _client.Execute(req, tContext.SessionKey);
 

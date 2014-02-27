@@ -56,7 +56,7 @@ namespace MyTools.TaoBao.Impl
             BanggoProduct bProduct = (BanggoProduct) product;
 
             bProduct.Cid = bProduct.ParentCatalog == "外套" ? _catalog.GetCid(bProduct.Category, bProduct.Catalog).ToType<Int64>() : _catalog.GetCid(bProduct.Category, bProduct.ParentCatalog).ToType<Int64>();
-            var tContext = InstanceLocator.Current.GetInstance<TopContext>();
+            var tContext = InstanceLocator.Current.GetInstance<AuthorizedContext>();
 
             bProduct.SellerCids = _shop.GetSellerCids(tContext.UserNick,
                                                       "{0} - {1}".StringFormat(bProduct.Brand, bProduct.Category),

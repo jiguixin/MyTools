@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorizedContext.cs" />
     <Compile Include="BanggoProduct.cs" />
     <Compile Include="BanggoUser.cs" />
     <Compile Include="ProductBase.cs" />

@@ -194,6 +194,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\fashionfoucs_lrtk.css" />
+    <Content Include="Content\index.css" />
+    <Content Include="Content\style.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -252,6 +255,49 @@
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\MyPublish.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
+    <Content Include="Images\20120830015430148.png" />
+    <Content Include="Images\20120830015446637.png" />
+    <Content Include="Images\20120830015615324.png" />
+    <Content Include="Images\20120830015631560.png" />
+    <Content Include="Images\20120830015651273.png" />
+    <Content Include="Images\20120830015711808.png" />
+    <Content Include="Images\20120830015726137.png" />
+    <Content Include="Images\20120905092323647.png" />
+    <Content Include="Images\banner_bg1.jpg" />
+    <Content Include="Images\banner_bg2.jpg" />
+    <Content Include="Images\banner_bg3.jpg" />
+    <Content Include="Images\banner_bg4.jpg" />
+    <Content Include="Images\banner_bg5.jpg" />
+    <Content Include="Images\banner_bg6.jpg" />
+    <Content Include="Images\banner_bg7.jpg" />
+    <Content Include="Images\banner_bg8.jpg" />
+    <Content Include="Images\baobei.png" />
+    <Content Include="Images\chart.png" />
+    <Content Include="Images\chartIco.png" />
+    <Content Include="Images\cloud.png" />
+    <Content Include="Images\coatIco.png" />
+    <Content Include="Images\copy.png" />
+    <Content Include="Images\copyIco.png" />
+    <Content Include="Images\dabao.png" />
+    <Content Include="Images\dabaolo.png" />
+    <Content Include="Images\dabaolo1.png" />
+    <Content Include="Images\dblIco.png" />
+    <Content Include="Images\kucun.png" />
+    <Content Include="Images\logo-pigcms.png" />
+    <Content Include="Images\qq.png" />
+    <Content Include="Images\serv_ico1.png" />
+    <Content Include="Images\shuiyin.png" />
+    <Content Include="Images\storageIco.png" />
+    <Content Include="Images\watermarkIco.png" />
+    <Content Include="Scripts\common.js" />
+    <Content Include="Scripts\config.js" />
+    <Content Include="Scripts\fashionfoucs.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\jquery.js" />
+    <Content Include="Scripts\jquery.lazyload.js" />
+    <Content Include="Scripts\jquery.plugin.min.js" />
+    <Content Include="Scripts\lang.js" />
+    <Content Include="Scripts\page.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -305,6 +351,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
+    <Content Include="Views\Home\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
