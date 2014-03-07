@@ -14,6 +14,8 @@ using System.Windows.Forms;
 
 namespace MyTools.TaoBao.Impl.Utils
 { 
+    // copied from: http://stackoverflow.com/a/19737374/1768303
+    
     // a helper class to start the message loop and execute an asynchronous task
     /// <summary>
     /// 用于多线程下，调用COM组件，或者是创建FORM控件
